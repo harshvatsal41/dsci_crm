@@ -1,127 +1,180 @@
 'use client';
 import { useState } from 'react';
+import { FiUser, FiMail, FiLock, FiPhone, FiArrowRight, FiLogIn, FiEye, FiEyeOff } from 'react-icons/fi';
+import { Input, Button } from '@/Component/UI/ReusableCom';
+import Link from 'next/link';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/Redux/Reducer/menuSlice';
+import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import { RegisterApi } from '@/utilities/ApiManager';
+
+const initialState = {
+    username: '', 
+    email: '', 
+    password: '', 
+    contactNo: '' 
+};
 
 export default function Register() {
-    const [formData, setFormData] = useState({ username: '', email: '', password: '', contactNo: '' });
-    const [message, setMessage] = useState(null);
-
+    const [formData, setFormData] = useState(initialState);
+    const [showPassword, setShowPassword] = useState(false);
+    const router = useRouter();
+    const dispatch = useDispatch();
+    
     const handleRegister = async (e) => {
         e.preventDefault();
-        setMessage(null);
-
+        dispatch(setLoading(true));
         try {
-            const res = await fetch('/api/admin/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-
-            const data = await res.json();
-
+            const res = await RegisterApi('POST', formData);
             if (res.ok) {
-                alert("Registered successfully");
-                setMessage({ text: data.message, type: 'success' });
+                toast.success('Registration successful!');
+                setTimeout(() => {
+                    window.location.href = '/administration/login';
+                }, 2000);
             } else {
-                setMessage({ text: data.error || "Something went wrong.", type: 'error' });
+                toast.error('Registration failed!');
             }
         } catch (error) {
-            console.error("Error parsing response:", error);
-            setMessage({ text: "Failed to register. Please try again later.", type: 'error' });
+            console.error("Registration error:", error);
+            toast.error("Failed to register. Please check your connection and try again.");
+        } finally {
+            dispatch(setLoading(false));
         }
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6">
             <div className="w-full max-w-md">
-                <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                    <div className="bg-primary-600 p-6">
-                        <h1 className="text-2xl font-bold text-white">Create an Account</h1>
-                        <p className="text-primary-100">Join us today!</p>
+                <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                    {/* Header */}
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-center">
+                        <h1 className="text-xl font-bold text-white">Create Account</h1>
+                        <p className="text-blue-100 text-sm mt-1">Get started in just a minute</p>
                     </div>
                     
+                    {/* Form */}
                     <form onSubmit={handleRegister} className="p-6 space-y-4">
-                        <div>
-                            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
-                                Username
-                            </label>
-                            <input
-                                id="username"
-                                type="text"
-                                placeholder="Enter your username"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                value={formData.username}
-                                onChange={(e) => setFormData({...formData, username: e.target.value})}
-                                required
-                            />
-                        </div>
+                        {/* Username */}
+                        <Input
+                            label="Username"
+                            type="text"
+                            placeholder="johndoe"
+                            value={formData.username}
+                            onChange={(e) => setFormData({...formData, username: e.target.value})}
+                            required
+                            icon={FiUser}
+                        />
                         
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                Email
-                            </label>
-                            <input
-                                id="email"
-                                type="email"
-                                placeholder="Enter your email"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                value={formData.email}
-                                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                required
-                            />
-                        </div>
+                        {/* Email */}
+                        <Input
+                            label="Email Address"
+                            type="email"
+                            placeholder="you@example.com"
+                            value={formData.email}
+                            onChange={(e) => setFormData({...formData, email: e.target.value})}
+                            required
+                            icon={FiMail}
+                        />
                         
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                                Password
-                            </label>
-                            <input
+                        {/* Password */}
+                        <div className="space-y-1">
+                            <div className="flex justify-between items-center">
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                    Password
+                                </label>
+                                <button 
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="text-xs text-blue-600 hover:text-blue-800 transition-colors"
+                                >
+                                    {showPassword ? (
+                                        <span className="flex items-center">
+                                            <FiEyeOff className="mr-1" /> Hide
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center">
+                                            <FiEye className="mr-1" /> Show
+                                        </span>
+                                    )}
+                                </button>
+                            </div>
+                            <Input
                                 id="password"
-                                type="password"
-                                placeholder="Create a password"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                                type={showPassword ? 'text' : 'password'}
+                                placeholder="••••••••"
                                 value={formData.password}
                                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                                 required
+                                minLength="8"
+                                icon={FiLock}
                             />
                         </div>
                         
-                        <div>
-                            <label htmlFor="contactNo" className="block text-sm font-medium text-gray-700 mb-1">
-                                Contact Number
-                            </label>
-                            <input
-                                id="contactNo"
-                                type="text"
-                                placeholder="Enter your phone number"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                value={formData.contactNo}
-                                onChange={(e) => setFormData({...formData, contactNo: e.target.value})}
-                            />
-                        </div>
+                        {/* Contact Number */}
+                        <Input
+                            label="Phone Number (Optional)"
+                            type="tel"
+                            placeholder="+1 (555) 123-4567"
+                            value={formData.contactNo}
+                            onChange={(e) => setFormData({...formData, contactNo: e.target.value})}
+                            icon={FiPhone}
+                        />
                         
-                        <button 
-                            type="submit" 
-                            className="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out"
-                        >
-                            Register
-                        </button>
-                        
-                        {message && (
-                            <div className={`p-3 rounded-md ${message.type === 'success' ? 'bg-success-100 text-success-700' : 'bg-danger-100 text-danger-700'}`}>
-                                {message.text}
+                        {/* Terms and Conditions */}
+                        <div className="flex items-start">
+                            <div className="flex items-center h-5">
+                                <input
+                                    id="terms"
+                                    name="terms"
+                                    type="checkbox"
+                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                    required
+                                />
                             </div>
-                        )}
+                            <div className="ml-3 text-sm">
+                                <label htmlFor="terms" className="font-medium text-gray-700">
+                                    I agree to the{' '}
+                                    <a href="#" className="text-blue-600 hover:text-blue-500">
+                                        Terms and Conditions
+                                    </a>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        {/* Submit Button */}
+                        <div className="pt-2">
+                            <Button 
+                                type="submit" 
+                                variant="primary"
+                                size="md"
+                                fullWidth
+                                className="flex items-center justify-center"
+                            >
+                                Register Now <FiArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </div>
                     </form>
                     
-                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                        <p className="text-sm text-gray-600 text-center">
+                    {/* Footer */}
+                    <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 text-center">
+                        <p className="text-sm text-gray-600">
                             Already have an account?{' '}
-                            <a href="/login" className="text-primary-600 hover:text-primary-800 font-medium">
-                                Sign in
-                            </a>
+                            <Link 
+                                href="/administration/login"
+                                className="font-medium text-blue-600 hover:text-blue-500 inline-flex items-center group"
+                            >
+                                <span>Sign in</span>
+                                <FiLogIn className="ml-1 h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
+                            </Link>
                         </p>
                     </div>
                 </div>
+                
+                {/* Copyright */}
+                <p className="mt-4 text-center text-xs text-gray-500">
+                    &copy; {new Date().getFullYear()} DSCI. All rights reserved.
+                </p>
             </div>
         </div>
     );

@@ -1,6 +1,6 @@
 'use client';
 
-import { store } from "@/Redux/store";
+import { store } from "@/Redux/Store/store";
 import toast from "react-hot-toast";
 
 /**
