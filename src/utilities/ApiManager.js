@@ -2,24 +2,23 @@
 import { FetchWithAuth } from "./FetchWithAuth";
 
 
-const LoginApi = async(method, body) => {
-    const url='/api/admin/auth/login';
-    const response = await FetchWithAuth(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    return response;
+const LoginApi = async(formData) => {
+    const res = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+    return res;
 }
 
-const RegisterApi = async(method, body) => {
+const RegisterApi = async(formData) => {
     const url='/api/admin/auth/register';
-    const response = await FetchWithAuth(url, {
-        method: method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-    });
-    return response;
+    const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+    return res;
 }
 
 export {LoginApi, RegisterApi}

@@ -3,43 +3,88 @@ import { useState } from 'react';
 import { FiUser, FiMail, FiLock, FiPhone, FiArrowRight, FiLogIn, FiEye, FiEyeOff } from 'react-icons/fi';
 import { Input, Button } from '@/Component/UI/ReusableCom';
 import Link from 'next/link';
-import { useDispatch } from 'react-redux';
-import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { RegisterApi } from '@/utilities/ApiManager';
 
 const initialState = {
     username: '', 
     email: '', 
     password: '', 
-    contactNo: '' 
+    contactNo: '',
+    isVerified: false,
+    isAdmin: false,
+    isDisabled: false
 };
 
 export default function Register() {
     const [formData, setFormData] = useState(initialState);
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({});
     const router = useRouter();
-    const dispatch = useDispatch();
     
     const handleRegister = async (e) => {
         e.preventDefault();
-        dispatch(setLoading(true));
+        setErrors({});
+        setIsLoading(true);
+
         try {
-            const res = await RegisterApi('POST', formData);
-            if (res.ok) {
-                toast.success('Registration successful!');
-                setTimeout(() => {
-                    window.location.href = '/administration/login';
-                }, 2000);
-            } else {
-                toast.error('Registration failed!');
+            const res = await fetch('/api/admin/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...formData,
+                    contactNo: formData.contactNo.replace(/\D/g, '') // Remove non-numeric characters
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                // Handle validation errors
+                if (res.status === 400) {
+                    // Handle Mongoose validation errors
+                    if (data.errors) {
+                        const validationErrors = {};
+                        Object.keys(data.errors).forEach(key => {
+                            validationErrors[key] = data.errors[key].message;
+                        });
+                        setErrors(validationErrors);
+                        toast.error('Please fix the form errors');
+                    } else {
+                        setErrors(prev => ({
+                            ...prev,
+                            form: data.message || 'Validation failed'
+                        }));
+                        toast.error(data.message || 'Validation failed');
+                    }
+                } else {
+                    throw new Error(data.message || 'Registration failed');
+                }
+                return;
             }
+
+            // Registration successful
+            toast.success('Registration successful! Please log in.');
+            router.push('/administration/login');
+            
         } catch (error) {
-            console.error("Registration error:", error);
-            toast.error("Failed to register. Please check your connection and try again.");
+            console.error('Registration error:', error);
+            toast.error(error.message || 'Failed to register. Please try again.');
         } finally {
-            dispatch(setLoading(false));
+            setIsLoading(false);
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+        // Clear error when user types
+        if (errors[name]) {
+            setErrors(prev => ({ ...prev, [name]: '' }));
         }
     };
 
@@ -55,27 +100,49 @@ export default function Register() {
                     
                     {/* Form */}
                     <form onSubmit={handleRegister} className="p-6 space-y-4">
+                        {errors.form && (
+                            <div className="p-3 bg-red-50 text-red-700 text-sm rounded-md">
+                                {errors.form}
+                            </div>
+                        )}
+
                         {/* Username */}
-                        <Input
-                            label="Username"
-                            type="text"
-                            placeholder="johndoe"
-                            value={formData.username}
-                            onChange={(e) => setFormData({...formData, username: e.target.value})}
-                            required
-                            icon={FiUser}
-                        />
+                        <div>
+                            <Input
+                                label="Username"
+                                name="username"
+                                type="text"
+                                placeholder="johndoe"
+                                value={formData.username}
+                                onChange={handleChange}
+                                required
+                                error={errors.username}
+                                icon={FiUser}
+                                minLength={3}
+                                maxLength={30}
+                            />
+                            {errors.username && (
+                                <p className="mt-1 text-xs text-red-500">{errors.username}</p>
+                            )}
+                        </div>
                         
                         {/* Email */}
-                        <Input
-                            label="Email Address"
-                            type="email"
-                            placeholder="you@example.com"
-                            value={formData.email}
-                            onChange={(e) => setFormData({...formData, email: e.target.value})}
-                            required
-                            icon={FiMail}
-                        />
+                        <div>
+                            <Input
+                                label="Email Address"
+                                name="email"
+                                type="email"
+                                placeholder="you@example.com"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                error={errors.email}
+                                icon={FiMail}
+                            />
+                            {errors.email && (
+                                <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+                            )}
+                        </div>
                         
                         {/* Password */}
                         <div className="space-y-1">
@@ -101,45 +168,48 @@ export default function Register() {
                             </div>
                             <Input
                                 id="password"
+                                name="password"
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="••••••••"
                                 value={formData.password}
-                                onChange={(e) => setFormData({...formData, password: e.target.value})}
+                                onChange={handleChange}
                                 required
                                 minLength="8"
+                                error={errors.password}
                                 icon={FiLock}
                             />
+                            {errors.password && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.password.includes('shorter than the minimum allowed length') 
+                                        ? 'Password must be at least 8 characters long'
+                                        : errors.password
+                                    }
+                                </p>
+                            )}
                         </div>
                         
                         {/* Contact Number */}
-                        <Input
-                            label="Phone Number (Optional)"
-                            type="tel"
-                            placeholder="+1 (555) 123-4567"
-                            value={formData.contactNo}
-                            onChange={(e) => setFormData({...formData, contactNo: e.target.value})}
-                            icon={FiPhone}
-                        />
-                        
-                        {/* Terms and Conditions */}
-                        <div className="flex items-start">
-                            <div className="flex items-center h-5">
-                                <input
-                                    id="terms"
-                                    name="terms"
-                                    type="checkbox"
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                    required
-                                />
-                            </div>
-                            <div className="ml-3 text-sm">
-                                <label htmlFor="terms" className="font-medium text-gray-700">
-                                    I agree to the{' '}
-                                    <a href="#" className="text-blue-600 hover:text-blue-500">
-                                        Terms and Conditions
-                                    </a>
-                                </label>
-                            </div>
+                        <div>
+                            <Input
+                                label="Contact Number"
+                                name="contactNo"
+                                type="tel"
+                                placeholder="1234567890"
+                                value={formData.contactNo}
+                                onChange={handleChange}
+                                required
+                                error={errors.contactNo}
+                                icon={FiPhone}
+                                maxLength="15"
+                            />
+                            {errors.contactNo && (
+                                <p className="mt-1 text-xs text-red-500">
+                                    {errors.contactNo.includes('valid contact number') 
+                                        ? 'Please enter a valid 10-digit phone number'
+                                        : errors.contactNo
+                                    }
+                                </p>
+                            )}
                         </div>
                         
                         {/* Submit Button */}
@@ -149,9 +219,12 @@ export default function Register() {
                                 variant="primary"
                                 size="md"
                                 fullWidth
+                                loading={isLoading}
+                                disabled={isLoading}
                                 className="flex items-center justify-center"
                             >
-                                Register Now <FiArrowRight className="ml-2 h-4 w-4" />
+                                {isLoading ? 'Registering...' : 'Register Now'} 
+                                {!isLoading && <FiArrowRight className="ml-2 h-4 w-4" />}
                             </Button>
                         </div>
                     </form>

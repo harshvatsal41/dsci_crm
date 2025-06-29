@@ -1,151 +1,100 @@
 "use client";
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiLoader } from 'react-icons/fi';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '@/Redux/Reducer/authSlice';
-import { setLoading } from "@/Redux/Reducer/menuSlice";
-import toast from 'react-hot-toast';
-import Link from 'next/link';
-import { Input, Button } from '@/Component/UI/ReusableCom';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "@/Redux/Reducer/authSlice";
+import { setLoading} from "@/Redux/Reducer/menuSlice";
 
-export default function LoginPage() {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  const router = useRouter();
+
+export default function Login() {
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [message, setMessage] = useState(null);
   const dispatch = useDispatch();
-  
-  const { loading, error } = useSelector((state) => state.auth);
+  const loading = useSelector((state) => state.menu?.loading ?? false);
+  const router = useRouter();
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+    setMessage(null);
+    dispatch(setLoading(true));
     
-    if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields');
-      setIsLoading(false);
-      return;
-    }
+    const res = await fetch("/api/admin/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData)
+    });
 
-    try {
-      const resultAction = await dispatch(login(formData));
-      
-      if (login.fulfilled.match(resultAction)) {
-        toast.success('Login successful!');
-        router.push('/administration/dashboard');
-      } else {
-        toast.error(resultAction.payload?.error || 'Login failed');
-      }
-    } catch (error) {
-      toast.error('An error occurred. Please try again.');
-      console.error('Login error:', error);
-    } finally {
-      setIsLoading(false);
-      dispatch(setLoading(false));
+    const data = await res.json();
+    if (res.ok) {
+      document.cookie = `rsvAuthToken=${data.token}; path=/;`;
+      // document.cookie = `rsvDesignation=${data.role}`;
+      // Dispatch Redux action to store token
+      dispatch(login({ token: data.token, role: data.role, user: data.user }));
+
+      setMessage("Logged in successfully");
+      router.push("/administration/dashboard");
+      dispatch(setLoading(false)); 
+    } else {
+      dispatch(setLoading(false)); 
+      setMessage(data.error);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-primary-100 p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-          <p className="text-gray-600">Sign in to continue to your account</p>
-        </div>
-        
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <Input
-              label="Email Address"
-              name="email"
-              type="email"
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              icon={FiMail}
-              required
-            />
-            
-            <div className="relative">
-              <Input
-                label="Password"
-                name="password"
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                icon={FiLock}
-                required
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center text-[#0A8270] mb-2">
+          Sign In
+        </h2>
+        <p className="text-center text-gray-600 mb-6 text-sm">
+          to continue with DSCI CRM
+        </p>
+        <form onSubmit={handleLogin}>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1">Email</label>
+            <div className="flex items-center border rounded px-3 bg-white">
+              <span className="text-gray-500 mr-2">📧</span>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="w-full p-2 outline-none text-gray-700"
+                value={formData.email}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                disabled={loading}
               />
-              <button
-                type="button"
-                className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 transition-colors"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-              >
-                {showPassword ? (
-                  <FiEyeOff className="h-5 w-5" />
-                ) : (
-                  <FiEye className="h-5 w-5" />
-                )}
-              </button>
             </div>
-            
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                  Remember me
-                </label>
-              </div>
-              <div className="text-sm">
-                <Link href="/forgot-password" className="font-medium text-primary-600 hover:text-primary-500">
-                  Forgot password?
-                </Link>
-              </div>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-1">Password</label>
+            <div className="flex items-center border rounded px-3 bg-white">
+              <span className="text-gray-500 mr-2">🔒</span>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                className="w-full p-2 outline-none text-gray-700"
+                value={formData.password}
+                onChange={(e) =>
+                  setFormData({ ...formData, password: e.target.value })
+                }
+                disabled={loading}
+              />
             </div>
-            
-            <Button
-              type="submit"
-              variant="primary"
-              size="lg"
-              loading={isLoading}
-              fullWidth
-              className="mt-2"
-            >
-              {isLoading ? 'Signing in...' : 'Sign In'}
-            </Button>
-            
-            <div className="text-center text-sm text-gray-600 mt-4">
-              Don't have an account?{' '}
-              <Link href="/administration/register" className="font-medium text-primary-600 hover:text-primary-500">
-                Sign up
-              </Link>
-            </div>
-          </form>
-        </div>
-        
-        <div className="mt-6 text-center text-xs text-gray-500">
-          <p> {new Date().getFullYear()} Your Company. All rights reserved.</p>
-        </div>
+          </div>
+          {message && (
+            <p className={`text-sm text-red-500`}>
+              {message}
+            </p>
+          )}
+          <button
+            type="submit"
+            className={`w-full p-2 mt-2 rounded text-white ${loading ? 'bg-gray-400' : 'bg-[#0A8270] hover:bg-[#086d5f]'}`}
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Log IN'}
+          </button>
+        </form>
       </div>
     </div>
   );
