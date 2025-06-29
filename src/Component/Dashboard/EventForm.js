@@ -2,9 +2,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
-import { set } from 'mongoose';
+import { InputField, TextAreaField } from '@/Component/UI/ReusableCom';
+import Modal from '@/Component/UI/Modal';
 
-export default function EventForm({ onSuccess, onClose }) {
+export default function EventForm({ onSuccess, onClose, eventData, isEditMode }) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     title: '',
@@ -57,59 +58,39 @@ export default function EventForm({ onSuccess, onClose }) {
     }
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setFormData(prev => ({
-        ...prev,
-        coverImage: file
-      }));
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     
     try {
-        const formPayload = new FormData();
-        
-        // Append all form data directly
-        formPayload.append('title', formData.title);
-        formPayload.append('year', formData.year);
-        formPayload.append('edition', formData.edition);
-        formPayload.append('description', formData.description);
-        formPayload.append('websiteURL', formData.websiteURL);
-        
-        // Append nested objects directly (they'll be properly handled by the backend)
-        formPayload.append('dates.start', formData.dates.start);
-        formPayload.append('dates.end', formData.dates.end);
-        
-        formPayload.append('location.address', formData.location.address);
-        formPayload.append('location.city', formData.location.city);
-        formPayload.append('location.state', formData.location.state);
-        formPayload.append('location.country', formData.location.country);
-        formPayload.append('location.pincode', formData.location.pincode);
-        formPayload.append('location.googleMapsLink', formData.location.googleMapsLink);
-        formPayload.append('location.latitude', formData.location.latitude);
-        formPayload.append('location.longitude', formData.location.longitude);
-        
-        formPayload.append('socialMediaLinks.facebook', formData.socialMediaLinks.facebook);
-        formPayload.append('socialMediaLinks.instagram', formData.socialMediaLinks.instagram);
-        formPayload.append('socialMediaLinks.twitter', formData.socialMediaLinks.twitter);
-        formPayload.append('socialMediaLinks.linkedin', formData.socialMediaLinks.linkedin);
-        formPayload.append('socialMediaLinks.youtube', formData.socialMediaLinks.youtube);
-        
-        if (formData.coverImage) {
-            formPayload.append('coverImage', formData.coverImage);
-        }
+      const formPayload = new FormData();
+      
+      // Append all form data
+      formPayload.append('title', formData.title);
+      formPayload.append('year', formData.year);
+      formPayload.append('edition', formData.edition);
+      formPayload.append('description', formData.description);
+      formPayload.append('websiteURL', formData.websiteURL);
+      
+      // Append nested objects
+      formPayload.append('dates.start', formData.dates.start);
+      formPayload.append('dates.end', formData.dates.end);
+      
+      formPayload.append('location.address', formData.location.address);
+      formPayload.append('location.city', formData.location.city);
+      formPayload.append('location.state', formData.location.state);
+      formPayload.append('location.country', formData.location.country);
+      formPayload.append('location.pincode', formData.location.pincode);
+      formPayload.append('location.googleMapsLink', formData.location.googleMapsLink);
+      formPayload.append('location.latitude', formData.location.latitude);
+      formPayload.append('location.longitude', formData.location.longitude);
+      
+      formPayload.append('socialMediaLinks.facebook', formData.socialMediaLinks.facebook);
+      formPayload.append('socialMediaLinks.instagram', formData.socialMediaLinks.instagram);
+      formPayload.append('socialMediaLinks.twitter', formData.socialMediaLinks.twitter);
+      formPayload.append('socialMediaLinks.linkedin', formData.socialMediaLinks.linkedin);
+      formPayload.append('socialMediaLinks.youtube', formData.socialMediaLinks.youtube);
+
       const response = await fetch('/api/admin/data/eventoutreach', {
         method: 'POST',
         body: formPayload
@@ -117,8 +98,7 @@ export default function EventForm({ onSuccess, onClose }) {
       
       if (!response.ok) {
         const errorData = await response.json();
-        alert(errorData.message || 'Failed to create event');
-        // throw new Error(errorData.message || 'Failed to create event');
+        throw new Error(errorData.message || 'Failed to create event');
       }
       
       const result = await response.json();
@@ -127,22 +107,22 @@ export default function EventForm({ onSuccess, onClose }) {
       if (onSuccess) {
         onSuccess(result.data);
         setFormData({
-            title: '',
-            year: new Date().getFullYear(),
-            edition: 1,
-            websiteURL: '',
-            socialMediaLinks: {
+          title: '',
+          year: new Date().getFullYear(),
+          edition: 1,
+          websiteURL: '',
+          socialMediaLinks: {
             facebook: '',
             instagram: '',
             twitter: '',
             linkedin: '',
             youtube: ''
-            },
-            dates: {
+          },
+          dates: {
             start: '',
             end: ''
-            },
-            location: {
+          },
+          location: {
             address: '',
             latitude: 0,
             longitude: 0,
@@ -151,10 +131,10 @@ export default function EventForm({ onSuccess, onClose }) {
             state: '',
             country: '',
             pincode: ''
-            },
-            description: ''
-        })
-        onClose()
+          },
+          description: ''
+        });
+        onClose();
       } else {
         router.refresh();
       }
@@ -171,65 +151,54 @@ export default function EventForm({ onSuccess, onClose }) {
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Basic Information</h3>
       
-      <div>
-        <label className="block text-sm font-medium mb-1">Event Title*</label>
-        <input
-          type="text"
-          name="title"
-          value={formData.title}
+      <InputField
+        id="event-title"
+        label="Event Title"
+        name="title"
+        value={formData.title}
+        onChange={handleChange}
+        required
+      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <InputField
+          id="event-year"
+          label="Year"
+          name="year"
+          type="number"
+          value={formData.year}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          required
+        />
+        <InputField
+          id="event-edition"
+          label="Edition"
+          name="edition"
+          type="number"
+          value={formData.edition}
+          onChange={handleChange}
           required
         />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Year*</label>
-          <input
-            type="number"
-            name="year"
-            value={formData.year}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Edition*</label>
-          <input
-            type="number"
-            name="edition"
-            value={formData.edition}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-      </div>
+      <TextAreaField
+        id="event-description"
+        label="Description"
+        name="description"
+        value={formData.description}
+        onChange={handleChange}
+        rows={4}
+      />
       
-      <div>
-        <label className="block text-sm font-medium mb-1">Description</label>
-        <textarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          rows={4}
-        />
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium mb-1">Website URL</label>
-        <input
-          type="url"
-          name="websiteURL"
-          value={formData.websiteURL}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          placeholder="https://example.com"
-        />
-      </div>
+      <InputField
+        id="event-website"
+        label="Website URL"
+        name="websiteURL"
+        type="url"
+        value={formData.websiteURL}
+        onChange={handleChange}
+        placeholder="https://example.com"
+      />
     </div>
   );
 
@@ -238,126 +207,101 @@ export default function EventForm({ onSuccess, onClose }) {
       <h3 className="text-lg font-semibold">Date & Location</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Start Date*</label>
-          <input
-            type="datetime-local"
-            name="dates.start"
-            value={formData.dates.start}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">End Date*</label>
-          <input
-            type="datetime-local"
-            name="dates.end"
-            value={formData.dates.end}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">City*</label>
-          <input
-            type="text"
-            name="location.city"
-            value={formData.location.city}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">State*</label>
-          <input
-            type="text"
-            name="location.state"
-            value={formData.location.state}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Country*</label>
-          <input
-            type="text"
-            name="location.country"
-            value={formData.location.country}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium mb-1">Full Address*</label>
-        <input
-          type="text"
-          name="location.address"
-          value={formData.location.address}
+        <InputField
+          id="event-start-date"
+          label="Start Date"
+          name="dates.start"
+          type="datetime-local"
+          value={formData.dates.start}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
+          required
+        />
+        <InputField
+          id="event-end-date"
+          label="End Date"
+          name="dates.end"
+          type="datetime-local"
+          value={formData.dates.end}
+          onChange={handleChange}
           required
         />
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Postal Code*</label>
-          <input
-            type="text"
-            name="location.pincode"
-            value={formData.location.pincode}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Latitude</label>
-          <input
-            type="number"
-            name="location.latitude"
-            value={formData.location.latitude}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            step="any"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Longitude</label>
-          <input
-            type="number"
-            name="location.longitude"
-            value={formData.location.longitude}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            step="any"
-          />
-        </div>
-      </div>
-      
-      <div>
-        <label className="block text-sm font-medium mb-1">Google Maps Link*</label>
-        <input
-          type="url"
-          name="location.googleMapsLink"
-          value={formData.location.googleMapsLink}
+        <InputField
+          id="event-city"
+          label="City"
+          name="location.city"
+          value={formData.location.city}
           onChange={handleChange}
-          className="w-full p-2 border rounded"
-          placeholder="https://maps.google.com/..."
+          required
+        />
+        <InputField
+          id="event-state"
+          label="State"
+          name="location.state"
+          value={formData.location.state}
+          onChange={handleChange}
+          required
+        />
+        <InputField
+          id="event-country"
+          label="Country"
+          name="location.country"
+          value={formData.location.country}
+          onChange={handleChange}
           required
         />
       </div>
+      
+      <InputField
+        id="event-address"
+        label="Full Address"
+        name="location.address"
+        value={formData.location.address}
+        onChange={handleChange}
+        required
+      />
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <InputField
+          id="event-pincode"
+          label="Postal Code"
+          name="location.pincode"
+          value={formData.location.pincode}
+          onChange={handleChange}
+          required
+        />
+        <InputField
+          id="event-latitude"
+          label="Latitude"
+          name="location.latitude"
+          type="number"
+          value={formData.location.latitude}
+          onChange={handleChange}
+          step="any"
+        />
+        <InputField
+          id="event-longitude"
+          label="Longitude"
+          name="location.longitude"
+          type="number"
+          value={formData.location.longitude}
+          onChange={handleChange}
+          step="any"
+        />
+      </div>
+      
+      <InputField
+        id="event-gmaps"
+        label="Google Maps Link"
+        name="location.googleMapsLink"
+        type="url"
+        value={formData.location.googleMapsLink}
+        onChange={handleChange}
+        placeholder="https://maps.google.com/..."
+        required
+      />
     </div>
   );
 
@@ -366,78 +310,63 @@ export default function EventForm({ onSuccess, onClose }) {
       <h3 className="text-lg font-semibold">Social Media Links</h3>
       
       <div className="space-y-3">
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Facebook</label>
-          <input
-            type="url"
-            name="socialMediaLinks.facebook"
-            value={formData.socialMediaLinks.facebook}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="https://facebook.com/..."
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Instagram</label>
-          <input
-            type="url"
-            name="socialMediaLinks.instagram"
-            value={formData.socialMediaLinks.instagram}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="https://instagram.com/..."
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">Twitter/X</label>
-          <input
-            type="url"
-            name="socialMediaLinks.twitter"
-            value={formData.socialMediaLinks.twitter}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="https://twitter.com/..."
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">LinkedIn</label>
-          <input
-            type="url"
-            name="socialMediaLinks.linkedin"
-            value={formData.socialMediaLinks.linkedin}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="https://linkedin.com/..."
-          />
-        </div>
-        <div>
-          <label className="block text-xs text-gray-500 mb-1">YouTube</label>
-          <input
-            type="url"
-            name="socialMediaLinks.youtube"
-            value={formData.socialMediaLinks.youtube}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="https://youtube.com/..."
-          />
-        </div>
+        <InputField
+          id="event-facebook"
+          label="Facebook"
+          name="socialMediaLinks.facebook"
+          type="url"
+          value={formData.socialMediaLinks.facebook}
+          onChange={handleChange}
+          placeholder="https://facebook.com/..."
+          labelClass="text-xs text-gray-500"
+        />
+        <InputField
+          id="event-instagram"
+          label="Instagram"
+          name="socialMediaLinks.instagram"
+          type="url"
+          value={formData.socialMediaLinks.instagram}
+          onChange={handleChange}
+          placeholder="https://instagram.com/..."
+          labelClass="text-xs text-gray-500"
+        />
+        <InputField
+          id="event-twitter"
+          label="Twitter/X"
+          name="socialMediaLinks.twitter"
+          type="url"
+          value={formData.socialMediaLinks.twitter}
+          onChange={handleChange}
+          placeholder="https://twitter.com/..."
+          labelClass="text-xs text-gray-500"
+        />
+        <InputField
+          id="event-linkedin"
+          label="LinkedIn"
+          name="socialMediaLinks.linkedin"
+          type="url"
+          value={formData.socialMediaLinks.linkedin}
+          onChange={handleChange}
+          placeholder="https://linkedin.com/..."
+          labelClass="text-xs text-gray-500"
+        />
+        <InputField
+          id="event-youtube"
+          label="YouTube"
+          name="socialMediaLinks.youtube"
+          type="url"
+          value={formData.socialMediaLinks.youtube}
+          onChange={handleChange}
+          placeholder="https://youtube.com/..."
+          labelClass="text-xs text-gray-500"
+        />
       </div>
     </div>
   );
 
   return (
-    <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">Create New Event</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            Cancel
-          </button>
-        </div>
-        
+    <Modal isOpen={true} onClose={onClose} title="Create New Event">
+    
         <div className="mb-6">
           <div className="flex border-b">
             <button
@@ -502,7 +431,7 @@ export default function EventForm({ onSuccess, onClose }) {
             </div>
           </div>
         </form>
-      </div>
-    </div>
+      
+    </Modal>
   );
 }

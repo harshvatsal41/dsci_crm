@@ -21,4 +21,10 @@ const RegisterApi = async(formData) => {
     return res;
 }
 
-export {LoginApi, RegisterApi}
+const EventApi = async(formData) => {
+    const url='/api/admin/data/eventoutreach';
+    const res = await fetch(url);
+    return res;
+}
+
+export {LoginApi, RegisterApi, EventApi}
