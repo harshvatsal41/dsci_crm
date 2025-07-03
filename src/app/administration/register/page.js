@@ -90,7 +90,7 @@ export default function Register() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br  p-4 sm:p-6">
             <div className="w-full max-w-md">
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     {/* Header */}

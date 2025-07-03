@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import {X} from 'lucide-react';
+import { X } from 'lucide-react';
+import PropTypes from 'prop-types';
 
 // Utility function for conditional class names
 export function cn(...classes) {
@@ -48,28 +49,50 @@ DialogTitle.displayName = 'DialogTitle';
 
 
 // Enhanced Button Component with responsive sizes
-export const Button = React.forwardRef(({ 
-  className, 
+export const Button = React.forwardRef(({
+  className,
   variant = 'default',
   size = 'default',
-  icon: Icon,
-  fullWidth,
+  icon,
+  iconPosition = 'left',
+  fullWidth = false,
   children,
   ...props 
 }, ref) => {
+  // Style configurations
   const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+  
   const sizeStyles = {
     default: 'px-3 py-2 text-sm sm:px-4 sm:py-2',
     sm: 'px-2.5 py-1.5 text-xs sm:px-3 sm:py-1.5',
     lg: 'px-5 py-2.5 text-base sm:px-6 sm:py-3',
     icon: 'p-2'
   };
+  
   const variantStyles = {
-    default: 'bg-[#0C2FB2] text-white hover:bg-[#0A2899] focus:ring-[#0C2FB2]/50',
-    outline: 'border border-[#E5E7EB] bg-white text-[#374151] hover:bg-[#F9FAFB]',
-    ghost: 'bg-transparent hover:bg-[#F3F4F6] text-[#374151]',
-    danger: 'bg-[#EF4444] text-white hover:bg-[#DC2626] focus:ring-[#EF4444]/50',
-    success: 'bg-[#22C55E] text-white hover:bg-[#16A34A] focus:ring-[#22C55E]/50',
+    default: 'bg-blue-600 text-white hover:bg-blue-700',
+    outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50',
+    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700',
+    danger: 'bg-red-600 text-white hover:bg-red-700',
+    success: 'bg-green-600 text-white hover:bg-green-700',
+  };
+
+  // Icon rendering logic
+  const renderIcon = () => {
+    if (!icon) return null;
+    
+    const iconClasses = cn(
+      'flex-shrink-0',
+      children ? (iconPosition === 'left' ? 'mr-2' : 'ml-2') : '',
+      'h-4 w-4'
+    );
+
+    if (React.isValidElement(icon)) {
+      return React.cloneElement(icon, { className: cn(icon.props.className, iconClasses) });
+    }
+    
+    const IconComponent = icon;
+    return <IconComponent className={iconClasses} aria-hidden="true" />;
   };
 
   return (
@@ -84,8 +107,9 @@ export const Button = React.forwardRef(({
       )}
       {...props}
     >
-      {Icon && <Icon className={cn(children ? 'mr-1.5 sm:mr-2' : '', 'h-3.5 w-3.5 sm:h-4 sm:w-4')} />}
+      {iconPosition === 'left' && renderIcon()}
       {children}
+      {iconPosition === 'right' && renderIcon()}
     </button>
   );
 });
@@ -125,7 +149,7 @@ export function TableBody({ className, children, ...props }) {
 
 export function TableRow({ className, children, ...props }) {
   return (
-    <tr 
+    <tr
       className={cn(
         'hover:bg-gray-50 transition-colors block sm:table-row',
         'border-b border-gray-200 sm:border-0',
@@ -175,7 +199,7 @@ export function TableCell({ className, header, children, ...props }) {
 export function ExpandableTableRow({ children, expanded, onToggle, expandedContent, ...props }) {
   return (
     <>
-      <tr 
+      <tr
         className={cn(
           'hover:bg-gray-50 transition-colors block sm:table-row',
           'border-b border-gray-200 sm:border-0',
@@ -272,8 +296,8 @@ export function ConfirmDialog({
     confirmColor === 'danger'
       ? 'bg-[#EF4444] hover:bg-[#DC2626] text-white'
       : confirmColor === 'success'
-      ? 'bg-[#22C55E] hover:bg-[#16A34A] text-white'
-      : 'bg-[#0C2FB2] hover:bg-[#0A2899] text-white';
+        ? 'bg-[#22C55E] hover:bg-[#16A34A] text-white'
+        : 'bg-[#0C2FB2] hover:bg-[#0A2899] text-white';
 
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onClose}>
@@ -373,39 +397,39 @@ export function Container({ className, children, ...props }) {
 // Responsive Status Badge
 export function StatusBadge({ status, className, ...props }) {
   const statusConfig = {
-    pending: { 
-      text: 'Pending', 
-      bg: 'bg-yellow-50', 
+    pending: {
+      text: 'Pending',
+      bg: 'bg-yellow-50',
       textColor: 'text-yellow-800',
       border: 'border-yellow-400'
     },
-    accepted: { 
-      text: 'Accepted', 
-      bg: 'bg-green-50', 
+    accepted: {
+      text: 'Accepted',
+      bg: 'bg-green-50',
       textColor: 'text-green-800',
       border: 'border-green-400'
     },
-    rejected: { 
-      text: 'Rejected', 
-      bg: 'bg-red-50', 
+    rejected: {
+      text: 'Rejected',
+      bg: 'bg-red-50',
       textColor: 'text-red-700',
       border: 'border-red-400'
     },
-    active: { 
-      text: 'Active', 
-      bg: 'bg-green-50', 
+    active: {
+      text: 'Active',
+      bg: 'bg-green-50',
       textColor: 'text-green-800',
       border: 'border-green-400'
     },
-    inactive: { 
-      text: 'Inactive', 
-      bg: 'bg-gray-100', 
+    inactive: {
+      text: 'Inactive',
+      bg: 'bg-gray-100',
       textColor: 'text-gray-800',
       border: 'border-gray-300'
     },
   };
 
-  const config = statusConfig[status?.toLowerCase()] || { 
+  const config = statusConfig[status?.toLowerCase()] || {
     text: status || 'Unknown',
     bg: 'bg-gray-100',
     textColor: 'text-gray-800',
@@ -456,10 +480,9 @@ export const Tabs = ({ activeTab, setActiveTab, children, onRemoveTab }) => {
               type="button"
               onClick={() => setActiveTab(index)}
               className={`flex items-center px-3 py-1.5 rounded-t-lg text-sm font-medium border transition-all duration-200
-                ${
-                  index === activeTab
-                    ? 'bg-blue-50 text-blue-600 border-blue-300 shadow-sm'
-                    : 'bg-white text-blue-500 border border-blue-100 hover:bg-blue-50'
+                ${index === activeTab
+                  ? 'bg-blue-50 text-blue-600 border-blue-300 shadow-sm'
+                  : 'bg-white text-blue-500 border border-blue-100 hover:bg-blue-50'
                 }
               `}
             >

@@ -1,7 +1,7 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { EventApi } from '@/utilities/ApiManager';
@@ -9,65 +9,61 @@ import EventCard from '@/Component/Dashboard/EventCard';
 import EventForm from '@/Component/Dashboard/EventForm';
 import Modal from '@/Component/UI/Modal';
 import { Button } from '@/Component/UI/TableFormat';
+import DashboardLoading from './loading';
+import { useRouter } from 'next/navigation';
 
 export default function DashboardPage() {
   const [events, setEvents] = useState([]);
-  const [error, setError] = useState(null);
-  const [modalState, setModalState] = useState({ open: false, data: null });
-  const isEditMode = useRef(false);
+  const [modalState, setModalState] = useState({ open: Boolean(false), data: null });
+  const router = useRouter();
   const dispatch = useDispatch();
+  const isLoading = useSelector((state) => state.menu.loading);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     dispatch(setLoading(true));
     try {
-      const response = await EventApi();
-      if (!response.ok) throw new Error('Failed to fetch events');
+      const response = await EventApi(null, "Get");
+      if (!response.ok) toast.error('Failed to fetch events');
       const data = await response.json();
       setEvents(data.data);
     } catch (err) {
       toast.error(err.message);
-      setError(err.message);
     } finally {
       dispatch(setLoading(false));
     }
+  }, [dispatch]);
+
+  const handleView = (event) => {
+    router.push(`/administration/dashboard/specificEventCard/${event._id}`);
+  };
+
+
+
+  const handleDelete = (event) => {
+    console.log(event);
   };
 
   useEffect(() => {
     fetchEvents();
-  }, []);
-
-  const handleCreateEvent = () => {
-    isEditMode.current = false;
-    setModalState({ open: true, data: null });
-  };
+  }, [fetchEvents]);
 
   const handleEditEvent = (event) => {
-    isEditMode.current = true;
-    setModalState({ open: true, data: event });
+    const editData = { ...event, editMode: true };
+    console.log(editData);
+    setModalState({ open: Boolean(true), data: editData });
   };
 
   const handleCloseModal = () => {
-    setModalState({ open: false, data: null });
-    isEditMode.current = false;
+    setModalState({ open: Boolean(false), data: null });
   };
 
-  const handleEventSuccess = (newEvent) => {
-    if (isEditMode.current) {
-      setEvents(events.map(event => 
-        event._id === newEvent._id ? newEvent : event
-      ));
-    } else {
-      setEvents([...events, newEvent]);
-    }
+  const onSuccess = () => {
+    fetchEvents();
     handleCloseModal();
   };
 
-  if (error) {
-    return (
-      <div className="p-6 text-red-600">
-        Error: {error}
-      </div>
-    );
+  if (isLoading) {
+    return <DashboardLoading />;
   }
 
   return (
@@ -75,7 +71,7 @@ export default function DashboardPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Event Dashboard</h1>
         <Button
-          onClick={handleCreateEvent}
+          onClick={() => setModalState({ open: Boolean(true), data: null })}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
         >
           Create New Event
@@ -94,21 +90,22 @@ export default function DashboardPage() {
           <AnimatePresence>
             {events.map(event => (
               <EventCard
-                key={event._id}
+                key={`event-${event._id}`}
                 event={event}
-                onClick={() => handleEditEvent(event)}
+                onView={handleView}
+                onEdit={handleEditEvent}
+                onDelete={handleDelete}
               />
             ))}
           </AnimatePresence>
         </motion.div>
       )}
 
-        <EventForm 
-          onSuccess={handleEventSuccess}
-          onClose={handleCloseModal}
-          eventData={modalState.data}
-          isEditMode={isEditMode.current}
-        />
+      {modalState.open && <EventForm
+        onSuccess={onSuccess}
+        onClose={handleCloseModal}
+        eventData={modalState.data}
+      />}
     </section>
   );
 }

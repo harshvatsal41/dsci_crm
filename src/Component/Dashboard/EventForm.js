@@ -1,42 +1,66 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { InputField, TextAreaField } from '@/Component/UI/ReusableCom';
 import Modal from '@/Component/UI/Modal';
 
-export default function EventForm({ onSuccess, onClose, eventData, isEditMode }) {
+const initialState = {
+  title: '',
+  year: new Date().getFullYear(),
+  edition: 1,
+  websiteURL: '',
+  socialMediaLinks: {
+    facebook: '',
+    instagram: '',
+    twitter: '',
+    linkedin: '',
+    youtube: ''
+  },
+  dates: {
+    start: '',
+    end: ''
+  },
+  location: {
+    address: '',
+    latitude: 0,
+    longitude: 0,
+    googleMapsLink: '',
+    city: '',
+    state: '',
+    country: '',
+    pincode: ''
+  },
+  description: ''
+};
+
+export default function EventForm({ onSuccess, onClose, eventData = {} }) {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    title: '',
-    year: new Date().getFullYear(),
-    edition: 1,
-    websiteURL: '',
-    socialMediaLinks: {
-      facebook: '',
-      instagram: '',
-      twitter: '',
-      linkedin: '',
-      youtube: ''
-    },
-    dates: {
-      start: '',
-      end: ''
-    },
-    location: {
-      address: '',
-      latitude: 0,
-      longitude: 0,
-      googleMapsLink: '',
-      city: '',
-      state: '',
-      country: '',
-      pincode: ''
-    },
-    description: ''
-  });
+  const [formData, setFormData] = useState(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeSection, setActiveSection] = useState('basic');
+
+  // Initialize form data based on edit mode
+  useEffect(() => {
+    if (eventData?.editMode) {
+      // Format dates for datetime-local inputs
+      const formattedData = {
+        ...eventData,
+        dates: {
+          start: eventData.dates.start ? formatDateForInput(eventData.dates.start) : '',
+          end: eventData.dates.end ? formatDateForInput(eventData.dates.end) : ''
+        }
+      };
+      setFormData(formattedData);
+    } else {
+      setFormData(initialState);
+    }
+  }, [eventData]);
+
+  const formatDateForInput = (dateString) => {
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16);
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,94 +87,70 @@ export default function EventForm({ onSuccess, onClose, eventData, isEditMode })
     setIsSubmitting(true);
     
     try {
-      const formPayload = new FormData();
-      
-      // Append all form data
-      formPayload.append('title', formData.title);
-      formPayload.append('year', formData.year);
-      formPayload.append('edition', formData.edition);
-      formPayload.append('description', formData.description);
-      formPayload.append('websiteURL', formData.websiteURL);
-      
-      // Append nested objects
-      formPayload.append('dates.start', formData.dates.start);
-      formPayload.append('dates.end', formData.dates.end);
-      
-      formPayload.append('location.address', formData.location.address);
-      formPayload.append('location.city', formData.location.city);
-      formPayload.append('location.state', formData.location.state);
-      formPayload.append('location.country', formData.location.country);
-      formPayload.append('location.pincode', formData.location.pincode);
-      formPayload.append('location.googleMapsLink', formData.location.googleMapsLink);
-      formPayload.append('location.latitude', formData.location.latitude);
-      formPayload.append('location.longitude', formData.location.longitude);
-      
-      formPayload.append('socialMediaLinks.facebook', formData.socialMediaLinks.facebook);
-      formPayload.append('socialMediaLinks.instagram', formData.socialMediaLinks.instagram);
-      formPayload.append('socialMediaLinks.twitter', formData.socialMediaLinks.twitter);
-      formPayload.append('socialMediaLinks.linkedin', formData.socialMediaLinks.linkedin);
-      formPayload.append('socialMediaLinks.youtube', formData.socialMediaLinks.youtube);
+      // Format dates back to ISO string before submission
+      const submissionData = {
+        ...formData,
+        dates: {
+          start: new Date(formData.dates.start).toISOString(),
+          end: new Date(formData.dates.end).toISOString()
+        }
+      };
 
-      const response = await fetch('/api/admin/data/eventoutreach', {
-        method: 'POST',
-        body: formPayload
+      const method = eventData?.editMode ? 'PUT' : 'POST';
+      const url = eventData?.editMode 
+        ? `/api/admin/data/eventoutreach/${eventData._id}`
+        : '/api/admin/data/eventoutreach';
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(submissionData)
       });
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create event');
+        throw new Error(errorData.message || 'Failed to save event');
       }
-      
+
       const result = await response.json();
-      toast.success('Event created successfully!');
-      
-      if (onSuccess) {
-        onSuccess(result.data);
-        setFormData({
-          title: '',
-          year: new Date().getFullYear(),
-          edition: 1,
-          websiteURL: '',
-          socialMediaLinks: {
-            facebook: '',
-            instagram: '',
-            twitter: '',
-            linkedin: '',
-            youtube: ''
-          },
-          dates: {
-            start: '',
-            end: ''
-          },
-          location: {
-            address: '',
-            latitude: 0,
-            longitude: 0,
-            googleMapsLink: '',
-            city: '',
-            state: '',
-            country: '',
-            pincode: ''
-          },
-          description: ''
-        });
-        onClose();
-      } else {
-        router.refresh();
-      }
-      
+      onSuccess(result.data);
+      toast.success(`Event ${eventData?.editMode ? 'updated' : 'created'} successfully!`);
+      onClose();
     } catch (error) {
-      toast.error(error.message || 'Failed to create event');
+      toast.error(error.message || 'Failed to save event');
       console.error('Error:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const renderSectionNavigation = () => (
+    <div className="mb-6">
+      <div className="flex border-b">
+        {['basic', 'dateLocation', 'media'].map((section) => (
+          <button
+            key={section}
+            type="button"
+            onClick={() => setActiveSection(section)}
+            className={`px-4 py-2 font-medium text-sm transition-colors ${
+              activeSection === section 
+                ? 'text-blue-600 border-b-2 border-blue-600' 
+                : 'text-gray-500 hover:text-gray-700'
+            }`}
+          >
+            {section === 'basic' && 'Basic Info'}
+            {section === 'dateLocation' && 'Date & Location'}
+            {section === 'media' && 'Media & Social'}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+
   const renderBasicInfoSection = () => (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Basic Information</h3>
-      
       <InputField
         id="event-title"
         label="Event Title"
@@ -158,9 +158,10 @@ export default function EventForm({ onSuccess, onClose, eventData, isEditMode })
         value={formData.title}
         onChange={handleChange}
         required
+        containerClass="mb-4"
       />
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <InputField
           id="event-year"
           label="Year"
@@ -188,6 +189,7 @@ export default function EventForm({ onSuccess, onClose, eventData, isEditMode })
         value={formData.description}
         onChange={handleChange}
         rows={4}
+        containerClass="mb-4"
       />
       
       <InputField
@@ -204,9 +206,7 @@ export default function EventForm({ onSuccess, onClose, eventData, isEditMode })
 
   const renderDateLocationSection = () => (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Date & Location</h3>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <InputField
           id="event-start-date"
           label="Start Date"
@@ -227,7 +227,7 @@ export default function EventForm({ onSuccess, onClose, eventData, isEditMode })
         />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <InputField
           id="event-city"
           label="City"
@@ -261,6 +261,7 @@ export default function EventForm({ onSuccess, onClose, eventData, isEditMode })
         value={formData.location.address}
         onChange={handleChange}
         required
+        containerClass="mb-4"
       />
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -300,138 +301,81 @@ export default function EventForm({ onSuccess, onClose, eventData, isEditMode })
         value={formData.location.googleMapsLink}
         onChange={handleChange}
         placeholder="https://maps.google.com/..."
-        required
+        containerClass="mt-4"
       />
     </div>
   );
 
   const renderMediaSection = () => (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Social Media Links</h3>
-      
-      <div className="space-y-3">
+      {Object.entries(formData.socialMediaLinks).map(([platform, value]) => (
         <InputField
-          id="event-facebook"
-          label="Facebook"
-          name="socialMediaLinks.facebook"
+          key={platform}
+          id={`event-${platform}`}
+          label={platform.charAt(0).toUpperCase() + platform.slice(1)}
+          name={`socialMediaLinks.${platform}`}
           type="url"
-          value={formData.socialMediaLinks.facebook}
+          value={value}
           onChange={handleChange}
-          placeholder="https://facebook.com/..."
-          labelClass="text-xs text-gray-500"
+          placeholder={`https://${platform}.com/...`}
+          containerClass="mb-3"
         />
-        <InputField
-          id="event-instagram"
-          label="Instagram"
-          name="socialMediaLinks.instagram"
-          type="url"
-          value={formData.socialMediaLinks.instagram}
-          onChange={handleChange}
-          placeholder="https://instagram.com/..."
-          labelClass="text-xs text-gray-500"
-        />
-        <InputField
-          id="event-twitter"
-          label="Twitter/X"
-          name="socialMediaLinks.twitter"
-          type="url"
-          value={formData.socialMediaLinks.twitter}
-          onChange={handleChange}
-          placeholder="https://twitter.com/..."
-          labelClass="text-xs text-gray-500"
-        />
-        <InputField
-          id="event-linkedin"
-          label="LinkedIn"
-          name="socialMediaLinks.linkedin"
-          type="url"
-          value={formData.socialMediaLinks.linkedin}
-          onChange={handleChange}
-          placeholder="https://linkedin.com/..."
-          labelClass="text-xs text-gray-500"
-        />
-        <InputField
-          id="event-youtube"
-          label="YouTube"
-          name="socialMediaLinks.youtube"
-          type="url"
-          value={formData.socialMediaLinks.youtube}
-          onChange={handleChange}
-          placeholder="https://youtube.com/..."
-          labelClass="text-xs text-gray-500"
-        />
+      ))}
+    </div>
+  );
+
+  const renderFooterButtons = () => (
+    <div className="flex justify-between pt-6 mt-6 border-t">
+      <div>
+        {activeSection !== 'basic' && (
+          <button
+            type="button"
+            onClick={() => setActiveSection(activeSection === 'dateLocation' ? 'basic' : 'dateLocation')}
+            className="px-4 py-2 text-sm border rounded text-gray-700 hover:bg-gray-50 transition-colors"
+          >
+            Back
+          </button>
+        )}
+      </div>
+      <div className="flex gap-3">
+        {activeSection !== 'media' ? (
+          <button
+            type="button"
+            onClick={() => setActiveSection(activeSection === 'basic' ? 'dateLocation' : 'media')}
+            className="px-4 py-2 text-sm bg-gray-100 text-gray-700 rounded hover:bg-gray-200 transition-colors"
+          >
+            Next
+          </button>
+        ) : (
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-400 transition-colors"
+          >
+            {isSubmitting 
+              ? eventData?.editMode ? 'Updating...' : 'Creating...' 
+              : eventData?.editMode ? 'Update Event' : 'Create Event'}
+          </button>
+        )}
       </div>
     </div>
   );
 
   return (
-    <Modal isOpen={true} onClose={onClose} title="Create New Event">
-    
-        <div className="mb-6">
-          <div className="flex border-b">
-            <button
-              type="button"
-              onClick={() => setActiveSection('basic')}
-              className={`px-4 py-2 font-medium ${activeSection === 'basic' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-            >
-              Basic Info
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveSection('dateLocation')}
-              className={`px-4 py-2 font-medium ${activeSection === 'dateLocation' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-            >
-              Date & Location
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveSection('media')}
-              className={`px-4 py-2 font-medium ${activeSection === 'media' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
-            >
-              Media & Social
-            </button>
-          </div>
-        </div>
+    <Modal 
+      isOpen={true} 
+      onClose={onClose} 
+      title={eventData?.editMode ? 'Edit Event' : 'Create New Event'}
+    >
+      <form onSubmit={handleSubmit}>
+        {renderSectionNavigation()}
         
-        <form onSubmit={handleSubmit}>
-          {activeSection === 'basic' && renderBasicInfoSection()}
-          {activeSection === 'dateLocation' && renderDateLocationSection()}
-          {activeSection === 'media' && renderMediaSection()}
-          
-          <div className="flex justify-between pt-6 mt-6 border-t">
-            <div>
-              {activeSection !== 'basic' && (
-                <button
-                  type="button"
-                  onClick={() => setActiveSection(activeSection === 'dateLocation' ? 'basic' : 'dateLocation')}
-                  className="px-4 py-2 border rounded text-gray-700 hover:bg-gray-50"
-                >
-                  Back
-                </button>
-              )}
-            </div>
-            <div className="flex gap-3">
-              {activeSection !== 'media' ? (
-                <button
-                  type="button"
-                  onClick={() => setActiveSection(activeSection === 'basic' ? 'dateLocation' : 'media')}
-                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-                >
-                  Next
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-400"
-                >
-                  {isSubmitting ? 'Creating Event...' : 'Create Event'}
-                </button>
-              )}
-            </div>
-          </div>
-        </form>
-      
+        {activeSection === 'basic' && renderBasicInfoSection()}
+        {activeSection === 'dateLocation' && renderDateLocationSection()}
+        {activeSection === 'media' && renderMediaSection()}
+        
+        {renderFooterButtons()}
+      </form>
     </Modal>
   );
 }

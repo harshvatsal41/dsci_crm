@@ -1,5 +1,7 @@
+'use client'
 import React, { useEffect, useRef, useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
+import { motion } from "framer-motion";
 
 export const InputField = ({
   id,
@@ -147,8 +149,50 @@ export const TextAreaField = ({
 };
 
 
-// TableFormat
+// Skeleton Loader
+export const Skeleton = ({ className = "", variant = "rectangular", width, height, ...props }) => {
+  const baseClasses = "bg-gray-200 animate-pulse rounded";
+  
+  const variants = {
+    rectangular: "",
+    circular: "rounded-full",
+    text: "h-4 rounded-full",
+    title: "h-6 rounded-lg w-3/4",
+    subtitle: "h-4 rounded-lg w-1/2",
+    button: "h-10 rounded-lg w-24",
+    card: "h-full w-full rounded-lg"
+  };
 
+  const style = {
+    ...(width && { width: typeof width === 'number' ? `${width}px` : width }),
+    ...(height && { height: typeof height === 'number' ? `${height}px` : height })
+  };
+
+  return (
+    <motion.div
+      className={`${baseClasses} ${variants[variant] || ''} ${className}`}
+      style={style}
+      initial={{ opacity: 0.7 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+      {...props}
+    />
+  );
+};
+
+// Skeleton Wrapper
+export const SkeletonWrapper = ({ children, isLoading = true, className = "", ...props }) => {
+  if (isLoading) {
+    return (
+      <div className={`animate-pulse ${className}`} {...props}>
+        {children}
+      </div>
+    );
+  }
+  return children;
+};
+
+// TableFormat
 
 // OtpPasswordInput
 export const OtpPasswordInput = ({ value = "", onChange, length = 6 }) => {
