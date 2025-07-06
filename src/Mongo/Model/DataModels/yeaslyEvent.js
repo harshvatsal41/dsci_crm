@@ -27,6 +27,12 @@ const EventOutreachSchema = new mongoose.Schema({
         pincode: { type: String , required: true }
     },
     description: { type: String,},
+
+    createdBy : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
 }, { timestamps: true });
 
 export default mongoose.models.EventOutreach || mongoose.model("EventOutreach", EventOutreachSchema);
