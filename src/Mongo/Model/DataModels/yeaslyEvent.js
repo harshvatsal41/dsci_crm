@@ -27,12 +27,17 @@ const EventOutreachSchema = new mongoose.Schema({
         pincode: { type: String , required: true }
     },
     description: { type: String,},
-
+    focusAreaIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "FocusArea" }],
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date },
+    deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     createdBy : {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
+    createdAt: { type: Date, default: Date.now },
+    
 }, { timestamps: true });
 
 export default mongoose.models.EventOutreach || mongoose.model("EventOutreach", EventOutreachSchema);

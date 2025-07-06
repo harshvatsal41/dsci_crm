@@ -1,3 +1,4 @@
 {
-  "/api/admin/data/eventoutreach/[id]/route": "app/api/admin/data/eventoutreach/[id]/route.js"
+  "/api/admin/data/eventoutreach/[id]/route": "app/api/admin/data/eventoutreach/[id]/route.js",
+  "/api/admin/data/eventoutreach/route": "app/api/admin/data/eventoutreach/route.js"
 }
