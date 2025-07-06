@@ -9,7 +9,7 @@ export async function GET(req, { params }) {
     try {
         await util.connectDB();
 
-        const { id } = params;
+        const { id } = await params;
 
         const event = await EventOutreach.findById(id);
 

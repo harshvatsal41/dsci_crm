@@ -374,7 +374,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Helper$2f$apiUtils$2e
 async function GET(req, { params }) {
     try {
         await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Helper$2f$apiUtils$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].connectDB();
-        const { id } = params;
+        const { id } = await params;
         const event = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Mongo$2f$Model$2f$DataModels$2f$yeaslyEvent$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].findById(id);
         if (!event) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json((0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Helper$2f$response$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["apiResponse"])({

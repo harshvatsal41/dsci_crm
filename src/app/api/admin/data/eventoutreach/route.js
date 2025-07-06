@@ -9,7 +9,7 @@ export async function GET() {
     await util.connectDB();
         
         const events = await EventOutreach.find({}).sort({ createdAt: -1 });
-        console.log('Fetched events:', events);
+        // console.log('Fetched events:', events);
         
         return NextResponse.json(
             apiResponse({
