@@ -35,7 +35,6 @@ const initialState = {
 };
 
 export default function EventForm({ onSuccess, onClose, eventData = {} }) {
-  const router = useRouter();
   const [formData, setFormData] = useState(initialState);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeSection, setActiveSection] = useState('basic');
