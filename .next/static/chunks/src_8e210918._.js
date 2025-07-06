@@ -6,204 +6,413 @@
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
 __turbopack_context__.s({
-    "Button": (()=>Button),
-    "Input": (()=>Input)
+    "DetailItem": (()=>DetailItem),
+    "InfoCard": (()=>InfoCard),
+    "InputField": (()=>InputField),
+    "NativeSelectField": (()=>NativeSelectField),
+    "OtpPasswordInput": (()=>OtpPasswordInput),
+    "Skeleton": (()=>Skeleton),
+    "SkeletonWrapper": (()=>SkeletonWrapper),
+    "TextAreaField": (()=>TextAreaField)
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/jsx-dev-runtime.js [app-client] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/compiled/react/index.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/prop-types/index.js [app-client] (ecmascript)");
-var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react-icons/fi/index.mjs [app-client] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/eye.js [app-client] (ecmascript) <export default as Eye>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2d$off$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__EyeOff$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/eye-off.js [app-client] (ecmascript) <export default as EyeOff>");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/framer-motion/dist/es/render/components/motion/proxy.mjs [app-client] (ecmascript)");
+;
+var _s = __turbopack_context__.k.signature();
 'use client';
 ;
 ;
 ;
-;
-const Input = /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["forwardRef"])(_c = ({ label, id, type = 'text', placeholder = '', value, onChange, error = '', icon: Icon, className = '', containerClassName = '', disabled = false, required = false, ...rest }, ref)=>{
-    const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
+const InputField = ({ id, label, required = false, name, value, onChange, placeholder, readOnly = false, type = 'text', className = '', inputClass = '', textarea = false, rows = 3 })=>{
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: `mb-4 ${containerClassName}`,
+        className: `w-full max-w-full font-sans ${className}`,
         children: [
             label && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                htmlFor: inputId,
-                className: "block text-sm font-medium text-gray-700 mb-1.5",
+                htmlFor: id,
+                className: "block text-sm md:text-base font-semibold text-gray-700 mb-1 md:mb-2",
                 children: [
                     label,
+                    " ",
                     required && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        className: "text-red-500 ml-1",
+                        className: "text-red-500",
                         children: "*"
                     }, void 0, false, {
                         fileName: "[project]/src/Component/UI/ReusableCom.js",
-                        lineNumber: 31,
-                        columnNumber: 24
+                        lineNumber: 25,
+                        columnNumber: 32
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/Component/UI/ReusableCom.js",
-                lineNumber: 26,
+                lineNumber: 24,
                 columnNumber: 9
             }, this),
-            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "relative",
-                children: [
-                    Icon && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none",
-                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(Icon, {
-                            className: "h-5 w-5 text-gray-400"
-                        }, void 0, false, {
-                            fileName: "[project]/src/Component/UI/ReusableCom.js",
-                            lineNumber: 37,
-                            columnNumber: 13
-                        }, this)
-                    }, void 0, false, {
-                        fileName: "[project]/src/Component/UI/ReusableCom.js",
-                        lineNumber: 36,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
-                        id: inputId,
-                        ref: ref,
-                        type: type,
-                        value: value,
-                        onChange: onChange,
-                        placeholder: placeholder,
-                        className: `block w-full rounded-md border shadow-sm focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200 ${Icon ? 'pl-10 pr-3' : 'px-3'} py-2.5 ${error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300'} ${disabled ? 'bg-gray-100 cursor-not-allowed' : 'bg-white'} ${className}`,
-                        disabled: disabled,
-                        required: required,
-                        "aria-invalid": !!error,
-                        "aria-describedby": error ? `${inputId}-error` : undefined,
-                        ...rest
-                    }, void 0, false, {
-                        fileName: "[project]/src/Component/UI/ReusableCom.js",
-                        lineNumber: 40,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
+            textarea ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
+                id: id,
+                name: name,
+                value: value,
+                onChange: onChange,
+                placeholder: placeholder,
+                required: required,
+                readOnly: readOnly,
+                rows: rows,
+                className: `w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm ${inputClass}`
+            }, void 0, false, {
                 fileName: "[project]/src/Component/UI/ReusableCom.js",
-                lineNumber: 34,
-                columnNumber: 7
-            }, this),
-            error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex items-center mt-1 text-sm text-red-600",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiAlertCircle"], {
-                        className: "mr-1 h-4 w-4"
-                    }, void 0, false, {
-                        fileName: "[project]/src/Component/UI/ReusableCom.js",
-                        lineNumber: 61,
-                        columnNumber: 11
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                        id: `${inputId}-error`,
-                        role: "alert",
-                        children: error
-                    }, void 0, false, {
-                        fileName: "[project]/src/Component/UI/ReusableCom.js",
-                        lineNumber: 62,
-                        columnNumber: 11
-                    }, this)
-                ]
-            }, void 0, true, {
+                lineNumber: 29,
+                columnNumber: 9
+            }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                id: id,
+                name: name,
+                type: type,
+                value: value,
+                onChange: onChange,
+                placeholder: placeholder,
+                required: required,
+                readOnly: readOnly,
+                className: `w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400 text-sm ${inputClass}`
+            }, void 0, false, {
                 fileName: "[project]/src/Component/UI/ReusableCom.js",
-                lineNumber: 60,
+                lineNumber: 41,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/Component/UI/ReusableCom.js",
-        lineNumber: 24,
+        lineNumber: 22,
         columnNumber: 5
     }, this);
-});
-_c1 = Input;
-Input.displayName = 'Input';
-Input.propTypes = {
-    label: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].string,
-    id: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].string,
-    type: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].string,
-    placeholder: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].string,
-    value: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].any,
-    onChange: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].func,
-    error: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].string,
-    icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].elementType,
-    className: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].string,
-    containerClassName: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].string,
-    disabled: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].bool,
-    required: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].bool
 };
-const Button = ({ children, variant = 'primary', size = 'md', loading = false, fullWidth = false, className = '', ...rest })=>{
-    const baseStyles = 'inline-flex items-center justify-center rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed';
+_c = InputField;
+const NativeSelectField = ({ id, label, name, value, onChange, onClick, options = [], placeholder, required = false, className = "", selectClass = "" })=>{
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: className,
+        children: [
+            label && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                htmlFor: id,
+                className: "block mb-0.5 font-medium text-gray-700",
+                children: [
+                    label,
+                    " ",
+                    required && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                        className: "text-red-500",
+                        children: "*"
+                    }, void 0, false, {
+                        fileName: "[project]/src/Component/UI/ReusableCom.js",
+                        lineNumber: 76,
+                        columnNumber: 32
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 75,
+                columnNumber: 9
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("select", {
+                id: id,
+                name: name,
+                value: value,
+                onChange: onChange,
+                onClick: onClick,
+                required: required,
+                className: `w-full px-2 py-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white text-gray-700 ${selectClass}`,
+                children: [
+                    placeholder && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                        value: "",
+                        children: placeholder
+                    }, void 0, false, {
+                        fileName: "[project]/src/Component/UI/ReusableCom.js",
+                        lineNumber: 88,
+                        columnNumber: 25
+                    }, this),
+                    options.map((opt)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("option", {
+                            value: opt.value,
+                            children: opt.label
+                        }, opt.value, false, {
+                            fileName: "[project]/src/Component/UI/ReusableCom.js",
+                            lineNumber: 90,
+                            columnNumber: 11
+                        }, this))
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 79,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/Component/UI/ReusableCom.js",
+        lineNumber: 73,
+        columnNumber: 5
+    }, this);
+};
+_c1 = NativeSelectField;
+const InfoCard = ({ title, children })=>{
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "bg-white rounded-xl border border-gray-200 p-3 shadow-sm",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
+                className: "text-xl font-semibold text-gray-900 mb-2 border-b pb-2",
+                children: title
+            }, void 0, false, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 103,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                className: "space-y-3",
+                children: children
+            }, void 0, false, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 104,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/Component/UI/ReusableCom.js",
+        lineNumber: 102,
+        columnNumber: 5
+    }, this);
+};
+_c2 = InfoCard;
+const DetailItem = ({ label, value })=>{
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "flex text-sm text-gray-700",
+        children: [
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("dt", {
+                className: "font-medium font-semibold w-32",
+                children: [
+                    label,
+                    ":"
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 112,
+                columnNumber: 7
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("dd", {
+                className: "ml-1",
+                children: value || "-"
+            }, void 0, false, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 113,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/Component/UI/ReusableCom.js",
+        lineNumber: 111,
+        columnNumber: 5
+    }, this);
+};
+_c3 = DetailItem;
+const TextAreaField = ({ id, label, name, value, onChange, placeholder, required = false, className = "", textareaClass = "" })=>{
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: className,
+        children: [
+            label && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
+                htmlFor: id,
+                className: "block mb-0.5 font-medium text-gray-700",
+                children: [
+                    label,
+                    " ",
+                    required && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                        className: "text-red-500",
+                        children: "*"
+                    }, void 0, false, {
+                        fileName: "[project]/src/Component/UI/ReusableCom.js",
+                        lineNumber: 135,
+                        columnNumber: 32
+                    }, this)
+                ]
+            }, void 0, true, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 134,
+                columnNumber: 9
+            }, this),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("textarea", {
+                id: id,
+                name: name,
+                value: value,
+                onChange: onChange,
+                placeholder: placeholder,
+                required: required,
+                className: `w-full p-1 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none ${textareaClass}`
+            }, void 0, false, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 138,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/Component/UI/ReusableCom.js",
+        lineNumber: 132,
+        columnNumber: 5
+    }, this);
+};
+_c4 = TextAreaField;
+const Skeleton = ({ className = "", variant = "rectangular", width, height, ...props })=>{
+    const baseClasses = "bg-gray-200 animate-pulse rounded";
     const variants = {
-        primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-        secondary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500',
-        success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500',
-        danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-        warning: 'bg-yellow-600 text-white hover:bg-yellow-700 focus:ring-yellow-500',
-        info: 'bg-cyan-600 text-white hover:bg-cyan-700 focus:ring-cyan-500',
-        outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500',
-        ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-gray-300'
+        rectangular: "",
+        circular: "rounded-full",
+        text: "h-4 rounded-full",
+        title: "h-6 rounded-lg w-3/4",
+        subtitle: "h-4 rounded-lg w-1/2",
+        button: "h-10 rounded-lg w-24",
+        card: "h-full w-full rounded-lg"
     };
-    const sizes = {
-        sm: 'px-3 py-1.5 text-xs',
-        md: 'px-4 py-2 text-sm',
-        lg: 'px-6 py-3 text-base'
+    const style = {
+        ...width && {
+            width: typeof width === 'number' ? `${width}px` : width
+        },
+        ...height && {
+            height: typeof height === 'number' ? `${height}px` : height
+        }
     };
-    const buttonStyles = `
-    ${baseStyles}
-    ${variants[variant] || variants.primary}
-    ${sizes[size] || sizes.md}
-    ${fullWidth ? 'w-full' : ''}
-    ${className}
-  `;
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-        className: buttonStyles,
-        disabled: loading || rest.disabled,
-        ...rest,
-        children: loading ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
-            children: [
-                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiLoader"], {
-                    className: "animate-spin -ml-1 mr-2 h-4 w-4 text-current"
-                }, void 0, false, {
-                    fileName: "[project]/src/Component/UI/ReusableCom.js",
-                    lineNumber: 132,
-                    columnNumber: 11
-                }, this),
-                children
-            ]
-        }, void 0, true) : children
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
+        className: `${baseClasses} ${variants[variant] || ''} ${className}`,
+        style: style,
+        initial: {
+            opacity: 0.7
+        },
+        animate: {
+            opacity: 1
+        },
+        transition: {
+            duration: 0.8,
+            repeat: Infinity,
+            repeatType: 'reverse'
+        },
+        ...props
     }, void 0, false, {
         fileName: "[project]/src/Component/UI/ReusableCom.js",
-        lineNumber: 125,
+        lineNumber: 172,
         columnNumber: 5
     }, this);
 };
-_c2 = Button;
-Button.propTypes = {
-    children: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].node.isRequired,
-    variant: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].oneOf([
-        'primary',
-        'secondary',
-        'success',
-        'danger',
-        'warning',
-        'info',
-        'outline',
-        'ghost'
-    ]),
-    size: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].oneOf([
-        'sm',
-        'md',
-        'lg'
-    ]),
-    loading: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].bool,
-    fullWidth: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].bool,
-    className: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].string,
-    disabled: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$prop$2d$types$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].bool
+_c5 = Skeleton;
+const SkeletonWrapper = ({ children, isLoading = true, className = "", ...props })=>{
+    if (isLoading) {
+        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: `animate-pulse ${className}`,
+            ...props,
+            children: children
+        }, void 0, false, {
+            fileName: "[project]/src/Component/UI/ReusableCom.js",
+            lineNumber: 187,
+            columnNumber: 7
+        }, this);
+    }
+    return children;
 };
-var _c, _c1, _c2;
-__turbopack_context__.k.register(_c, "Input$forwardRef");
-__turbopack_context__.k.register(_c1, "Input");
-__turbopack_context__.k.register(_c2, "Button");
+_c6 = SkeletonWrapper;
+const OtpPasswordInput = ({ value = "", onChange, length = 6 })=>{
+    _s();
+    const [otp, setOtp] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(Array(length).fill(""));
+    const [showPassword, setShowPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
+    const inputRefs = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])([]);
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "OtpPasswordInput.useEffect": ()=>{
+            if (value && value.length === length) {
+                setOtp(value.split(""));
+            }
+        }
+    }["OtpPasswordInput.useEffect"], [
+        value,
+        length
+    ]);
+    const handleChange = (index, e)=>{
+        const digit = e.target.value.replace(/\D/, "");
+        if (!digit) return;
+        const updated = [
+            ...otp
+        ];
+        updated[index] = digit;
+        setOtp(updated);
+        onChange?.(updated.join(""));
+        // Focus next input
+        if (index < length - 1) {
+            inputRefs.current[index + 1]?.focus();
+        }
+    };
+    const handleKeyDown = (index, e)=>{
+        if (e.key === "Backspace") {
+            e.preventDefault();
+            const updated = [
+                ...otp
+            ];
+            if (otp[index] === "" && index > 0) {
+                updated[index - 1] = "";
+                inputRefs.current[index - 1]?.focus();
+            } else {
+                updated[index] = "";
+            }
+            setOtp(updated);
+            onChange?.(updated.join(""));
+        }
+    };
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+        className: "relative flex items-center gap-2",
+        children: [
+            otp.map((digit, idx)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                    ref: (el)=>inputRefs.current[idx] = el,
+                    type: showPassword ? "text" : "password",
+                    inputMode: "numeric",
+                    maxLength: "1",
+                    value: digit,
+                    onChange: (e)=>handleChange(idx, e),
+                    onKeyDown: (e)=>handleKeyDown(idx, e),
+                    className: "w-10 h-10 text-center border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 text-lg font-semibold"
+                }, idx, false, {
+                    fileName: "[project]/src/Component/UI/ReusableCom.js",
+                    lineNumber: 242,
+                    columnNumber: 9
+                }, this)),
+            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
+                type: "button",
+                onClick: ()=>setShowPassword((prev)=>!prev),
+                className: "ml-2 text-gray-500 hover:text-gray-800",
+                title: showPassword ? "Hide Password" : "Show Password",
+                children: showPassword ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2d$off$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__EyeOff$3e$__["EyeOff"], {
+                    size: 20
+                }, void 0, false, {
+                    fileName: "[project]/src/Component/UI/ReusableCom.js",
+                    lineNumber: 261,
+                    columnNumber: 25
+                }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
+                    size: 20
+                }, void 0, false, {
+                    fileName: "[project]/src/Component/UI/ReusableCom.js",
+                    lineNumber: 261,
+                    columnNumber: 48
+                }, this)
+            }, void 0, false, {
+                fileName: "[project]/src/Component/UI/ReusableCom.js",
+                lineNumber: 255,
+                columnNumber: 7
+            }, this)
+        ]
+    }, void 0, true, {
+        fileName: "[project]/src/Component/UI/ReusableCom.js",
+        lineNumber: 240,
+        columnNumber: 5
+    }, this);
+};
+_s(OtpPasswordInput, "/C2w0tzk+8evGD9pDh07vsdVdTg=");
+_c7 = OtpPasswordInput;
+var _c, _c1, _c2, _c3, _c4, _c5, _c6, _c7;
+__turbopack_context__.k.register(_c, "InputField");
+__turbopack_context__.k.register(_c1, "NativeSelectField");
+__turbopack_context__.k.register(_c2, "InfoCard");
+__turbopack_context__.k.register(_c3, "DetailItem");
+__turbopack_context__.k.register(_c4, "TextAreaField");
+__turbopack_context__.k.register(_c5, "Skeleton");
+__turbopack_context__.k.register(_c6, "SkeletonWrapper");
+__turbopack_context__.k.register(_c7, "OtpPasswordInput");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
@@ -244,7 +453,6 @@ const initialState = {
 function Register() {
     _s();
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(initialState);
-    const [showPassword, setShowPassword] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [isLoading, setIsLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [errors, setErrors] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({});
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
@@ -253,6 +461,7 @@ function Register() {
         setErrors({});
         setIsLoading(true);
         try {
+            console.log("Form Data", formData);
             const res = await fetch('/api/admin/auth/register', {
                 method: 'POST',
                 headers: {
@@ -260,7 +469,7 @@ function Register() {
                 },
                 body: JSON.stringify({
                     ...formData,
-                    contactNo: formData.contactNo.replace(/\D/g, '') // Remove non-numeric characters
+                    contactNo: formData.contactNo.replace(/\D/g, '')
                 })
             });
             const data = await res.json();
@@ -283,7 +492,7 @@ function Register() {
                         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error(data.message || 'Validation failed');
                     }
                 } else {
-                    throw new Error(data.message || 'Registration failed');
+                    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error(data.message || 'Registration failed');
                 }
                 return;
             }
@@ -291,6 +500,7 @@ function Register() {
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].success('Registration successful! Please log in.');
             router.push('/administration/login');
         } catch (error) {
+            console.log("Error", error);
             console.error('Registration error:', error);
             __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].error(error.message || 'Failed to register. Please try again.');
         } finally{
@@ -312,7 +522,7 @@ function Register() {
         }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6",
+        className: "min-h-screen flex items-center justify-center bg-gradient-to-br  p-4 sm:p-6",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
             className: "w-full max-w-md",
             children: [
@@ -320,14 +530,14 @@ function Register() {
                     className: "bg-white rounded-lg shadow-md overflow-hidden",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "bg-gradient-to-r from-blue-600 to-blue-500 p-6 text-center",
+                            className: "bg-gradient-to-r from-blue-50 to-blue-100 p-6 text-center",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                                     className: "text-xl font-bold text-white",
                                     children: "Create Account"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/administration/register/page.js",
-                                    lineNumber: 97,
+                                    lineNumber: 98,
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -335,13 +545,13 @@ function Register() {
                                     children: "Get started in just a minute"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/administration/register/page.js",
-                                    lineNumber: 98,
+                                    lineNumber: 99,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/administration/register/page.js",
-                            lineNumber: 96,
+                            lineNumber: 97,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -353,150 +563,77 @@ function Register() {
                                     children: errors.form
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/administration/register/page.js",
-                                    lineNumber: 104,
+                                    lineNumber: 105,
                                     columnNumber: 29
                                 }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
-                                            label: "Username",
-                                            name: "username",
-                                            type: "text",
-                                            placeholder: "johndoe",
-                                            value: formData.username,
-                                            onChange: handleChange,
-                                            required: true,
-                                            error: errors.username,
-                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiUser"],
-                                            minLength: 3,
-                                            maxLength: 30
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 111,
-                                            columnNumber: 29
-                                        }, this),
-                                        errors.username && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "mt-1 text-xs text-red-500",
-                                            children: errors.username
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 125,
-                                            columnNumber: 33
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
+                                    id: "username",
+                                    label: "Username",
+                                    name: "username",
+                                    type: "text",
+                                    placeholder: "johndoe",
+                                    value: formData.username,
+                                    onChange: handleChange,
+                                    required: true,
+                                    error: errors.username,
+                                    icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiUser"],
+                                    minLength: 3,
+                                    maxLength: 30
+                                }, void 0, false, {
                                     fileName: "[project]/src/app/administration/register/page.js",
-                                    lineNumber: 110,
+                                    lineNumber: 111,
                                     columnNumber: 25
                                 }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
-                                            label: "Email Address",
-                                            name: "email",
-                                            type: "email",
-                                            placeholder: "you@example.com",
-                                            value: formData.email,
-                                            onChange: handleChange,
-                                            required: true,
-                                            error: errors.email,
-                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiMail"]
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 131,
-                                            columnNumber: 29
-                                        }, this),
-                                        errors.email && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "mt-1 text-xs text-red-500",
-                                            children: errors.email
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 143,
-                                            columnNumber: 33
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
+                                errors.username && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "mt-1 text-xs text-red-500",
+                                    children: errors.username
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/administration/register/page.js",
+                                    lineNumber: 126,
+                                    columnNumber: 29
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
+                                    id: "email",
+                                    label: "Email Address",
+                                    name: "email",
+                                    type: "email",
+                                    placeholder: "you@example.com",
+                                    value: formData.email,
+                                    onChange: handleChange,
+                                    required: true,
+                                    error: errors.email,
+                                    icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiMail"]
+                                }, void 0, false, {
                                     fileName: "[project]/src/app/administration/register/page.js",
                                     lineNumber: 130,
                                     columnNumber: 25
                                 }, this),
+                                errors.email && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "mt-1 text-xs text-red-500",
+                                    children: errors.email
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/administration/register/page.js",
+                                    lineNumber: 143,
+                                    columnNumber: 29
+                                }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "space-y-1",
                                     children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "flex justify-between items-center",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("label", {
-                                                    htmlFor: "password",
-                                                    className: "block text-sm font-medium text-gray-700",
-                                                    children: "Password"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/app/administration/register/page.js",
-                                                    lineNumber: 150,
-                                                    columnNumber: 33
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                    type: "button",
-                                                    onClick: ()=>setShowPassword(!showPassword),
-                                                    className: "text-xs text-blue-600 hover:text-blue-800 transition-colors",
-                                                    children: showPassword ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "flex items-center",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiEyeOff"], {
-                                                                className: "mr-1"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/app/administration/register/page.js",
-                                                                lineNumber: 160,
-                                                                columnNumber: 45
-                                                            }, this),
-                                                            " Hide"
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/app/administration/register/page.js",
-                                                        lineNumber: 159,
-                                                        columnNumber: 41
-                                                    }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "flex items-center",
-                                                        children: [
-                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiEye"], {
-                                                                className: "mr-1"
-                                                            }, void 0, false, {
-                                                                fileName: "[project]/src/app/administration/register/page.js",
-                                                                lineNumber: 164,
-                                                                columnNumber: 45
-                                                            }, this),
-                                                            " Show"
-                                                        ]
-                                                    }, void 0, true, {
-                                                        fileName: "[project]/src/app/administration/register/page.js",
-                                                        lineNumber: 163,
-                                                        columnNumber: 41
-                                                    }, this)
-                                                }, void 0, false, {
-                                                    fileName: "[project]/src/app/administration/register/page.js",
-                                                    lineNumber: 153,
-                                                    columnNumber: 33
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 149,
-                                            columnNumber: 29
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
                                             id: "password",
+                                            label: "Password",
                                             name: "password",
-                                            type: showPassword ? 'text' : 'password',
+                                            type: "password",
                                             placeholder: "••••••••",
                                             value: formData.password,
                                             onChange: handleChange,
                                             required: true,
-                                            minLength: "8",
+                                            minLength: 8,
                                             error: errors.password,
                                             icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiLock"]
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 169,
+                                            lineNumber: 148,
                                             columnNumber: 29
                                         }, this),
                                         errors.password && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -504,81 +641,71 @@ function Register() {
                                             children: errors.password.includes('shorter than the minimum allowed length') ? 'Password must be at least 8 characters long' : errors.password
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 182,
+                                            lineNumber: 162,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/administration/register/page.js",
-                                    lineNumber: 148,
+                                    lineNumber: 147,
                                     columnNumber: 25
                                 }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
-                                            label: "Contact Number",
-                                            name: "contactNo",
-                                            type: "tel",
-                                            placeholder: "1234567890",
-                                            value: formData.contactNo,
-                                            onChange: handleChange,
-                                            required: true,
-                                            error: errors.contactNo,
-                                            icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiPhone"],
-                                            maxLength: "15"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 193,
-                                            columnNumber: 29
-                                        }, this),
-                                        errors.contactNo && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "mt-1 text-xs text-red-500",
-                                            children: errors.contactNo.includes('valid contact number') ? 'Please enter a valid 10-digit phone number' : errors.contactNo
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/administration/register/page.js",
-                                            lineNumber: 206,
-                                            columnNumber: 33
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
+                                    id: "contactNo",
+                                    label: "Contact Number",
+                                    name: "contactNo",
+                                    type: "tel",
+                                    placeholder: "1234567890",
+                                    value: formData.contactNo,
+                                    onChange: handleChange,
+                                    required: true,
+                                    error: errors.contactNo,
+                                    icon: __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiPhone"],
+                                    maxLength: 15
+                                }, void 0, false, {
                                     fileName: "[project]/src/app/administration/register/page.js",
-                                    lineNumber: 192,
+                                    lineNumber: 172,
                                     columnNumber: 25
+                                }, this),
+                                errors.contactNo && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                    className: "mt-1 text-xs text-red-500",
+                                    children: errors.contactNo.includes('valid contact number') ? 'Please enter a valid 10-digit phone number' : errors.contactNo
+                                }, void 0, false, {
+                                    fileName: "[project]/src/app/administration/register/page.js",
+                                    lineNumber: 186,
+                                    columnNumber: 29
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "pt-2",
-                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
+                                    children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                         type: "submit",
-                                        variant: "primary",
-                                        size: "md",
-                                        fullWidth: true,
-                                        loading: isLoading,
+                                        className: `w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors flex items-center justify-center
+                                    ${isLoading ? 'opacity-75 cursor-not-allowed' : ''}`,
                                         disabled: isLoading,
-                                        className: "flex items-center justify-center",
                                         children: [
                                             isLoading ? 'Registering...' : 'Register Now',
                                             !isLoading && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiArrowRight"], {
                                                 className: "ml-2 h-4 w-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/administration/register/page.js",
-                                                lineNumber: 227,
+                                                lineNumber: 203,
                                                 columnNumber: 48
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/administration/register/page.js",
-                                        lineNumber: 217,
+                                        lineNumber: 196,
                                         columnNumber: 29
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/administration/register/page.js",
-                                    lineNumber: 216,
+                                    lineNumber: 195,
                                     columnNumber: 25
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/administration/register/page.js",
-                            lineNumber: 102,
+                            lineNumber: 103,
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -596,37 +723,37 @@ function Register() {
                                                 children: "Sign in"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/administration/register/page.js",
-                                                lineNumber: 240,
+                                                lineNumber: 216,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fi$2f$index$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["FiLogIn"], {
                                                 className: "ml-1 h-4 w-4 transform group-hover:translate-x-1 transition-transform"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/administration/register/page.js",
-                                                lineNumber: 241,
+                                                lineNumber: 217,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/administration/register/page.js",
-                                        lineNumber: 236,
+                                        lineNumber: 212,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/administration/register/page.js",
-                                lineNumber: 234,
+                                lineNumber: 210,
                                 columnNumber: 25
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/app/administration/register/page.js",
-                            lineNumber: 233,
+                            lineNumber: 209,
                             columnNumber: 21
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/administration/register/page.js",
-                    lineNumber: 94,
+                    lineNumber: 95,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -638,22 +765,22 @@ function Register() {
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/administration/register/page.js",
-                    lineNumber: 248,
+                    lineNumber: 224,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/administration/register/page.js",
-            lineNumber: 93,
+            lineNumber: 94,
             columnNumber: 13
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/administration/register/page.js",
-        lineNumber: 92,
+        lineNumber: 93,
         columnNumber: 9
     }, this);
 }
-_s(Register, "l/9N9DfjSQpIrQLcTioSix7UtY0=", false, function() {
+_s(Register, "Y39fQAcFvuR5i+LmW7IlGor/a28=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];

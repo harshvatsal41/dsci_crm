@@ -34,6 +34,7 @@ export default function DashboardPage() {
   }, [dispatch]);
 
   const handleView = (event) => {
+    console.log("event",event)
     router.push(`/administration/dashboard/specificEventCard/${event._id}`);
   };
 
@@ -67,8 +68,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <section className="p-6 h-full overflow-auto">
-      <div className="flex justify-between items-center mb-6">
+    <section className=" h-full overflow-auto">
+      <div className="flex p-6 justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Event Dashboard</h1>
         <Button
           onClick={() => setModalState({ open: Boolean(true), data: null })}
