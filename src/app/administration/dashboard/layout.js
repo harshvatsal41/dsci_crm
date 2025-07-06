@@ -7,7 +7,7 @@ export default function DashboardLayout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="dashboard-container flex h-screen overflow-hidden">
+    <div className="dashboard-container  flex h-screen overflow-hidden">
       <Sidebar 
         isOpen={sidebarOpen} 
         onClose={() => setSidebarOpen(false)} 

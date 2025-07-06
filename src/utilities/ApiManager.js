@@ -21,4 +21,21 @@ const RegisterApi = async(formData) => {
     return res;
 }
 
-export {LoginApi, RegisterApi}
+const EventApi = async(data, method) => {
+    if(method==="Get"){
+        const url='/api/admin/data/eventoutreach';
+        const res = await fetch(url);
+        return res;
+    }
+    if(method==="Post"){
+        const url='/api/admin/data/eventoutreach';
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+          });
+        return res;
+    }
+}
+
+export {LoginApi, RegisterApi, EventApi}
