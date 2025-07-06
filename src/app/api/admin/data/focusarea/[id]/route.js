@@ -13,7 +13,7 @@ export async function GET(req, { params }) {
     try {
         await util.connectDB();
 
-        const { id } = params;
+        const { id } = await params;
         const focusArea = await FocusArea.findById(id).populate("yeaslyEventId");
 
         if (!focusArea || focusArea.isDeleted) {
