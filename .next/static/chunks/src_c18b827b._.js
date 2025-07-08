@@ -74,6 +74,7 @@ if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelper
 var { g: global, __dirname, k: __turbopack_refresh__, m: module } = __turbopack_context__;
 {
 __turbopack_context__.s({
+    "BroadFocusAreaApi": (()=>BroadFocusAreaApi),
     "EventApi": (()=>EventApi),
     "LoginApi": (()=>LoginApi),
     "RegisterApi": (()=>RegisterApi)
@@ -104,13 +105,16 @@ const RegisterApi = async (formData)=>{
     return res;
 };
 _c1 = RegisterApi;
-const EventApi = async (data, method)=>{
-    if (method === "Get") {
+const EventApi = async (data, method, params = {})=>{
+    if (params.id && method === "Get") {
+        const url = '/api/admin/data/eventoutreach/' + params.id;
+        const res = await fetch(url);
+        return res;
+    } else if (method === "Get") {
         const url = '/api/admin/data/eventoutreach';
         const res = await fetch(url);
         return res;
-    }
-    if (method === "Post") {
+    } else if (method === "Post") {
         const url = '/api/admin/data/eventoutreach';
         const res = await fetch(url, {
             method: "POST",
@@ -123,11 +127,34 @@ const EventApi = async (data, method)=>{
     }
 };
 _c2 = EventApi;
+const BroadFocusAreaApi = async (data, method, params = {})=>{
+    if (params.id && method === "Get") {
+        const url = '/api/admin/data/focusarea?eventId=' + params.id;
+        const res = await fetch(url);
+        return res;
+    } else if (method === "Get") {
+        const url = '/api/admin/data/focusarea?eventId=' + params.id;
+        const res = await fetch(url);
+        return res;
+    } else if (method === "Post") {
+        const url = '/api/admin/data/focusarea';
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "form-data"
+            },
+            body: data
+        });
+        return res;
+    }
+};
+_c3 = BroadFocusAreaApi;
 ;
-var _c, _c1, _c2;
+var _c, _c1, _c2, _c3;
 __turbopack_context__.k.register(_c, "LoginApi");
 __turbopack_context__.k.register(_c1, "RegisterApi");
 __turbopack_context__.k.register(_c2, "EventApi");
+__turbopack_context__.k.register(_c3, "BroadFocusAreaApi");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }
@@ -1525,7 +1552,6 @@ const initialState = {
 };
 function EventForm({ onSuccess, onClose, eventData = {} }) {
     _s();
-    const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(initialState);
     const [isSubmitting, setIsSubmitting] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [activeSection, setActiveSection] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('basic');
@@ -1626,17 +1652,17 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                         ]
                     }, section, true, {
                         fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                        lineNumber: 133,
+                        lineNumber: 132,
                         columnNumber: 11
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                lineNumber: 131,
+                lineNumber: 130,
                 columnNumber: 7
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-            lineNumber: 130,
+            lineNumber: 129,
             columnNumber: 5
         }, this);
     const renderBasicInfoSection = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1652,7 +1678,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                     containerClass: "mb-4"
                 }, void 0, false, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 154,
+                    lineNumber: 153,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1668,7 +1694,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 165,
+                            lineNumber: 164,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1681,13 +1707,13 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 174,
+                            lineNumber: 173,
                             columnNumber: 9
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 164,
+                    lineNumber: 163,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["TextAreaField"], {
@@ -1700,7 +1726,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                     containerClass: "mb-4"
                 }, void 0, false, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 185,
+                    lineNumber: 184,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1713,13 +1739,13 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                     placeholder: "https://example.com"
                 }, void 0, false, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 195,
+                    lineNumber: 194,
                     columnNumber: 7
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-            lineNumber: 153,
+            lineNumber: 152,
             columnNumber: 5
         }, this);
     const renderDateLocationSection = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1738,7 +1764,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 210,
+                            lineNumber: 209,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1751,13 +1777,13 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 219,
+                            lineNumber: 218,
                             columnNumber: 9
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 209,
+                    lineNumber: 208,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1772,7 +1798,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 231,
+                            lineNumber: 230,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1784,7 +1810,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 239,
+                            lineNumber: 238,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1796,13 +1822,13 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 247,
+                            lineNumber: 246,
                             columnNumber: 9
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 230,
+                    lineNumber: 229,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1815,7 +1841,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                     containerClass: "mb-4"
                 }, void 0, false, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 257,
+                    lineNumber: 256,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1830,7 +1856,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 268,
+                            lineNumber: 267,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1843,7 +1869,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             step: "any"
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 276,
+                            lineNumber: 275,
                             columnNumber: 9
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1856,13 +1882,13 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                             step: "any"
                         }, void 0, false, {
                             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                            lineNumber: 285,
+                            lineNumber: 284,
                             columnNumber: 9
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 267,
+                    lineNumber: 266,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$ReusableCom$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["InputField"], {
@@ -1876,13 +1902,13 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                     containerClass: "mt-4"
                 }, void 0, false, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 296,
+                    lineNumber: 295,
                     columnNumber: 7
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-            lineNumber: 208,
+            lineNumber: 207,
             columnNumber: 5
         }, this);
     const renderMediaSection = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1898,12 +1924,12 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                     containerClass: "mb-3"
                 }, platform, false, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 312,
+                    lineNumber: 311,
                     columnNumber: 9
                 }, this))
         }, void 0, false, {
             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-            lineNumber: 310,
+            lineNumber: 309,
             columnNumber: 5
         }, this);
     const renderFooterButtons = ()=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1917,12 +1943,12 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                         children: "Back"
                     }, void 0, false, {
                         fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                        lineNumber: 331,
+                        lineNumber: 330,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 329,
+                    lineNumber: 328,
                     columnNumber: 7
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1934,7 +1960,7 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                         children: "Next"
                     }, void 0, false, {
                         fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                        lineNumber: 342,
+                        lineNumber: 341,
                         columnNumber: 11
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         type: "submit",
@@ -1943,18 +1969,18 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
                         children: isSubmitting ? eventData?.editMode ? 'Updating...' : 'Creating...' : eventData?.editMode ? 'Update Event' : 'Create Event'
                     }, void 0, false, {
                         fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                        lineNumber: 350,
+                        lineNumber: 349,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/src/Component/Dashboard/EventForm.js",
-                    lineNumber: 340,
+                    lineNumber: 339,
                     columnNumber: 7
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-            lineNumber: 328,
+            lineNumber: 327,
             columnNumber: 5
         }, this);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$Modal$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -1972,20 +1998,16 @@ function EventForm({ onSuccess, onClose, eventData = {} }) {
             ]
         }, void 0, true, {
             fileName: "[project]/src/Component/Dashboard/EventForm.js",
-            lineNumber: 370,
+            lineNumber: 369,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/Component/Dashboard/EventForm.js",
-        lineNumber: 365,
+        lineNumber: 364,
         columnNumber: 5
     }, this);
 }
-_s(EventForm, "/rDG0W+2uaVzhgXFBjcupWvpuIA=", false, function() {
-    return [
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
-    ];
-});
+_s(EventForm, "pk9JuJC8txxqlKiY3x0WpHHb4Ug=");
 _c = EventForm;
 var _c;
 __turbopack_context__.k.register(_c, "EventForm");
@@ -2008,7 +2030,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$Re
 ;
 function DashboardLoading() {
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "p-6 space-y-6",
+        className: "p-3 space-y-3",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "flex justify-between items-center mb-6",
@@ -2176,6 +2198,7 @@ function DashboardPage() {
         dispatch
     ]);
     const handleView = (event)=>{
+        console.log("event", event);
         router.push(`/administration/dashboard/specificEventCard/${event._id}`);
     };
     const handleDelete = (event)=>{
@@ -2212,22 +2235,22 @@ function DashboardPage() {
     if (isLoading) {
         return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$administration$2f$dashboard$2f$loading$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {}, void 0, false, {
             fileName: "[project]/src/app/administration/dashboard/page.js",
-            lineNumber: 66,
+            lineNumber: 67,
             columnNumber: 12
         }, this);
     }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-        className: "p-6 h-full overflow-auto",
+        className: " h-full overflow-auto",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "flex justify-between items-center mb-6",
+                className: "flex p-6 justify-between items-center mb-6",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
                         className: "text-2xl font-bold",
                         children: "Event Dashboard"
                     }, void 0, false, {
                         fileName: "[project]/src/app/administration/dashboard/page.js",
-                        lineNumber: 72,
+                        lineNumber: 73,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$TableFormat$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -2239,13 +2262,13 @@ function DashboardPage() {
                         children: "Create New Event"
                     }, void 0, false, {
                         fileName: "[project]/src/app/administration/dashboard/page.js",
-                        lineNumber: 73,
+                        lineNumber: 74,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/src/app/administration/dashboard/page.js",
-                lineNumber: 71,
+                lineNumber: 72,
                 columnNumber: 7
             }, this),
             events.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2255,12 +2278,12 @@ function DashboardPage() {
                     children: "No events found. Create your first event!"
                 }, void 0, false, {
                     fileName: "[project]/src/app/administration/dashboard/page.js",
-                    lineNumber: 83,
+                    lineNumber: 84,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/administration/dashboard/page.js",
-                lineNumber: 82,
+                lineNumber: 83,
                 columnNumber: 9
             }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$framer$2d$motion$2f$dist$2f$es$2f$render$2f$components$2f$motion$2f$proxy$2e$mjs__$5b$app$2d$client$5d$__$28$ecmascript$29$__["motion"].div, {
                 layout: true,
@@ -2273,17 +2296,17 @@ function DashboardPage() {
                             onDelete: handleDelete
                         }, `event-${event._id}`, false, {
                             fileName: "[project]/src/app/administration/dashboard/page.js",
-                            lineNumber: 92,
+                            lineNumber: 93,
                             columnNumber: 15
                         }, this))
                 }, void 0, false, {
                     fileName: "[project]/src/app/administration/dashboard/page.js",
-                    lineNumber: 90,
+                    lineNumber: 91,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/administration/dashboard/page.js",
-                lineNumber: 86,
+                lineNumber: 87,
                 columnNumber: 9
             }, this),
             modalState.open && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$Dashboard$2f$EventForm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -2292,13 +2315,13 @@ function DashboardPage() {
                 eventData: modalState.data
             }, void 0, false, {
                 fileName: "[project]/src/app/administration/dashboard/page.js",
-                lineNumber: 104,
+                lineNumber: 105,
                 columnNumber: 27
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/src/app/administration/dashboard/page.js",
-        lineNumber: 70,
+        lineNumber: 71,
         columnNumber: 5
     }, this);
 }

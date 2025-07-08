@@ -1281,21 +1281,21 @@ function SpecificEventCard() {
     }
     const hasSocialLinks = event.socialMediaLinks && (event.socialMediaLinks.facebook || event.socialMediaLinks.instagram || event.socialMediaLinks.twitter || event.socialMediaLinks.linkedin || event.socialMediaLinks.youtube);
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-        className: "jsx-6fbfaa56ed209bfd" + " " + "h-screen overflow-hidden bg-gradient-to-br  text-blue-900 font-sans",
+        className: "jsx-806c044420914d33" + " " + "h-screen overflow-hidden bg-gradient-to-br  text-blue-900 font-sans",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "jsx-6fbfaa56ed209bfd" + " " + "container mx-auto px-4 h-full flex flex-col",
+                className: "jsx-806c044420914d33" + " " + "container mx-auto px-4 h-full flex flex-col",
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                    className: "jsx-6fbfaa56ed209bfd" + " " + "flex flex-col lg:flex-row gap-6 h-full overflow-y-auto custom-scrollbar py-1",
+                    className: "jsx-806c044420914d33" + " " + "flex flex-col lg:flex-row gap-6 h-full overflow-y-auto custom-scrollbar py-1",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "jsx-6fbfaa56ed209bfd" + " " + "lg:w-2/3 flex flex-col h-full",
+                            className: "jsx-806c044420914d33" + " " + "lg:w-2/3 flex flex-col h-full",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "jsx-6fbfaa56ed209bfd" + " " + "mb-6 bg-white rounded-xl p-6 shadow-sm",
+                                    className: "jsx-806c044420914d33" + " " + "mb-6 bg-white rounded-xl p-6 shadow-sm",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                            className: "jsx-6fbfaa56ed209bfd" + " " + "text-3xl font-bold mb-2 text-blue-800",
+                                            className: "jsx-806c044420914d33" + " " + "text-3xl font-bold mb-2 text-blue-800",
                                             children: event.title
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1303,10 +1303,10 @@ function SpecificEventCard() {
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center gap-4 text-blue-600",
+                                            className: "jsx-806c044420914d33" + " " + "flex items-center gap-4 text-blue-600",
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center gap-2",
+                                                    className: "jsx-806c044420914d33" + " " + "flex items-center gap-2",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaCalendarAlt"], {
                                                             className: "text-blue-500"
@@ -1316,7 +1316,7 @@ function SpecificEventCard() {
                                                             columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            className: "jsx-6fbfaa56ed209bfd" + " " + "text-sm",
+                                                            className: "jsx-806c044420914d33" + " " + "text-sm",
                                                             children: [
                                                                 (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$TableFormat$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["formatDate"])(new Date(event.dates.start), 'MMM dd, yyyy'),
                                                                 " -",
@@ -1334,7 +1334,7 @@ function SpecificEventCard() {
                                                     columnNumber: 33
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center gap-2",
+                                                    className: "jsx-806c044420914d33" + " " + "flex items-center gap-2",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaMapMarkerAlt"], {
                                                             className: "text-blue-500"
@@ -1344,7 +1344,7 @@ function SpecificEventCard() {
                                                             columnNumber: 37
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                            className: "jsx-6fbfaa56ed209bfd" + " " + "text-sm",
+                                                            className: "jsx-806c044420914d33" + " " + "text-sm",
                                                             children: [
                                                                 event.location?.city,
                                                                 ", ",
@@ -1374,10 +1374,10 @@ function SpecificEventCard() {
                                     columnNumber: 25
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "jsx-6fbfaa56ed209bfd" + " " + "mb-6 flex-row overflow-y-auto custom-scrollbar bg-white rounded-xl p-6 shadow-sm",
+                                    className: "jsx-806c044420914d33" + " " + "mb-6 flex-row overflow-y-auto custom-scrollbar bg-white rounded-xl p-6 shadow-sm",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                            className: "jsx-6fbfaa56ed209bfd" + " " + "text-xl font-semibold mb-4 text-blue-700",
+                                            className: "jsx-806c044420914d33" + " " + "text-xl font-semibold mb-4 text-blue-700",
                                             children: "About the Event"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1385,7 +1385,7 @@ function SpecificEventCard() {
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-800 leading-relaxed",
+                                            className: "jsx-806c044420914d33" + " " + "text-blue-800 leading-relaxed",
                                             children: event.description || 'No description available.'
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1393,10 +1393,10 @@ function SpecificEventCard() {
                                             columnNumber: 29
                                         }, this),
                                         hasSocialLinks && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "jsx-6fbfaa56ed209bfd" + " " + "mt-8",
+                                            className: "jsx-806c044420914d33" + " " + "mt-8",
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                                    className: "jsx-6fbfaa56ed209bfd" + " " + "text-xl font-semibold mb-4 text-blue-700",
+                                                    className: "jsx-806c044420914d33" + " " + "text-xl font-semibold mb-4 text-blue-700",
                                                     children: "Connect With Us"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1404,7 +1404,7 @@ function SpecificEventCard() {
                                                     columnNumber: 37
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    className: "jsx-6fbfaa56ed209bfd" + " " + "space-y-3 w-[400px]",
+                                                    className: "jsx-806c044420914d33" + " " + "space-y-3 w-[400px]",
                                                     children: [
                                                         event.socialMediaLinks?.facebook && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(SocialLinkItem, {
                                                             url: event.socialMediaLinks?.facebook,
@@ -1506,15 +1506,15 @@ function SpecificEventCard() {
                             columnNumber: 21
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "jsx-6fbfaa56ed209bfd" + " " + "lg:w-1/3 h-full",
+                            className: "jsx-806c044420914d33" + " " + "lg:w-1/3 h-full",
                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                className: "jsx-6fbfaa56ed209bfd" + " " + "bg-white rounded-xl p-4 shadow-lg  overflow-y-auto custom-scrollbar",
+                                className: "jsx-806c044420914d33" + " " + "bg-white rounded-xl p-4 shadow-lg  overflow-y-auto custom-scrollbar",
                                 children: [
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "jsx-6fbfaa56ed209bfd" + " " + "mb-6",
+                                        className: "jsx-806c044420914d33" + " " + "mb-6",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-xl font-semibold mb-3 text-blue-700 border-b pb-2 border-blue-100",
+                                                className: "jsx-806c044420914d33" + " " + "text-xl font-semibold mb-3 text-blue-700 border-b pb-2 border-blue-100",
                                                 children: "Event Details"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1522,13 +1522,13 @@ function SpecificEventCard() {
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "jsx-6fbfaa56ed209bfd" + " " + "space-y-3",
+                                                className: "jsx-806c044420914d33" + " " + "space-y-3",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center justify-between bg-blue-50 p-3 rounded-lg",
+                                                        className: "jsx-806c044420914d33" + " " + "flex items-center justify-between bg-blue-50 p-3 rounded-lg",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center gap-2 text-blue-600",
+                                                                className: "jsx-806c044420914d33" + " " + "flex items-center gap-2 text-blue-600",
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaCalendarAlt"], {}, void 0, false, {
                                                                         fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1543,7 +1543,7 @@ function SpecificEventCard() {
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "font-medium",
+                                                                className: "jsx-806c044420914d33" + " " + "font-medium",
                                                                 children: event?.year
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1557,10 +1557,10 @@ function SpecificEventCard() {
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center justify-between bg-blue-50 p-3 rounded-lg",
+                                                        className: "jsx-806c044420914d33" + " " + "flex items-center justify-between bg-blue-50 p-3 rounded-lg",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center gap-2 text-blue-600",
+                                                                className: "jsx-806c044420914d33" + " " + "flex items-center gap-2 text-blue-600",
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaHashtag"], {}, void 0, false, {
                                                                         fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1575,7 +1575,7 @@ function SpecificEventCard() {
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "font-medium",
+                                                                className: "jsx-806c044420914d33" + " " + "font-medium",
                                                                 children: event?.edition
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1589,10 +1589,10 @@ function SpecificEventCard() {
                                                         columnNumber: 37
                                                     }, this),
                                                     event?.websiteURL && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-6fbfaa56ed209bfd" + " " + "bg-blue-50 p-3 rounded-lg",
+                                                        className: "jsx-806c044420914d33" + " " + "bg-blue-50 p-3 rounded-lg",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center gap-2 text-blue-600 mb-1",
+                                                                className: "jsx-806c044420914d33" + " " + "flex items-center gap-2 text-blue-600 mb-1",
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaLink"], {}, void 0, false, {
                                                                         fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1600,7 +1600,7 @@ function SpecificEventCard() {
                                                                         columnNumber: 49
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                        className: "jsx-6fbfaa56ed209bfd",
+                                                                        className: "jsx-806c044420914d33",
                                                                         children: "Website"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1617,7 +1617,7 @@ function SpecificEventCard() {
                                                                 href: event?.websiteURL,
                                                                 target: "_blank",
                                                                 rel: "noopener noreferrer",
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-700 hover:text-blue-500 text-sm break-all",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-700 hover:text-blue-500 text-sm break-all",
                                                                 children: event?.websiteURL
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1643,10 +1643,10 @@ function SpecificEventCard() {
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                        className: "jsx-6fbfaa56ed209bfd" + " " + "mb-6",
+                                        className: "jsx-806c044420914d33" + " " + "mb-6",
                                         children: [
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-xl font-semibold mb-3 text-blue-700 border-b pb-2 border-blue-100",
+                                                className: "jsx-806c044420914d33" + " " + "text-xl font-semibold mb-3 text-blue-700 border-b pb-2 border-blue-100",
                                                 children: "Location"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1654,13 +1654,13 @@ function SpecificEventCard() {
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                className: "jsx-6fbfaa56ed209bfd" + " " + "grid grid-cols-2 gap-3 mb-3",
+                                                className: "jsx-806c044420914d33" + " " + "grid grid-cols-2 gap-3 mb-3",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-6fbfaa56ed209bfd" + " " + "bg-blue-50 p-3 rounded-lg col-span-2",
+                                                        className: "jsx-806c044420914d33" + " " + "bg-blue-50 p-3 rounded-lg col-span-2",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center gap-2 text-blue-600 mb-1",
+                                                                className: "jsx-806c044420914d33" + " " + "flex items-center gap-2 text-blue-600 mb-1",
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaMapMarkerAlt"], {}, void 0, false, {
                                                                         fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1668,7 +1668,7 @@ function SpecificEventCard() {
                                                                         columnNumber: 45
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                                        className: "jsx-6fbfaa56ed209bfd",
+                                                                        className: "jsx-806c044420914d33",
                                                                         children: "Address"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1682,7 +1682,7 @@ function SpecificEventCard() {
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-800 text-sm",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-800 text-sm",
                                                                 children: event?.location?.address
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1696,10 +1696,10 @@ function SpecificEventCard() {
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-6fbfaa56ed209bfd" + " " + "bg-blue-50 p-3 rounded-lg",
+                                                        className: "jsx-806c044420914d33" + " " + "bg-blue-50 p-3 rounded-lg",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-600 text-xs mb-1",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-600 text-xs mb-1",
                                                                 children: "City"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1707,7 +1707,7 @@ function SpecificEventCard() {
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-800 text-sm",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-800 text-sm",
                                                                 children: event?.location?.city
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1721,10 +1721,10 @@ function SpecificEventCard() {
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-6fbfaa56ed209bfd" + " " + "bg-blue-50 p-3 rounded-lg",
+                                                        className: "jsx-806c044420914d33" + " " + "bg-blue-50 p-3 rounded-lg",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-600 text-xs mb-1",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-600 text-xs mb-1",
                                                                 children: "State"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1732,7 +1732,7 @@ function SpecificEventCard() {
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-800 text-sm",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-800 text-sm",
                                                                 children: event?.location?.state
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1746,10 +1746,10 @@ function SpecificEventCard() {
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-6fbfaa56ed209bfd" + " " + "bg-blue-50 p-3 rounded-lg",
+                                                        className: "jsx-806c044420914d33" + " " + "bg-blue-50 p-3 rounded-lg",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-600 text-xs mb-1",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-600 text-xs mb-1",
                                                                 children: "Country"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1757,7 +1757,7 @@ function SpecificEventCard() {
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-800 text-sm",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-800 text-sm",
                                                                 children: event?.location?.country
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1771,10 +1771,10 @@ function SpecificEventCard() {
                                                         columnNumber: 37
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                        className: "jsx-6fbfaa56ed209bfd" + " " + "bg-blue-50 p-3 rounded-lg",
+                                                        className: "jsx-806c044420914d33" + " " + "bg-blue-50 p-3 rounded-lg",
                                                         children: [
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-600 text-xs mb-1",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-600 text-xs mb-1",
                                                                 children: "Pincode"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1782,7 +1782,7 @@ function SpecificEventCard() {
                                                                 columnNumber: 41
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                                className: "jsx-6fbfaa56ed209bfd" + " " + "text-blue-800 text-sm",
+                                                                className: "jsx-806c044420914d33" + " " + "text-blue-800 text-sm",
                                                                 children: event?.location?.pincode
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1805,7 +1805,7 @@ function SpecificEventCard() {
                                                 href: event?.location?.googleMapsLink,
                                                 target: "_blank",
                                                 rel: "noopener noreferrer",
-                                                className: "jsx-6fbfaa56ed209bfd" + " " + "flex items-center justify-center gap-2 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors w-full",
+                                                className: "jsx-806c044420914d33" + " " + "flex items-center justify-center gap-2 bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors w-full",
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$icons$2f$fa$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["FaMapMarkedAlt"], {}, void 0, false, {
                                                         fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1813,7 +1813,7 @@ function SpecificEventCard() {
                                                         columnNumber: 41
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                        className: "jsx-6fbfaa56ed209bfd",
+                                                        className: "jsx-806c044420914d33",
                                                         children: "View on Google Maps"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/administration/dashboard/specificEventCard/[id]/page.js",
@@ -1855,7 +1855,7 @@ function SpecificEventCard() {
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$styled$2d$jsx$2f$style$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
-                id: "6fbfaa56ed209bfd",
+                id: "806c044420914d33",
                 children: ".custom-scrollbar::-webkit-scrollbar{width:6px;height:6px}.custom-scrollbar::-webkit-scrollbar-track{background:#3b82f61a;border-radius:10px}.custom-scrollbar::-webkit-scrollbar-thumb{background:#3b82f64d;border-radius:10px}.custom-scrollbar::-webkit-scrollbar-thumb:hover{background:#3b82f680}"
             }, void 0, false, void 0, this)
         ]
