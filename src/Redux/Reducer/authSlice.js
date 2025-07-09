@@ -11,7 +11,6 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         login: (state, action) => {
-
             const { token, role } = action.payload;
             state.token = token;
             state.role = role; // Store role in the Redux store

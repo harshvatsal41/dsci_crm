@@ -2,6 +2,7 @@
 
 import { store } from "@/Redux/Store/store";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 
 /**
  * A universal fetch wrapper with token support, error handling, and optional toast suppression.
@@ -23,10 +24,10 @@ export const FetchWithAuth = async (
   if (typeof window === "undefined") {
     throw new Error("FetchWithAuth can only be used in the browser");
   }
-
-  const token = localStorage.getItem("rsvAuthToken") || Cookies.get("dsciAuthToken") || "";
-  const loginPath = "/administration/login"; // Simplified to only use admin login path
-
+  
+  const token = localStorage.getItem("dsciAuthToken") || Cookies.get("dsciAuthToken") || "";
+  console.log("token",token)
+  const loginPath = "/administration/login"; 
   const headers = {
     "Content-Type": "application/json",
     ...(token && { Authorization: `Bearer ${token}` }),
@@ -46,7 +47,7 @@ export const FetchWithAuth = async (
     // Handle token expiration
     if (response.status === 401) {
       store.dispatch({ type: "auth/logout" });
-      localStorage.removeItem("rsvAuthToken");
+      localStorage.removeItem("dsciAuthToken");
       if (!suppressToast) toast.error("Your session has expired. Please login again.");
       window.location.href = `${loginPath}?redirect=${encodeURIComponent(window.location.pathname)}`;
       return;

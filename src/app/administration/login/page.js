@@ -7,6 +7,8 @@ import { setLoading } from "@/Redux/Reducer/menuSlice";
 import { InputField } from "@/Component/UI/ReusableCom";
 import { Eye, EyeOff } from "lucide-react";
 import { LoginApi } from "@/utilities/ApiManager";
+import Cookies from 'js-cookie';
+
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
@@ -22,10 +24,10 @@ export default function Login() {
     dispatch(setLoading(true));
 
     const res = await LoginApi(formData);
-    console.log("res",res); 
   
     if (res.statusCode===200) {
-      document.cookie = `rsvAuthToken=${res.token}; path=/;`;
+      document.cookie = `dsciAuthToken=${res.token}; path=/;`;
+      document.cookie = `dsciAuthRole=${res.role}; path=/;`;
       dispatch(login({ token: res.token, role: res.role, user: res.user }));
       setMessage("Logged in successfully");
       router.push("/administration/dashboard");
@@ -33,6 +35,7 @@ export default function Login() {
       setMessage(res.error);
     }
     dispatch(setLoading(false));
+  
   };
 
   return (

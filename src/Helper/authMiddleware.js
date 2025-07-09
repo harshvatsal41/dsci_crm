@@ -7,7 +7,7 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET;
 
 export const validateAuthToken = async (req) => {
     try {
-        const token = req.cookies.get("rsvAuthToken")?.value;
+        const token = req.cookies.get("dsciAuthToken")?.value;
         if (!token) {
             throw new AppError("Authentication token is required", STATUS_CODES.UNAUTHORIZED);
         }                

@@ -402,15 +402,18 @@ __turbopack_context__.s({
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Redux$2f$Store$2f$store$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/Redux/Store/store.js [app-ssr] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/react-hot-toast/dist/index.mjs [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$js$2d$cookie$2f$dist$2f$js$2e$cookie$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/js-cookie/dist/js.cookie.mjs [app-ssr] (ecmascript)");
 'use client';
+;
 ;
 ;
 const FetchWithAuth = async (url, method = "GET", body = null, extraHeaders = {}, suppressToast = false)=>{
     if ("TURBOPACK compile-time truthy", 1) {
         throw new Error("FetchWithAuth can only be used in the browser");
     }
-    const token = localStorage.getItem("rsvAuthToken") || Cookies.get("dsciAuthToken") || "";
-    const loginPath = "/administration/login"; // Simplified to only use admin login path
+    const token = localStorage.getItem("dsciAuthToken") || __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$js$2d$cookie$2f$dist$2f$js$2e$cookie$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].get("dsciAuthToken") || "";
+    console.log("token", token);
+    const loginPath = "/administration/login";
     const headers = {
         "Content-Type": "application/json",
         ...token && {
@@ -433,7 +436,7 @@ const FetchWithAuth = async (url, method = "GET", body = null, extraHeaders = {}
             __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Redux$2f$Store$2f$store$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["store"].dispatch({
                 type: "auth/logout"
             });
-            localStorage.removeItem("rsvAuthToken");
+            localStorage.removeItem("dsciAuthToken");
             if (!suppressToast) __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$react$2d$hot$2d$toast$2f$dist$2f$index$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"].error("Your session has expired. Please login again.");
             window.location.href = `${loginPath}?redirect=${encodeURIComponent(window.location.pathname)}`;
             return;
@@ -520,7 +523,9 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Component$2f$UI$2f$Re
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/eye.js [app-ssr] (ecmascript) <export default as Eye>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2d$off$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__EyeOff$3e$__ = __turbopack_context__.i("[project]/node_modules/lucide-react/dist/esm/icons/eye-off.js [app-ssr] (ecmascript) <export default as EyeOff>");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utilities$2f$ApiManager$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/utilities/ApiManager.js [app-ssr] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$js$2d$cookie$2f$dist$2f$js$2e$cookie$2e$mjs__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/js-cookie/dist/js.cookie.mjs [app-ssr] (ecmascript)");
 "use client";
+;
 ;
 ;
 ;
@@ -545,9 +550,9 @@ function Login() {
         setMessage(null);
         dispatch((0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Redux$2f$Reducer$2f$menuSlice$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["setLoading"])(true));
         const res = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$utilities$2f$ApiManager$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["LoginApi"])(formData);
-        console.log("res", res);
         if (res.statusCode === 200) {
-            document.cookie = `rsvAuthToken=${res.token}; path=/;`;
+            document.cookie = `dsciAuthToken=${res.token}; path=/;`;
+            document.cookie = `dsciAuthRole=${res.role}; path=/;`;
             dispatch((0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Redux$2f$Reducer$2f$authSlice$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["login"])({
                 token: res.token,
                 role: res.role,
@@ -570,7 +575,7 @@ function Login() {
                     children: "Sign In"
                 }, void 0, false, {
                     fileName: "[project]/src/app/administration/login/page.js",
-                    lineNumber: 41,
+                    lineNumber: 44,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -578,7 +583,7 @@ function Login() {
                     children: "to continue with DSCI CRM"
                 }, void 0, false, {
                     fileName: "[project]/src/app/administration/login/page.js",
-                    lineNumber: 42,
+                    lineNumber: 45,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -600,7 +605,7 @@ function Login() {
                             required: true
                         }, void 0, false, {
                             fileName: "[project]/src/app/administration/login/page.js",
-                            lineNumber: 45,
+                            lineNumber: 48,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -621,7 +626,7 @@ function Login() {
                                     required: true
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/administration/login/page.js",
-                                    lineNumber: 58,
+                                    lineNumber: 61,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -632,24 +637,24 @@ function Login() {
                                         size: 18
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/administration/login/page.js",
-                                        lineNumber: 74,
+                                        lineNumber: 77,
                                         columnNumber: 31
                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$eye$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Eye$3e$__["Eye"], {
                                         size: 18
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/administration/login/page.js",
-                                        lineNumber: 74,
+                                        lineNumber: 77,
                                         columnNumber: 54
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/administration/login/page.js",
-                                    lineNumber: 69,
+                                    lineNumber: 72,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/administration/login/page.js",
-                            lineNumber: 57,
+                            lineNumber: 60,
                             columnNumber: 11
                         }, this),
                         message && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -657,7 +662,7 @@ function Login() {
                             children: message
                         }, void 0, false, {
                             fileName: "[project]/src/app/administration/login/page.js",
-                            lineNumber: 79,
+                            lineNumber: 82,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -668,24 +673,24 @@ function Login() {
                             children: loading ? "Logging in..." : "Log In"
                         }, void 0, false, {
                             fileName: "[project]/src/app/administration/login/page.js",
-                            lineNumber: 84,
+                            lineNumber: 87,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/administration/login/page.js",
-                    lineNumber: 44,
+                    lineNumber: 47,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/administration/login/page.js",
-            lineNumber: 40,
+            lineNumber: 43,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/administration/login/page.js",
-        lineNumber: 39,
+        lineNumber: 42,
         columnNumber: 5
     }, this);
 }
