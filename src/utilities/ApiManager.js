@@ -3,11 +3,7 @@ import { FetchWithAuth } from "./FetchWithAuth";
 
 
 const LoginApi = async(formData) => {
-    const res = await fetch("/api/admin/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
+    const res = await FetchWithAuth("/api/admin/auth/login", "POST", formData);
     return res;
 }
 

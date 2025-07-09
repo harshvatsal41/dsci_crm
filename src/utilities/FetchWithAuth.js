@@ -24,7 +24,7 @@ export const FetchWithAuth = async (
     throw new Error("FetchWithAuth can only be used in the browser");
   }
 
-  const token = localStorage.getItem("dsciAuthToken") || Cookies.get("dsciAuthToken") || "";
+  const token = localStorage.getItem("rsvAuthToken") || Cookies.get("dsciAuthToken") || "";
   const loginPath = "/administration/login"; // Simplified to only use admin login path
 
   const headers = {
