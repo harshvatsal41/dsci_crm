@@ -20,11 +20,7 @@ const LogoutPage = () => {
 
         // Redirect after short delay
         const timer = setTimeout(() => {
-            // if (role === "vendor") {
-            //     router.push("/vendor/login");
-            // } else {
-            //     router.push("/login");
-            // }
+         //     router.push("/login")
             router.push("/")
         }, 1000); // 1 second for smooth transition
 

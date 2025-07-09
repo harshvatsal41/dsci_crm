@@ -4,8 +4,27 @@ import { isTokenExpired } from '@/Helper/jwtValidator';
 export function middleware(request) {
     console.log("Middleware triggered");
 
-    let token = request.cookies.get('dsciAuthToken');
-    console.log(token);
+    const token = request.headers.get("Authorization")?.split(" ")[1];
+
+    const path = request.nextUrl.pathname;
+    const isApiRoute = path.startsWith("/api");
+
+    if (!token || isTokenExpired(token)) {
+        if (isApiRoute) {
+            return NextResponse.json(
+                {
+                    message: "Token not found or expired",
+                    statusCode: 401,
+                    status: "failed",
+                },
+                { status: 401 }
+            );
+        }
+        else {
+            return NextResponse.redirect(new URL('/logout', request.url));
+        }
+    }
+
     const protectedRoutes = ['/administration/profile', '/administration/dashboard'];
 
 
@@ -19,7 +38,9 @@ export function middleware(request) {
     return NextResponse.next();
 }
 
+
 export const config = {
     matcher: ['/administration/dashboard:path*'],
 };
+
 

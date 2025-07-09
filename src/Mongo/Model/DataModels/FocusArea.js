@@ -1,7 +1,13 @@
 import mongoose from "mongoose";
 
 const focusAreaSchema = new mongoose.Schema({
-    name: String,
+    name: {
+        type:String,
+        require:true,
+        trim:true,
+        unique:true,
+        index:true,
+    },
     description: String,
     imageUrlPath: String,
     yeaslyEventId: { type: mongoose.Schema.Types.ObjectId, ref: "EventOutreach" },
