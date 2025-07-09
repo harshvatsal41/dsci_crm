@@ -3,7 +3,7 @@ import { Skeleton } from '@/Component/UI/ReusableCom';
 
 export default function DashboardLoading() {
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 space-y-3">
       <div className="flex justify-between items-center mb-6">
         <Skeleton className="h-10 w-48" />
         <Skeleton className="h-10 w-32" />

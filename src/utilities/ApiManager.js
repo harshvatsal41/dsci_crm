@@ -17,21 +17,48 @@ const RegisterApi = async(formData) => {
     return res;
 }
 
-const EventApi = async(data, method) => {
-    if(method==="Get"){
-        const url='/api/admin/data/eventoutreach';
-        const res = await fetch(url);
+const EventApi = async(data=null, method="GET", params={}) => {
+
+    if(params.id && method === "GET"){
+        const url='/api/admin/data/eventoutreach/'+params.id;
+        const res = await FetchWithAuth(url);
         return res;
     }
-    if(method==="Post"){
+    else if(method==="GET"){
         const url='/api/admin/data/eventoutreach';
-        const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-          });
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST"){
+        const url='/api/admin/data/eventoutreach';
+        const res = await FetchWithAuth(url, "POST", data);
         return res;
     }
 }
 
-export {LoginApi, RegisterApi, EventApi}
+const BroadFocusAreaApi = async(data, method, params={}) => {
+    if(params.id && method === "Get"){
+        const url='/api/admin/data/focusarea?eventId='+params.id;
+        const res = await fetch(url);
+        return res;
+    }
+    else if(method==="Get"){
+        const url='/api/admin/data/focusarea?eventId='+params.id;
+        const res = await fetch(url);
+        return res;
+    }
+    else if(method==="Post"){
+        const url='/api/admin/data/focusarea';
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "form-data" },
+            body: data
+          });
+        return res;
+    }
+    
+}
+
+
+
+export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi}

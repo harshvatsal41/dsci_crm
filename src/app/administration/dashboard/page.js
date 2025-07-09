@@ -22,10 +22,10 @@ export default function DashboardPage() {
   const fetchEvents = useCallback(async () => {
     dispatch(setLoading(true));
     try {
-      const response = await EventApi(null, "Get");
+      const response = await EventApi(null, "GET");
       if (!response.ok) toast.error('Failed to fetch events');
-      const data = await response.json();
-      setEvents(data.data);
+      const data = await response.data
+      setEvents(data);
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -34,6 +34,7 @@ export default function DashboardPage() {
   }, [dispatch]);
 
   const handleView = (event) => {
+    console.log("event",event)
     router.push(`/administration/dashboard/specificEventCard/${event._id}`);
   };
 
@@ -67,8 +68,8 @@ export default function DashboardPage() {
   }
 
   return (
-    <section className="p-6 h-full overflow-auto">
-      <div className="flex justify-between items-center mb-6">
+    <section className=" h-full overflow-auto">
+      <div className="flex p-6 justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Event Dashboard</h1>
         <Button
           onClick={() => setModalState({ open: Boolean(true), data: null })}
