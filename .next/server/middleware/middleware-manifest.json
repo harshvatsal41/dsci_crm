@@ -13,6 +13,10 @@
         {
           "regexp": "/:nextData(_next/data/[^/]{1,})?/administration/dashboard:path*{(\\\\.json)}?",
           "originalSource": "/administration/dashboard:path*"
+        },
+        {
+          "regexp": "/:nextData(_next/data/[^/]{1,})?/api/admin/data/:path*{(\\\\.json)}?",
+          "originalSource": "/api/admin/data/:path*"
         }
       ],
       "wasm": [],

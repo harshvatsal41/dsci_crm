@@ -44,7 +44,9 @@ export async function POST(req) {
                 id: user._id, 
                 username: user.username, 
                 email: user.email 
-            }
+            },
+            status: "success",
+            statusCode: 200,
         }), { 
             status: 200,
             headers: {

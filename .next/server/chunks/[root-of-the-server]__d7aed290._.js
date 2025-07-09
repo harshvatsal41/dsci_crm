@@ -80,7 +80,13 @@ __turbopack_context__.s({
 var __TURBOPACK__imported__module__$5b$externals$5d2f$mongoose__$5b$external$5d$__$28$mongoose$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/mongoose [external] (mongoose, cjs)");
 ;
 const focusAreaSchema = new __TURBOPACK__imported__module__$5b$externals$5d2f$mongoose__$5b$external$5d$__$28$mongoose$2c$__cjs$29$__["default"].Schema({
-    name: String,
+    name: {
+        type: String,
+        require: true,
+        trim: true,
+        unique: true,
+        index: true
+    },
     description: String,
     imageUrlPath: String,
     yeaslyEventId: {
