@@ -99,9 +99,10 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Helper$2f$jwtValidato
 ;
 function middleware(request) {
     console.log("Middleware triggered");
-    const token = request.headers.get("Authorization")?.split(" ")[1];
+    const token = request.cookies.get("dsciAuthToken")?.value || request.headers.get("Authorization")?.split(" ")[1];
     const path = request.nextUrl.pathname;
-    const isApiRoute = path.startsWith("/api");
+    const isApiRoute = path.startsWith("/api/admin/data/");
+    console.log("Token:", token);
     if (!token || (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Helper$2f$jwtValidator$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["isTokenExpired"])(token)) {
         if (isApiRoute) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].json({
@@ -120,7 +121,7 @@ function middleware(request) {
         '/administration/dashboard'
     ];
     if (protectedRoutes.some((route)=>request.nextUrl.pathname.startsWith(route))) {
-        if (!token || (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Helper$2f$jwtValidator$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["isTokenExpired"])(token.value)) {
+        if (!token || (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$Helper$2f$jwtValidator$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["isTokenExpired"])(token)) {
             console.log("redirecting back");
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$esm$2f$server$2f$web$2f$spec$2d$extension$2f$response$2e$js__$5b$middleware$2d$edge$5d$__$28$ecmascript$29$__["NextResponse"].redirect(new URL('/logout', request.url));
         }

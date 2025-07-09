@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///Users/harshvatsal/Desktop/DSCI/CMS/DSCI_Events/dsci_crm/src/app/administration/dashboard/specificEventCard/%5Bid%5D/page.js"],"sourcesContent":["'use client';\n\nexport default function SpecificEventCard() {\n    return (\n        <div>\n            <h1>Specific Event Card</h1>\n        </div>\n    );\n}\n"],"names":[],"mappings":";;;;AAAA;;AAEe,SAAS;IACpB,qBACI,8OAAC;kBACG,cAAA,8OAAC;sBAAG;;;;;;;;;;;AAGhB","debugId":null}}]
+}

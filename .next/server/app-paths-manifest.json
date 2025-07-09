@@ -1,3 +1,7 @@
 {
-  "/api/admin/auth/login/route": "app/api/admin/auth/login/route.js"
+  "/administration/dashboard/page": "app/administration/dashboard/page.js",
+  "/administration/dashboard/specificEventCard/[id]/page": "app/administration/dashboard/specificEventCard/[id]/page.js",
+  "/administration/login/page": "app/administration/login/page.js",
+  "/api/admin/auth/login/route": "app/api/admin/auth/login/route.js",
+  "/api/admin/data/eventoutreach/route": "app/api/admin/data/eventoutreach/route.js"
 }
