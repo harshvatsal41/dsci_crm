@@ -22,10 +22,10 @@ export default function DashboardPage() {
   const fetchEvents = useCallback(async () => {
     dispatch(setLoading(true));
     try {
-      const response = await EventApi(null, "Get");
+      const response = await EventApi(null, "GET");
       if (!response.ok) toast.error('Failed to fetch events');
-      const data = await response.json();
-      setEvents(data.data);
+      const data = await response.data
+      setEvents(data);
     } catch (err) {
       toast.error(err.message);
     } finally {

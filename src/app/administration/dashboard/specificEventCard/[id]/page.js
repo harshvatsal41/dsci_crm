@@ -31,8 +31,8 @@ export default function SpecificEventCard() {
         try {
             dispatch(setLoading(true));
             const [eventRes, broadFocusAreaRes] = await Promise.all([
-                EventApi(null, "Get", { id }),
-                BroadFocusAreaApi(null, "Get", { id })
+                EventApi(null, "GET", { id }),
+                BroadFocusAreaApi(null, "GET", { id })
             ]);
             if (eventRes.statusCode===200){
                 alert("hi")

@@ -17,19 +17,19 @@ const RegisterApi = async(formData) => {
     return res;
 }
 
-const EventApi = async(data, method, params={}) => {
+const EventApi = async(data=null, method="GET", params={}) => {
 
-    if(params.id && method === "Get"){
+    if(params.id && method === "GET"){
         const url='/api/admin/data/eventoutreach/'+params.id;
-        const res = await fetch(url);
+        const res = await FetchWithAuth(url);
         return res;
     }
-    else if(method==="Get"){
+    else if(method==="GET"){
         const url='/api/admin/data/eventoutreach';
         const res = await FetchWithAuth(url);
         return res;
     }
-    else if(method==="Post"){
+    else if(method==="POST"){
         const url='/api/admin/data/eventoutreach';
         const res = await FetchWithAuth(url, "POST", data);
         return res;
