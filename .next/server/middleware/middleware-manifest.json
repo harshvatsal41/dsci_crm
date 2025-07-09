@@ -13,6 +13,10 @@
         {
           "regexp": "/:nextData(_next/data/[^/]{1,})?/administration/dashboard:path*{(\\\\.json)}?",
           "originalSource": "/administration/dashboard:path*"
+        },
+        {
+          "regexp": "/:nextData(_next/data/[^/]{1,})?/api/admin/data/:path*{(\\\\.json)}?",
+          "originalSource": "/api/admin/data/:path*"
         }
       ],
       "wasm": [],
@@ -20,9 +24,9 @@
       "env": {
         "__NEXT_BUILD_ID": "development",
         "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "c8cDytuSjGENVZAs5F9CKDH90HYQAM6wXvg1C3aeRWk=",
-        "__NEXT_PREVIEW_MODE_ID": "8ae7d7a009c2b0a321fbf404907e41c6",
-        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "c3a1fea433d0598194ce1346cc9cd8e49e3628eefd2114794babf23acd137635",
-        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "fbeed155c0339b3c6e40f6fc85c41efd0d3eff15dad986478d33a71e8816c204"
+        "__NEXT_PREVIEW_MODE_ID": "95ba67dba7cb540b28109f3902312cc3",
+        "__NEXT_PREVIEW_MODE_ENCRYPTION_KEY": "6cd2a04090edf0b8ee1dcee5444a010764547cf9d65ac2664b0dcf5d0fdff771",
+        "__NEXT_PREVIEW_MODE_SIGNING_KEY": "a9f23d64cb272143659767d4eb41c4dfd62b61e1505b30e47e89f058e855c61b"
       }
     }
   },

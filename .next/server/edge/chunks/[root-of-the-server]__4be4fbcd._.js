@@ -129,7 +129,8 @@ function middleware(request) {
 }
 const config = {
     matcher: [
-        '/administration/dashboard:path*'
+        '/administration/dashboard:path*',
+        '/api/admin/data/:path*'
     ]
 };
 }}),

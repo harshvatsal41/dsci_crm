@@ -40,7 +40,5 @@ export function middleware(request) {
 
 
 export const config = {
-    matcher: ['/administration/dashboard:path*'],
+    matcher: ['/administration/dashboard:path*','/api/admin/data/:path*'],
 };
-
-

@@ -36,7 +36,7 @@ export async function POST(req) {
             maxAge: 60 * 60 , // 1 hour
             path: '/',
         });
-        return new Response(JSON.stringify({
+        return new Response({
             message: "Login successful!",
             token,
             role: "ADMIN",
@@ -44,8 +44,10 @@ export async function POST(req) {
                 id: user._id, 
                 username: user.username, 
                 email: user.email 
-            }
-        }), { 
+            },
+            status: "success",
+            statusCode: 200,
+        }, { 
             status: 200,
             headers: {
                 'Set-Cookie': cookie
