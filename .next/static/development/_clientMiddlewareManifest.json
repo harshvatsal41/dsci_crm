@@ -1,6 +1,0 @@
-[
-  {
-    "regexp": "^(?:\\/(_next\\/data\\/[^/]{1,}))?\\/administration\\/dashboard([^\\/#\\?]+?)*(\\\\.json)?[\\/#\\?]?$",
-    "originalSource": "/administration/dashboard:path*"
-  }
-]

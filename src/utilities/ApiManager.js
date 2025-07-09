@@ -3,11 +3,7 @@ import { FetchWithAuth } from "./FetchWithAuth";
 
 
 const LoginApi = async(formData) => {
-    const res = await fetch("/api/admin/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
+    const res = await FetchWithAuth("/api/admin/auth/login", "POST", formData);
     return res;
 }
 
@@ -30,16 +26,12 @@ const EventApi = async(data, method, params={}) => {
     }
     else if(method==="Get"){
         const url='/api/admin/data/eventoutreach';
-        const res = await fetch(url);
+        const res = await FetchWithAuth(url);
         return res;
     }
     else if(method==="Post"){
         const url='/api/admin/data/eventoutreach';
-        const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-          });
+        const res = await FetchWithAuth(url, "POST", data);
         return res;
     }
 }

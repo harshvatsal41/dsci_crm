@@ -13,18 +13,14 @@ const LogoutPage = () => {
     useEffect(() => {
         // Remove cookie
         document.cookie =
-            "rsvAuthToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            "dsciAuthToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
         // Dispatch Redux logout
         dispatch(logout());
 
         // Redirect after short delay
         const timer = setTimeout(() => {
-            // if (role === "vendor") {
-            //     router.push("/vendor/login");
-            // } else {
-            //     router.push("/login");
-            // }
+         //     router.push("/login")
             router.push("/")
         }, 1000); // 1 second for smooth transition
 

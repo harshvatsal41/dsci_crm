@@ -6,6 +6,8 @@ import { login } from "@/Redux/Reducer/authSlice";
 import { setLoading } from "@/Redux/Reducer/menuSlice";
 import { InputField } from "@/Component/UI/ReusableCom";
 import { Eye, EyeOff } from "lucide-react";
+import { LoginApi } from "@/utilities/ApiManager";
+import Cookies from 'js-cookie';
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -15,27 +17,25 @@ export default function Login() {
   const loading = useSelector((state) => state.menu?.loading ?? false);
   const router = useRouter();
 
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage(null);
     dispatch(setLoading(true));
 
-    const res = await fetch("/api/admin/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      document.cookie = `rsvAuthToken=${data.token}; path=/;`;
-      dispatch(login({ token: data.token, role: data.role, user: data.user }));
+    const res = await LoginApi(formData);
+  
+    if (res.statusCode===200) {
+      document.cookie = `dsciAuthToken=${res.token}; path=/;`;
+      document.cookie = `dsciAuthRole=${res.role}; path=/;`;
+      dispatch(login({ token: res.token, role: res.role, user: res.user }));
       setMessage("Logged in successfully");
       router.push("/administration/dashboard");
     } else {
-      setMessage(data.error);
+      setMessage(res.error);
     }
     dispatch(setLoading(false));
+  
   };
 
   return (
