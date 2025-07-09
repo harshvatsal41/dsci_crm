@@ -13,7 +13,7 @@ const LogoutPage = () => {
     useEffect(() => {
         // Remove cookie
         document.cookie =
-            "rsvAuthToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            "dsciAuthToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
         // Dispatch Redux logout
         dispatch(logout());
