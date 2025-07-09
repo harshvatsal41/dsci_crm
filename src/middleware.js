@@ -4,12 +4,13 @@ import { isTokenExpired } from '@/Helper/jwtValidator';
 export function middleware(request) {
     console.log("Middleware triggered");
 
-    const token = request.headers.get("Authorization")?.split(" ")[1];
-
+    const token = request.cookies.get("dsciAuthToken")?.value;
     const path = request.nextUrl.pathname;
-    const isApiRoute = path.startsWith("/api");
+    const isApiRoute = path.startsWith("/api/admin/data/");
 
-    if (!token || isTokenExpired(token)) {
+    console.log("Token:", token);
+
+    if (!token || isTokenExpired(token.value)) {
         if (isApiRoute) {
             return NextResponse.json(
                 {
@@ -29,7 +30,7 @@ export function middleware(request) {
 
 
     if (protectedRoutes.some(route => request.nextUrl.pathname.startsWith(route))) {
-        if (!token || isTokenExpired(token.value)) {
+        if (!token || isTokenExpired(token)) {
             console.log("redirecting back")
             return NextResponse.redirect(new URL('/logout', request.url));
         }
