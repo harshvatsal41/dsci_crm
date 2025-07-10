@@ -9,11 +9,7 @@ const LoginApi = async(formData) => {
 
 const RegisterApi = async(formData) => {
     const url='/api/admin/auth/register';
-    const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
-      });
+    const res = await FetchWithAuth(url, "POST", formData);
     return res;
 }
 
@@ -37,23 +33,19 @@ const EventApi = async(data=null, method="GET", params={}) => {
 }
 
 const BroadFocusAreaApi = async(data, method, params={}) => {
-    if(params.id && method === "Get"){
+    if(params.id && method === "GET"){
         const url='/api/admin/data/focusarea?eventId='+params.id;
-        const res = await fetch(url);
+        const res = await FetchWithAuth(url);
         return res;
     }
-    else if(method==="Get"){
+    else if(method==="GET"){
         const url='/api/admin/data/focusarea?eventId='+params.id;
-        const res = await fetch(url);
+        const res = await FetchWithAuth(url);
         return res;
     }
-    else if(method==="Post"){
+    else if(method==="POST"){
         const url='/api/admin/data/focusarea';
-        const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "form-data" },
-            body: data
-          });
+        const res = await FetchWithAuth(url, "POST", data);
         return res;
     }
     
