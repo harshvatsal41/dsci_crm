@@ -32,13 +32,13 @@ const Navbar = () => {
                         {role === "ADMIN" && (
                             <div className="flex space-x-6">
                                 <Link 
-                                    href="/dashboard" 
+                                    href="/administration/dashboard" 
                                     className="text-gray-600 hover:text-gray-900 transition-colors"
                                 >
                                     Dashboard
                                 </Link>
                                 <Link 
-                                    href="/profile" 
+                                    href="/administration/profile" 
                                     className="text-gray-600 hover:text-gray-900 transition-colors"
                                 >
                                     Profile

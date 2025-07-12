@@ -5,7 +5,6 @@ const focusAreaSchema = new mongoose.Schema({
         type:String,
         require:true,
         trim:true,
-        unique:true,
         index:true,
     },
     description: String,
