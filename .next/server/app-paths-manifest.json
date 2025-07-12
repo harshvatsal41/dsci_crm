@@ -1,12 +1,3 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
-  "/administration/dashboard/page": "app/administration/dashboard/page.js",
-  "/administration/dashboard/specificEventCard/[id]/page": "app/administration/dashboard/specificEventCard/[id]/page.js",
-  "/administration/login/page": "app/administration/login/page.js",
-  "/api/admin/auth/login/route": "app/api/admin/auth/login/route.js",
-  "/api/admin/data/eventoutreach/[id]/route": "app/api/admin/data/eventoutreach/[id]/route.js",
-  "/api/admin/data/eventoutreach/route": "app/api/admin/data/eventoutreach/route.js",
-  "/api/admin/data/focusarea/route": "app/api/admin/data/focusarea/route.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/page": "app/page.js"
+  "/api/admin/data/focusarea/route": "app/api/admin/data/focusarea/route.js"
 }

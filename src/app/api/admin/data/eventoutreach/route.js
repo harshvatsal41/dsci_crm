@@ -4,13 +4,16 @@ import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import util from '@/Helper/apiUtils';
 
-export async function GET() {
+export async function GET(request) {
     try {
-    await util.connectDB();
-        
+        await util.connectDB();
+
+        const token = request.cookies.get("dsciAuthToken")?.value || request.headers.get("Authorization")?.split(" ")[1];
+        console.log("Balle Balle", token)
+
         const events = await EventOutreach.find({}).sort({ createdAt: -1 });
         // console.log('Fetched events:', events);
-        
+
         return NextResponse.json(
             apiResponse({
                 message: "Events fetched successfully",
@@ -30,7 +33,10 @@ export async function GET() {
 export async function POST(request) {
     try {
         await util.connectDB();
-        
+
+        const token = request.cookies.get("dsciAuthToken")?.value || request.headers.get("Authorization")?.split(" ")[1];
+        console.log("Token:", token)
+
         // Check for form-data instead of application/json
         const contentType = request.headers.get('content-type');
         if (!contentType || !contentType.includes('multipart/form-data')) {
@@ -42,11 +48,11 @@ export async function POST(request) {
                 { status: STATUS_CODES.BAD_REQUEST }
             );
         }
-        
+
         // Parse FormData
         const formData = await request.formData();
         const body = {};
-        
+
         // Convert FormData to object
         for (const [key, value] of formData.entries()) {
             // Handle nested objects
@@ -67,10 +73,10 @@ export async function POST(request) {
                 }
             }
         }
-        
+
         // Rest of your validation and creation logic remains the same...
         const newEvent = await EventOutreach.create(body);
-        
+
         return NextResponse.json(
             apiResponse({
                 message: "Event created successfully",

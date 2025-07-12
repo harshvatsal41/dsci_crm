@@ -32,6 +32,24 @@ export const verifyToken = (token) => {
     }
 }
 
+
+export const decodeTokenPayload = (token) => {
+    if (typeof token !== 'string' || !token.includes('.')) {
+        console.error('Invalid or malformed token:', token);
+        return null;
+    }
+
+    try {
+        const [, payload] = token.split('.');
+        const decodedPayload = JSON.parse(atob(payload));
+        return decodedPayload;
+    } catch (error) {
+        console.error('Failed to decode token payload:', error);
+        return null;
+    }
+};
+
+
 //
 // export const isTokenExpired = (token) => {
 //     // Check if token is valid
