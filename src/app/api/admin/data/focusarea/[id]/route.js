@@ -26,7 +26,7 @@ export async function GET(req, { params }) {
 
         return NextResponse.json(apiResponse({
             message: "FocusArea found",
-            data: focusArea,
+            data: focusArea,    
             statusCode: STATUS_CODES.OK,
         }));
     } catch (error) {
