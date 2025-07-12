@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "pages": {
     "/_not-found/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
@@ -107,7 +106,4 @@
       "static/chunks/_93808211._.js"
     ]
   }
-=======
-  "pages": {}
->>>>>>> 7b1b0662e5b48f9acdb2f9a11b9107be00f28b1e
 }
