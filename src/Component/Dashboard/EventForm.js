@@ -7,31 +7,31 @@ import Modal from '@/Component/UI/Modal';
 
 const initialState = {
   title: '',
-  year: new Date().getFullYear(),
+  description: '',
   edition: 1,
+  year: new Date().getFullYear(),
   websiteURL: '',
-  socialMediaLinks: {
-    facebook: '',
-    instagram: '',
-    twitter: '',
-    linkedin: '',
-    youtube: ''
-  },
-  dates: {
+  dates: {  // Initialize dates object
     start: '',
     end: ''
   },
   location: {
     address: '',
+    city: '',
+    country: '',
+    googleMapsLink: '',
     latitude: 0,
     longitude: 0,
-    googleMapsLink: '',
-    city: '',
-    state: '',
-    country: '',
-    pincode: ''
+    pincode: '',
+    state: ''
   },
-  description: ''
+  socialMediaLinks: {
+    facebook: '',
+    instagram: '',
+    linkedin: '',
+    twitter: '',
+    youtube: ''
+  }
 };
 
 export default function EventForm({ onSuccess, onClose, eventData = {} }) {
@@ -84,35 +84,46 @@ export default function EventForm({ onSuccess, onClose, eventData = {} }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+  
     try {
-      // Format dates back to ISO string before submission
-      const submissionData = {
-        ...formData,
-        dates: {
-          start: new Date(formData.dates.start).toISOString(),
-          end: new Date(formData.dates.end).toISOString()
-        }
-      };
-
+      // Use a different variable name to avoid shadowing
+      const submitData = new FormData();
+  
+      // Add simple fields from the formData state
+      submitData.append('title', formData.title);
+      submitData.append('description', formData.description);
+      submitData.append('edition', formData.edition);
+      submitData.append('year', formData.year);
+      submitData.append('websiteURL', formData.websiteURL);
+  
+      // Add nested objects as JSON strings
+      submitData.append('dates', JSON.stringify({
+        start: formData.dates?.start ? new Date(formData.dates.start).toISOString() : '',
+        end: formData.dates?.end ? new Date(formData.dates.end).toISOString() : ''
+      }));
+      submitData.append('location', JSON.stringify(formData.location));
+      submitData.append('socialMediaLinks', JSON.stringify(formData.socialMediaLinks));
+  
+      // If you have file uploads, add them here
+      // if (formData.imageFile) {
+      //   submitData.append('image', formData.imageFile);
+      // }
+  
       const method = eventData?.editMode ? 'PUT' : 'POST';
       const url = eventData?.editMode 
         ? `/api/admin/data/eventoutreach/${eventData._id}`
         : '/api/admin/data/eventoutreach';
-
+  
       const response = await fetch(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(submissionData)
+        body: submitData
       });
-      
+  
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to save event');
       }
-
+  
       const result = await response.json();
       onSuccess(result.data);
       toast.success(`Event ${eventData?.editMode ? 'updated' : 'created'} successfully!`);
@@ -124,7 +135,7 @@ export default function EventForm({ onSuccess, onClose, eventData = {} }) {
       setIsSubmitting(false);
     }
   };
-
+  
   const renderSectionNavigation = () => (
     <div className="mb-6">
       <div className="flex border-b">

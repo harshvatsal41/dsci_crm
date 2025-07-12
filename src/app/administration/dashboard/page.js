@@ -69,7 +69,7 @@ export default function DashboardPage() {
 
   return (
     <section className=" h-full overflow-auto">
-      <div className="flex p-6 justify-between items-center mb-6">
+      <div className="flex p-4 justify-between items-center mb-1">
         <h1 className="text-2xl font-bold">Event Dashboard</h1>
         <Button
           onClick={() => setModalState({ open: Boolean(true), data: null })}

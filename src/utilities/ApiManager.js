@@ -32,6 +32,8 @@ const EventApi = async(data=null, method="GET", params={}) => {
     }
 }
 
+// Event Post api is still in page
+
 const BroadFocusAreaApi = async(data, method, params={}) => {
     if(params.id && method === "GET"){
         const url='/api/admin/data/focusarea?eventId='+params.id;
