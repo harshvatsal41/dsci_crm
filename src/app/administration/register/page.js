@@ -28,7 +28,6 @@ export default function Register() {
         setIsLoading(true);
 
         try {
-            console.log("Form Data", formData);
             const res = await fetch('/api/admin/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

@@ -14,10 +14,8 @@ const RegisterApi = async(formData) => {
 }
 
 const EventApi = async(data=null, method="GET", params={}) => {
-    console.log("params", params);
     if(params.Id && method === "GET"){
         const url='/api/admin/data/eventoutreach/'+params.Id;
-        console.log("url", url);
         const res = await FetchWithAuth(url);
         return res;
     }
@@ -29,6 +27,11 @@ const EventApi = async(data=null, method="GET", params={}) => {
     else if(method==="POST"){
         const url='/api/admin/data/eventoutreach';
         const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="PUT"){
+        const url='/api/admin/data/eventoutreach/'+params.Id;
+        const res = await FetchWithAuth(url, "PUT", data);
         return res;
     }
 }

@@ -26,20 +26,30 @@ export const FetchWithAuth = async (
   }
   
   const token = localStorage.getItem("dsciAuthToken") || Cookies.get("dsciAuthToken") || "";
-  console.log("token",token)
   const loginPath = "/administration/login"; 
-  const headers = {
-    "Content-Type": "application/json",
+  let headers = {
     ...(token && { Authorization: `Bearer ${token}` }),
     ...extraHeaders,
   };
 
-  const options = {
+  let options = {
     method,
     headers,
     credentials: "include",
-    ...(body && { body: JSON.stringify(body) }),
   };
+
+  if (body) {
+    if (body instanceof FormData) {
+      // Let browser set Content-Type with boundary
+      delete headers["Content-Type"];
+      options.body = body;
+    } else if (headers["Content-Type"] === "application/x-www-form-urlencoded") {
+      options.body = new URLSearchParams(body).toString();
+    } else {
+      headers["Content-Type"] = "application/json";
+      options.body = JSON.stringify(body);
+    }
+  }
 
   try {
     const response = await fetch(url, options);

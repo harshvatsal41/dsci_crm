@@ -56,7 +56,6 @@ export default function SpecificEventCard() {
             ]);
             
             if (eventRes.statusCode === 200) {
-                console.log("eventRes", eventRes);
                 setEvent(eventRes.data);
             }
         } catch (error) {

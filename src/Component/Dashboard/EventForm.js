@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 import { InputField, TextAreaField } from '@/Component/UI/ReusableCom';
 import Modal from '@/Component/UI/Modal';
+import { EventApi } from '@/utilities/ApiManager';
 
 const initialState = {
   title: '',
@@ -88,14 +89,13 @@ export default function EventForm({ onSuccess, onClose, eventData = {} }) {
     try {
       // Use a different variable name to avoid shadowing
       const submitData = new FormData();
-  
-      // Add simple fields from the formData state
+
       submitData.append('title', formData.title);
       submitData.append('description', formData.description);
       submitData.append('edition', formData.edition);
       submitData.append('year', formData.year);
       submitData.append('websiteURL', formData.websiteURL);
-  
+      
       // Add nested objects as JSON strings
       submitData.append('dates', JSON.stringify({
         start: formData.dates?.start ? new Date(formData.dates.start).toISOString() : '',
@@ -110,24 +110,13 @@ export default function EventForm({ onSuccess, onClose, eventData = {} }) {
       // }
   
       const method = eventData?.editMode ? 'PUT' : 'POST';
-      const url = eventData?.editMode 
-        ? `/api/admin/data/eventoutreach/${eventData._id}`
-        : '/api/admin/data/eventoutreach';
+      const response = await EventApi(submitData, method, method === 'PUT' ? eventData : {});
   
-      const response = await fetch(url, {
-        method,
-        body: submitData
-      });
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save event');
+      if(response.statusCode === 200){
+        onSuccess(response.data);
+        toast.success(`${response.message}`);
+        onClose();
       }
-  
-      const result = await response.json();
-      onSuccess(result.data);
-      toast.success(`Event ${eventData?.editMode ? 'updated' : 'created'} successfully!`);
-      onClose();
     } catch (error) {
       toast.error(error.message || 'Failed to save event');
       console.error('Error:', error);
