@@ -1,3 +1,4 @@
+'use client'
 import { useState, useEffect } from 'react';
 import { 
   FiMenu, 
@@ -11,18 +12,19 @@ import {
 import { BroadFocusAreaApi } from '@/utilities/ApiManager';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import Image from 'next/image';
 
 const Sidebar = ({isOpen, setIsOpen}) => {
   const [broadFocusAreas, setBroadFocusAreas] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
-  const { id } = useParams();
+  const { Id } = useParams();
   // Mock data - replace with your API call
   useEffect(() => {
      const getBroadFocusAreas = async () => {
       try {
-        const response = await BroadFocusAreaApi(null,"GET",{id});
+        const response = await BroadFocusAreaApi(null,"GET",{Id});
         setBroadFocusAreas(response.data);
       } catch (error) {
         console.error('Error fetching broad focus areas:', error);
@@ -47,7 +49,7 @@ const Sidebar = ({isOpen, setIsOpen}) => {
 
   const handleFocusAreaClick = (focusAreaId) => {
     console.log(`Navigate to focus area: ${focusAreaId}`);
-    // router.push(`/administration/dashboard/${id}/focus-areas/${focusAreaId}`);
+    router.push(`/administration/dashboard/specificEventCard/${Id}/focusArea/${focusAreaId}`);
     if (isMobile) {
       setIsOpen(false);
     }
@@ -126,9 +128,11 @@ const Sidebar = ({isOpen, setIsOpen}) => {
                   title={area.name}
                 >
                   {area.imageUrlPath ? (
-                    <img
+                    <Image
                       src={area.imageUrlPath}
                       alt={area.name}
+                      width={32}
+                      height={32}
                       className="w-8 h-8 rounded-md object-cover mx-auto"
                     />
                   ) : (

@@ -14,9 +14,10 @@ const RegisterApi = async(formData) => {
 }
 
 const EventApi = async(data=null, method="GET", params={}) => {
-
-    if(params.id && method === "GET"){
-        const url='/api/admin/data/eventoutreach/'+params.id;
+    console.log("params", params);
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/eventoutreach/'+params.Id;
+        console.log("url", url);
         const res = await FetchWithAuth(url);
         return res;
     }
@@ -35,8 +36,8 @@ const EventApi = async(data=null, method="GET", params={}) => {
 // Event Post api is still in page
 
 const BroadFocusAreaApi = async(data, method, params={}) => {
-    if(params.id && method === "GET"){
-        const url='/api/admin/data/focusarea?eventId='+params.id;
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/focusarea?eventId='+params.Id;
         const res = await FetchWithAuth(url);
         return res;
     }

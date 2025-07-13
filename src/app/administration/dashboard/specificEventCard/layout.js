@@ -12,7 +12,7 @@ export default function DashboardLayout({ children }) {
         isOpen={sidebarOpen} 
         setIsOpen={setSidebarOpen} 
       />
-      <main className={`main-content flex-1  transition-all duration-300 ${sidebarOpen ? ' ml-80' : ' ml-13'}`}>
+      <main className={`main-content flex-1  transition-all duration-300 ${sidebarOpen ? 'ml-79' : 'ml-14'}`}>
         {children}
       </main>
     </div>

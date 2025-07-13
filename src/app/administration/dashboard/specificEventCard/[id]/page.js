@@ -31,7 +31,7 @@ import {
 } from 'react-icons/fa';
 
 export default function SpecificEventCard() {
-    const { id } = useParams();
+    const { Id } = useParams();
     const [event, setEvent] = useState(null);
     const [showFocusArea, setShowFocusArea] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
@@ -52,10 +52,11 @@ export default function SpecificEventCard() {
         try {
             dispatch(setLoading(true));
             const [eventRes] = await Promise.all([
-                EventApi(null, "GET", { id }),
+                EventApi(null, "GET", { Id }),
             ]);
             
             if (eventRes.statusCode === 200) {
+                console.log("eventRes", eventRes);
                 setEvent(eventRes.data);
             }
         } catch (error) {
@@ -66,8 +67,8 @@ export default function SpecificEventCard() {
     };
 
     useEffect(() => {
-        if (id) fetchEvent();
-    }, [id]);
+        if (Id) fetchEvent();
+    }, [Id]);
 
     if (isLoading) {
         return <DashboardLoading />;
@@ -120,7 +121,7 @@ export default function SpecificEventCard() {
                                     {event.title}
                                 </h1>
                                 <p className="text-slate-500 text-xs sm:text-sm">
-                                    Event #{event.id} • {event.year}
+                                    Event #{Id} • {event.year}
                                 </p>
                             </div>
                         </div>
@@ -187,7 +188,7 @@ export default function SpecificEventCard() {
                                     <div className="bg-white/10 px-3 py-1.5 rounded-lg backdrop-blur-sm">
                                         <div className="text-blue-100 text-xs">Duration</div>
                                         <div className="text-base sm:text-lg font-semibold">
-                                            {Math.ceil((new Date(event.dates.end) - new Date(event.dates.start)) / (1000 * 60 * 60 * 24))} days
+                                            {Math.ceil((new Date(event.dates?.end) - new Date(event.dates?.start)) / (1000 * 60 * 60 * 24))} days
                                         </div>
                                     </div>
                                 </div>
@@ -199,7 +200,7 @@ export default function SpecificEventCard() {
                                             <span>Start Date</span>
                                         </div>
                                         <p className="text-base sm:text-lg font-semibold">
-                                            {formatDate(new Date(event.dates.start), 'MMM dd, yyyy')}
+                                            {formatDate(new Date(event.dates?.start), 'MMM dd, yyyy')}
                                         </p>
                                     </div>
                                     
@@ -273,8 +274,8 @@ function DetailsTab({ event }) {
     const details = [
         { label: 'Year', value: event.year, icon: FaCalendarAlt },
         { label: 'Edition', value: event.edition, icon: FaHashtag },
-        { label: 'Start Date', value: formatDate(new Date(event.dates.start), 'MMM dd, yyyy'), icon: FaCalendarAlt },
-        { label: 'End Date', value: formatDate(new Date(event.dates.end), 'MMM dd, yyyy'), icon: FaCalendarAlt },
+        { label: 'Start Date', value: formatDate(new Date(event.dates?.start), 'MMM dd, yyyy'), icon: FaCalendarAlt },
+        { label: 'End Date', value: formatDate(new Date(event.dates?.end), 'MMM dd, yyyy'), icon: FaCalendarAlt },
     ];
 
     return (
@@ -293,9 +294,9 @@ function DetailsTab({ event }) {
                                     <Icon className="text-blue-600 text-sm" />
                                 </div>
                                 <div>
-                                    <div className="text-slate-500 text-xs font-medium">{detail.label}</div>
+                                    <div className="text-slate-500 text-xs font-medium">{detail?.label}</div>
                                     <p className="text-slate-800 font-semibold text-sm sm:text-base">
-                                        {detail.value}
+                                        {detail?.value}
                                     </p>
                                 </div>
                             </div>

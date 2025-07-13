@@ -34,7 +34,6 @@ export default function DashboardPage() {
   }, [dispatch]);
 
   const handleView = (event) => {
-    console.log("event",event)
     router.push(`/administration/dashboard/specificEventCard/${event._id}`);
   };
 

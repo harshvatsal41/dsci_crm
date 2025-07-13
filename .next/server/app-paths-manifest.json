@@ -1,7 +1,8 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/administration/dashboard/page": "app/administration/dashboard/page.js",
-  "/administration/dashboard/specificEventCard/[id]/page": "app/administration/dashboard/specificEventCard/[id]/page.js",
+  "/administration/dashboard/specificEventCard/[Id]/focusArea/[focusAreaId]/page": "app/administration/dashboard/specificEventCard/[Id]/focusArea/[focusAreaId]/page.js",
+  "/administration/dashboard/specificEventCard/[Id]/page": "app/administration/dashboard/specificEventCard/[Id]/page.js",
   "/administration/login/page": "app/administration/login/page.js",
   "/api/admin/auth/login/route": "app/api/admin/auth/login/route.js",
   "/api/admin/data/eventoutreach/[id]/route": "app/api/admin/data/eventoutreach/[id]/route.js",
