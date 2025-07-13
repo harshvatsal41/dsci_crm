@@ -64,14 +64,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     console.log(item)
     const basePaths = {
       'Dashboard': `/administration/dashboard/specificEventCard/${Id}`,
-      'Focus Area': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/focus-area`,
+      'Focus Area': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/focusArea`,
       'Speakers': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/speaker`,
-      'Agenda': '/administration/agenda',
-      'Sponser': '/administration/sponser',
-      'FAQ': '/administration/faq',
-      'Testimonial': '/administration/testimonial',
-      'Navbar': '/administration/navbar',
-      'Ticketing': '/administration/ticketing'
+      'Agenda': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/agenda`,
+      'Sponser': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/sponser`,
+      'FAQ': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/faq`,
+      'Testimonial': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/testimonial`,
+      'Navbar': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/navbar`,
+      'Ticketing': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/ticketing`
     };
 
     const path = basePaths[item.title] || item.path;
