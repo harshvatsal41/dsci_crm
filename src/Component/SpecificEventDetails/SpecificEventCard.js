@@ -2,8 +2,12 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Modal from '../UI/Modal';
+import { Button } from '@/Component/UI/TableFormat';
+import { FaTrash } from 'react-icons/fa';
+import { BroadFocusAreaApi } from '@/utilities/ApiManager';
+import { toast } from 'react-toastify';
 
-export default function SpecificEventCard({ setEdit, data, type = 'focusArea' }) {
+export default function SpecificEventCard({ setEdit, data, type = 'focusArea', onDelete }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // Configuration for different card types
@@ -78,6 +82,19 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea' })
     setIsModalOpen(true);
   };
 
+  const deleteItem = async (item) => {
+    try {
+      const response = await BroadFocusAreaApi(null, 'DELETE', { Id: item._id });
+      if (response.statusCode === 200 || response.statusCode === 203 || response.status === "success") {
+        toast.success(response.message || 'Item deleted successfully');
+        onDelete();
+        closeModal();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to delete item');
+    }
+  };
+
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedItem(null);
@@ -123,6 +140,7 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea' })
                       {item.isDeleted && (
                         <span className="text-red-500">Deleted</span>
                       )}
+                    <Button className='bg-red-600 text-white cursor-pointer hover:bg-red-700' icon={<FaTrash />} onClick={() => deleteItem(item)}></Button>
                     </div>
                   </div>
                 </div>

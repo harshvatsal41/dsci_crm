@@ -29,6 +29,10 @@ export default function FocusArea() {
         setFormOpen(false);
         setEdit({value:Boolean(false), data:{}});
     };
+
+    const onDelete= ()=>{
+       fetchFocusArea();
+    }
  
     const fetchFocusArea = async () => {
         dispatch(setLoading(true));
@@ -39,6 +43,7 @@ export default function FocusArea() {
         }
         dispatch(setLoading(false));
     };
+
 
     useEffect(() => {
         fetchFocusArea();
@@ -69,7 +74,8 @@ export default function FocusArea() {
             </div>
             )}
             {(formOpen || edit.value) && <FocusAreaForm edit={edit} onSuccess={onSuccess} onClose={onClose}/>}
-            <SpecificEventCard 
+            <SpecificEventCard
+                onDelete={onDelete} 
                 setEdit={setEdit} 
                 data={focusArea} 
                 type="focusArea"
