@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "app": {
     "[project]/src/app/administration/dashboard/page": [
       "static/media/gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
@@ -22,6 +23,10 @@
     ]
   },
   "appUsingSizeAdjust": true,
+=======
+  "app": {},
+  "appUsingSizeAdjust": false,
+>>>>>>> 45065518cd4b7fcc562bc8a74dc5288e133ec452
   "pages": {},
   "pagesUsingSizeAdjust": false
 }

@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "pages": {
     "/administration/dashboard/page": [
       "static/chunks/node_modules_next_dist_1a6ee436._.js",
@@ -116,4 +117,7 @@
       "static/chunks/_93808211._.js"
     ]
   }
+=======
+  "pages": {}
+>>>>>>> 45065518cd4b7fcc562bc8a74dc5288e133ec452
 }

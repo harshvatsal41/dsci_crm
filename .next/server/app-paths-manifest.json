@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "/administration/dashboard/page": "app/administration/dashboard/page.js",
   "/administration/dashboard/specificEventCard/[Id]/page": "app/administration/dashboard/specificEventCard/[Id]/page.js",
   "/administration/dashboard/specificEventCard/[Id]/specificEventArea/focusArea/page": "app/administration/dashboard/specificEventCard/[Id]/specificEventArea/focusArea/page.js",
@@ -8,4 +9,8 @@
   "/api/admin/data/eventoutreach/route": "app/api/admin/data/eventoutreach/route.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/page": "app/page.js"
+=======
+  "/api/admin/data/focusarea/route": "app/api/admin/data/focusarea/route.js",
+  "/api/admin/data/speaker/route": "app/api/admin/data/speaker/route.js"
+>>>>>>> 45065518cd4b7fcc562bc8a74dc5288e133ec452
 }
