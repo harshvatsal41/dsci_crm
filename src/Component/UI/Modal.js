@@ -11,7 +11,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-1500 flex items-center justify-center p-4"
         >
           {/* Backdrop with subtle blur */}
           <motion.div

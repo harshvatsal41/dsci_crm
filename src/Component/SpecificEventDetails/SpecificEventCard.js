@@ -6,12 +6,11 @@ import Modal from '../UI/Modal';
 export default function SpecificEventCard({ setEdit, data, type = 'focusArea' }) {
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   // Configuration for different card types
   const cardConfig = {
     focusArea: {
-      title: 'Focus Areas',
-      emptyMessage: 'No focus areas found',
+      title: 'Focus Area',
+      emptyMessage: 'No focus area found',
       icon: '🌍',
       accentColor: 'bg-emerald-100 text-emerald-800'
     },
@@ -199,7 +198,7 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea' })
                 type="button"
                 onClick={() => {
                   closeModal();
-                  setEdit(selectedItem);
+                  setEdit({value:true, data:selectedItem});
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >

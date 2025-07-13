@@ -61,7 +61,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
   const handleNavigation = (item) => {
     // Define the base paths for each menu item
-    console.log(item)
     const basePaths = {
       'Dashboard': `/administration/dashboard/specificEventCard/${Id}`,
       'Focus Area': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/focusArea`,
@@ -148,20 +147,20 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0  bg-opacity-150 z-1000 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
       
       {/* Sidebar */}
       <div className={`
-        fixed top-15 left-0 h-full z-1000 transition-all duration-300 ease-in-out font-sans
+        fixed top-15  md:left-0  h-full   z-800 transition-all duration-300 ease-in-out font-sans
         ${isOpen ? 'w-64' : 'w-16'} 
-        ${isMobile ? (isOpen ? 'translate-x-0' : '-translate-x-full') : 'translate-x-0'}
+        ${isMobile ? (isOpen ? 'translate-x-0' : 'translate-x-[-16px]') : 'translate-x-0'}
         bg-white shadow-xl border-r border-gray-200
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-white">
+        <div className="flex items-center justify-end p-4 border-b border-gray-200 bg-white">
           
           <button
             onClick={() => setIsOpen(!isOpen)}

@@ -68,8 +68,6 @@ export default function Register() {
             router.push('/administration/login');
             
         } catch (error) {
-            console.log("Error", error);
-            console.error('Registration error:', error);
             toast.error(error.message || 'Failed to register. Please try again.');
         } finally {
             setIsLoading(false);

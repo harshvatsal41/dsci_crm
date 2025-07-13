@@ -40,13 +40,6 @@ export default function SpecificEventCard() {
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
 
-    const toggleFocusArea = () => {
-        setIsAnimating(true);
-        setTimeout(() => {
-            setShowFocusArea(!showFocusArea);
-            setIsAnimating(false);
-        }, 150);
-    };
 
     const fetchEvent = async () => {
         try {
@@ -109,12 +102,12 @@ export default function SpecificEventCard() {
                 <div className="container mx-auto px-4 sm:px-6 py-3">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <button 
+                            {/* <button 
                                 onClick={toggleFocusArea}
                                 className="lg:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
                             >
                                 <FaInfoCircle className="text-slate-600 text-lg" />
-                            </button>
+                            </button> */}
                             <div className="truncate">
                                 <h1 className="text-xl sm:text-2xl font-bold text-slate-800 truncate">
                                     {event.title}
