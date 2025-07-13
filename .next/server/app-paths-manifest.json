@@ -1,3 +1,5 @@
 {
-  "/api/admin/data/focusarea/route": "app/api/admin/data/focusarea/route.js"
+  "/api/admin/data/eventoutreach/route": "app/api/admin/data/eventoutreach/route.js",
+  "/api/admin/data/focusarea/route": "app/api/admin/data/focusarea/route.js",
+  "/api/admin/data/speaker/route": "app/api/admin/data/speaker/route.js"
 }

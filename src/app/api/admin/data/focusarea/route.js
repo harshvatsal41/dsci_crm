@@ -146,6 +146,12 @@ export async function POST(req) {
             createdBy,
         });
 
+        await EventOutreach.findByIdAndUpdate(
+            eventId,
+            { $push: { focusAreaIds: focusAreaDoc._id } },
+            { new: true }
+        );
+
         const folderPath = path.join(process.cwd(), "public", `${event.year}`, "focusarea");
         const randomId = crypto.randomBytes(8).toString("hex"); // e.g., "a4f8c1d2b3e4f5a6"
         const fileName = `${Date.now()}-${randomId}.${extension}`;
