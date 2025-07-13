@@ -41,7 +41,7 @@ export async function GET(req) {
         }));
     } catch (error) {
         return NextResponse.json(handleError(error), {
-            status: STATUS_CODES.INTERNAL_SERVER_ERROR,
+            status: STATUS_CODES.INTERNAL_ERROR,
         });
     }
 }
@@ -134,8 +134,8 @@ export async function POST(req) {
         const event = await EventOutreach.findById(eventId);
         if (!event) {
             return NextResponse.json(
-                apiResponse({ message: "Event not found", statusCode: 404 }),
-                { status: 404 }
+                apiResponse({ message: "Event not found", statusCode: STATUS_CODES.NOT_FOUND }),
+                { status: STATUS_CODES.NOT_FOUND }
             );
         }
 
@@ -191,7 +191,7 @@ export async function POST(req) {
     } catch (error) {
         const handledError = handleError(error);
         return NextResponse.json(handledError, {
-            status: handledError.httpStatus || 500,
+            status: handledError.httpStatus || STATUS_CODES.INTERNAL_ERROR,
         });
     }
 }
