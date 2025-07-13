@@ -8,7 +8,7 @@ import DashboardLoading from '@/app/administration/dashboard/loading';
 import SpecificEventCard from '@/Component/SpecificEventDetails/SpecificEventCard';
 import FocusAreaForm from '@/Component/SpecificEventDetails/FocusArea/FocusAreaForm';
 import { toast } from 'react-toastify';
-import {loading} from '@/app/administration/dashboard/loading';
+
 
 export default function FocusArea() {
     const {Id} = useParams();
@@ -17,7 +17,7 @@ export default function FocusArea() {
     const [formOpen, setFormOpen] = useState(false);
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-  
+
     const onSuccess = () => {
         setFormOpen(false);
         fetchFocusArea();
@@ -74,12 +74,12 @@ export default function FocusArea() {
             </div>
             )}
             {(formOpen || edit.value) && <FocusAreaForm edit={edit} onSuccess={onSuccess} onClose={onClose}/>}
-            <SpecificEventCard
+           {(!formOpen && !edit.value) && <SpecificEventCard
                 onDelete={onDelete} 
                 setEdit={setEdit} 
                 data={focusArea} 
                 type="focusArea"
-            />
+            />}
           
         </>
     );  

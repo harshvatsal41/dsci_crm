@@ -67,5 +67,34 @@ const BroadFocusAreaApi = async(data, method, params={}) => {
 }
 
 
+// Speaker Api
+const SpeakerApi=async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/speaker?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/speaker?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url='/api/admin/data/speaker/'+params.Id;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="POST"){
+        const url='/api/admin/data/speaker';
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DELETE"){
+        const url='/api/admin/data/speaker/delete?speakerId='+params.Id;
+        const res = await FetchWithAuth(url, "DELETE");
+        return res;
+    }   
+}
 
-export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi}
+
+
+export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi, SpeakerApi}
