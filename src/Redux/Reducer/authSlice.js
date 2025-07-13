@@ -1,6 +1,6 @@
+'use client'
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
-
 const initialState = {
     role: typeof window !== "undefined" ? localStorage.getItem("dsciAuthRole") || "" : "",
     token: typeof window !== "undefined" ? localStorage.getItem("dsciAuthToken") || "" : "",

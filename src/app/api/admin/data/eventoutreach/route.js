@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import util from '@/Helper/apiUtils';
+import { decodeTokenPayload } from "@/Helper/jwtValidator";
 
 export async function GET(request) {
     try {
@@ -35,7 +36,7 @@ export async function POST(request) {
         await util.connectDB();
 
         const token = request.cookies.get("dsciAuthToken")?.value || request.headers.get("Authorization")?.split(" ")[1];
-        console.log("Token:", token)
+        const decodedToken = decodeTokenPayload(token);
 
         // Check for form-data instead of application/json
         const contentType = request.headers.get('content-type');
@@ -74,6 +75,7 @@ export async function POST(request) {
             }
         }
 
+        body.createdBy = decodedToken?.id;
         // Rest of your validation and creation logic remains the same...
         const newEvent = await EventOutreach.create(body);
 
