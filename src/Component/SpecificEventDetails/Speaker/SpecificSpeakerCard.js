@@ -8,22 +8,31 @@ import { SpeakerApi } from '@/utilities/ApiManager';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
+import { ConfirmDialog } from '@/Component/UI/TableFormat';
 
 export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
   const dispatch = useDispatch();
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [speakerToDelete, setSpeakerToDelete] = useState(null);
 
   const openModal = (speaker) => {
     setSelectedSpeaker(speaker);
     setIsModalOpen(true);
   };
 
-  const deleteSpeaker = async (speaker) => {
+  const handleDeleteClick = (speaker) => {
+    setSpeakerToDelete(speaker);
+    setConfirmOpen(true);
+  };
+
+  const deleteSpeaker = async () => {
+    if (!speakerToDelete) return;
+    
     dispatch(setLoading(true));
-    closeModal();
     try {
-      const response = await SpeakerApi(null, 'DELETE', { Id: speaker._id });
+      const response = await SpeakerApi(null, 'DELETE', { Id: speakerToDelete._id });
       if (response.statusCode === 200 || response.statusCode === 203 || response.status === "success") {
         toast.success(response.message || 'Speaker deleted successfully');
         onDelete();
@@ -32,6 +41,9 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
       toast.error(error.response?.data?.message || 'Failed to delete speaker');
     } finally {
       dispatch(setLoading(false));
+      setConfirmOpen(false);
+      setSpeakerToDelete(null);
+      closeModal();
     }
   };
 
@@ -72,6 +84,17 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
 
   return (
     <div className="p-6">
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={deleteSpeaker}
+        title="Delete Speaker?"
+        description="Are you sure you want to delete this speaker? This action cannot be undone."
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        confirmColor="danger"
+      />
+      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {data?.data?.map((speaker) => (
           <div 
@@ -130,7 +153,7 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
                     icon={<FaTrash />} 
                     onClick={(e) => {
                       e.stopPropagation();
-                      deleteSpeaker(speaker);
+                      handleDeleteClick(speaker);
                     }}
                   />
                 </div>
@@ -365,6 +388,15 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
                 Edit Speaker
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleDeleteClick(selectedSpeaker);
+                }}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+              >
+                Delete Speaker
               </button>
             </div>
           </div>

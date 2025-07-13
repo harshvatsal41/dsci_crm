@@ -96,5 +96,61 @@ const SpeakerApi=async(data, method, params={}) => {
 }
 
 
+// Faq Api
+const FaqApi=async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/faq?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/faq?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url=`/api/admin/data/faq?eventId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="PUT" && params.Id){
+        const url=`/api/admin/data/faq/update?faqId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DELETE"){
+        const url=`/api/admin/data/faq/delete?faqId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
+        return res;
+    }   
+}
 
-export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi, SpeakerApi}
+
+// Testimonial Api
+const TestimonialApi=async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/testimonial?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/testimonial?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url=`/api/admin/data/testimonial?eventId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="PUT" && params.Id){
+        const url=`/api/admin/data/testimonial/update?testimonialId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DELETE"){
+        const url=`/api/admin/data/testimonial/delete?testimonialId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
+        return res;
+    }   
+}
+
+export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi, SpeakerApi, FaqApi, TestimonialApi}

@@ -8,11 +8,15 @@ import { BroadFocusAreaApi, SpeakerApi } from '@/utilities/ApiManager';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
+import { ConfirmDialog } from '@/Component/UI/TableFormat';
 
 export default function SpecificEventCard({ setEdit, data, type = 'focusArea', onDelete }) {
   const dispatch = useDispatch();
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
+
   // Configuration for different card types
   const cardConfig = {
     focusArea: {
@@ -85,11 +89,17 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
     setIsModalOpen(true);
   };
 
-  const deleteItem = async (item) => {
+  const handleDeleteClick = (item) => {
+    setItemToDelete(item);
+    setConfirmOpen(true);
+  };
+
+  const deleteItem = async () => {
+    if (!itemToDelete) return;
+    
     dispatch(setLoading(true));
-    closeModal();
     try {
-      const response = await BroadFocusAreaApi(null, 'DELETE', { Id: item._id });
+      const response = await BroadFocusAreaApi(null, 'DELETE', { Id: itemToDelete._id });
       if (response.statusCode === 200 || response.statusCode === 203 || response.status === "success") {
         toast.success(response.message || 'Item deleted successfully');
         onDelete();
@@ -98,6 +108,8 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
       toast.error(error.response?.data?.message || 'Failed to delete item');
     } finally {
       dispatch(setLoading(false));
+      setConfirmOpen(false);
+      setItemToDelete(null);
     }
   };
 
@@ -108,51 +120,69 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
 
   return (
     <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {data?.data?.map((item) => (
-              <div 
-                key={item._id}
-                onClick={() => openModal(item)}
-                className="group relative cursor-pointer"
-              >
-                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
-                <div className="relative h-full bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
-                  <div className={`h-2 ${config.accentColor}`}></div>
-                  <div className="p-5">
-                    <div className="flex items-start space-x-4">
-                      {item.imageUrlPath ? (
-                        <div className="flex-shrink-0 relative w-14 h-14 rounded-lg overflow-hidden">
-                          <Image
-                            src={item.imageUrlPath}
-                            alt={item.name}
-                            fill
-                            className="object-cover"
-                          />
-                        </div>
-                      ) : (
-                        <div className={`flex-shrink-0 w-14 h-14 rounded-lg ${config.accentColor} flex items-center justify-center text-2xl`}>
-                          {config.icon}
-                        </div>
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
-                        <p className="text-gray-500 text-sm mt-1 line-clamp-2">
-                          {item.description}
-                        </p>
-                      </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={deleteItem}
+        title={`Delete ${config.title}?`}
+        description={`Are you sure you want to delete this ${config.title.toLowerCase()}? This action cannot be undone.`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        confirmColor="danger"
+      />
+          
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {data?.data?.map((item) => (
+          <div 
+            key={item._id}
+            onClick={() => openModal(item)}
+            className="group relative cursor-pointer"
+          >
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
+            <div className="relative h-full bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
+              <div className={`h-2 ${config.accentColor}`}></div>
+              <div className="p-5">
+                <div className="flex items-start space-x-4">
+                  {item.imageUrlPath ? (
+                    <div className="flex-shrink-0 relative w-14 h-14 rounded-lg overflow-hidden">
+                      <Image
+                        src={item.imageUrlPath}
+                        alt={item.name}
+                        fill
+                        className="object-cover"
+                      />
                     </div>
-                    <div className="mt-4 flex justify-between items-center text-xs text-gray-400">
-                      <span>{new Date(item.createdAt).toLocaleDateString()}</span>
-                      {item.isDeleted && (
-                        <span className="text-red-500">Deleted</span>
-                      )}
-                    <Button className='bg-red-600 text-white cursor-pointer hover:bg-red-700' icon={<FaTrash />} onClick={() => deleteItem(item)}></Button>
+                  ) : (
+                    <div className={`flex-shrink-0 w-14 h-14 rounded-lg ${config.accentColor} flex items-center justify-center text-2xl`}>
+                      {config.icon}
                     </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
+                    <p className="text-gray-500 text-sm mt-1 line-clamp-2">
+                      {item.description}
+                    </p>
                   </div>
                 </div>
+                <div className="mt-4 flex justify-between items-center text-xs text-gray-400">
+                  <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                  {item.isDeleted && (
+                    <span className="text-red-500">Deleted</span>
+                  )}
+                  <Button 
+                    className='bg-red-600 text-white cursor-pointer hover:bg-red-700' 
+                    icon={<FaTrash />} 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteClick(item);
+                    }}
+                  />
+                </div>
               </div>
-            ))}
+            </div>
           </div>
+        ))}
+      </div>
 
       {/* Detail Modal */}
       <Modal 
