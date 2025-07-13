@@ -1,7 +1,10 @@
 'use client';
 import { Skeleton } from '@/Component/UI/ReusableCom';
-
+import { useSelector } from 'react-redux';
 export default function DashboardLoading() {
+    const loading = useSelector((state) => state.menu.loading);
+    console.log(loading)
+    if(!loading) return null;
   return (
     <div className="p-3 space-y-3">
       <div className="flex justify-between items-center mb-6">
