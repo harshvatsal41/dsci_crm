@@ -5,13 +5,14 @@ import { handleError } from "@/Helper/errorHandler";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import Speaker from "@/Mongo/Model/DataModels/Speaker";
 import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
+import sanitizeInput from "@/Helper/sanitizeInput";
 
-export async function DELETE(req) {
+export async function POST(req) {
     try {
         await util.connectDB();
 
         const { searchParams } = new URL(req.url);
-        const id = searchParams.get("speakerId");
+        const id = sanitizeInput(searchParams.get("speakerId"));
         if (!id) {
             return NextResponse.json(apiResponse({
                 message: "speakerId is required",
@@ -27,10 +28,18 @@ export async function DELETE(req) {
             }), { status: STATUS_CODES.NOT_FOUND });
         }
 
+        if(speaker.isDeleted){
+            return NextResponse.json(apiResponse({
+                message: "Speaker already deleted",
+                statusCode: STATUS_CODES.BAD_REQUEST,
+            }), { status: STATUS_CODES.BAD_REQUEST });
+        }
+
         await speaker.updateOne({ isDeleted: true });
 
         return NextResponse.json(apiResponse({
             message: "Speaker deleted successfully",
+            data: speaker,
             statusCode: STATUS_CODES.OK,
         }), { status: STATUS_CODES.OK });
     } catch (error) {

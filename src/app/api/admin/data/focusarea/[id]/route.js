@@ -7,13 +7,14 @@ import fs from "fs/promises";
 import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
+import sanitizeInput from "@/Helper/sanitizeInput";
 
 export async function GET(req, { params }) {
   try {
     await util.connectDB();
     const { id } = await params;
-
-    const focusArea = await FocusArea.findById(id);
+    const focusAreaId = sanitizeInput(id);
+    const focusArea = await FocusArea.findById(focusAreaId);
     if (!focusArea) {
       return NextResponse.json(
         apiResponse({ message: "Focus area not found", statusCode: 404 }),
@@ -39,13 +40,14 @@ export async function POST(req, { params }) {
   try {
     await util.connectDB();
     const { id } = await params;
+    const focusAreaId = sanitizeInput(id);
 
     // Authentication
     const token = req.cookies.get("dsciAuthToken")?.value || req.headers.get("Authorization")?.split(" ")[1];
     const decodedToken = decodeTokenPayload(token);
 
     // Get existing focus area
-    const existingFocusArea = await FocusArea.findById(id);
+    const existingFocusArea = await FocusArea.findById(focusAreaId);
     if (!existingFocusArea) {
       return NextResponse.json(
         apiResponse({ message: "Focus area not found", statusCode: 404 }),
@@ -55,11 +57,11 @@ export async function POST(req, { params }) {
 
     // Parse form data
     const formData = await req.formData();
-    const name = (formData.get("name") || "").trim();
-    const description = (formData.get("description") || "").trim();
+    const name = sanitizeInput(formData.get("name")?.toString().trim());
+    const description = sanitizeInput(formData.get("description")?.toString().trim());
     const image = formData.get("image");
 
-    // Prepare update data
+    // Prepare update data        
     const updateData = { name, description };
 
     // Handle image update if provided
@@ -99,7 +101,7 @@ export async function POST(req, { params }) {
 
     // Update focus area
     const updatedFocusArea = await FocusArea.findByIdAndUpdate(
-      id,
+      focusAreaId,
       updateData,
       { new: true }
     );
