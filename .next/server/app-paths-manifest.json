@@ -1,5 +1,4 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/administration/dashboard/page": "app/administration/dashboard/page.js",
   "/administration/dashboard/specificEventCard/[Id]/page": "app/administration/dashboard/specificEventCard/[Id]/page.js",
   "/administration/dashboard/specificEventCard/[Id]/specificEventArea/focusArea/page": "app/administration/dashboard/specificEventCard/[Id]/specificEventArea/focusArea/page.js",
@@ -8,5 +7,6 @@
   "/api/admin/data/eventoutreach/[id]/route": "app/api/admin/data/eventoutreach/[id]/route.js",
   "/api/admin/data/eventoutreach/route": "app/api/admin/data/eventoutreach/route.js",
   "/api/admin/data/focusarea/route": "app/api/admin/data/focusarea/route.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js"
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js"
 }
