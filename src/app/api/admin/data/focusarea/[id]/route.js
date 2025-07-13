@@ -108,7 +108,7 @@ export async function POST(req, { params }) {
       apiResponse({
         message: "Focus area updated successfully",
         data: updatedFocusArea,
-        statusCode: STATUS_CODES.SUCCESS,
+        statusCode: STATUS_CODES.UPDATEDSUCCESS,
       })
     );
   } catch (error) {

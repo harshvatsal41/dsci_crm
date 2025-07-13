@@ -59,8 +59,8 @@ const BroadFocusAreaApi = async(data, method, params={}) => {
         const res = await FetchWithAuth(url, "POST", data);
         return res;
     }else if(method==="DELETE"){
-        const url='/api/admin/data/focusarea/delete?focusAreaId='+params.Id;
-        const res = await FetchWithAuth(url, "DELETE");
+        const url=`/api/admin/data/focusarea/delete?focusAreaId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
         return res;
     }
     
@@ -89,8 +89,8 @@ const SpeakerApi=async(data, method, params={}) => {
         const res = await FetchWithAuth(url, "POST", data);
         return res;
     }else if(method==="DELETE"){
-        const url='/api/admin/data/speaker/delete?speakerId='+params.Id;
-        const res = await FetchWithAuth(url, "DELETE");
+        const url=`/api/admin/data/speaker/delete?speakerId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
         return res;
     }   
 }

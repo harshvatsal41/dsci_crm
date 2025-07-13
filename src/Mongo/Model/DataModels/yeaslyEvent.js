@@ -29,6 +29,8 @@ const EventOutreachSchema = new mongoose.Schema({
     description: { type: String,},
     focusAreaIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "FocusArea" }],
     speakers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Speaker" }],
+    faqIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Faq" }],
+    testimonialIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Testimonial" }],
     isDeleted: { type: Boolean, default: false },
     deletedAt: { type: Date },
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

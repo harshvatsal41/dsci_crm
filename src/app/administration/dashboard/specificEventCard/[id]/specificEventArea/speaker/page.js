@@ -5,7 +5,7 @@ import { SpeakerApi } from '@/utilities/ApiManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import DashboardLoading from '@/app/administration/dashboard/loading';
-import SpecificEventCard from '@/Component/SpecificEventDetails/SpecificEventCard';
+import SpecificSpeakerCard from '@/Component/SpecificEventDetails/Speaker/SpecificSpeakerCard';
 import SpeakerForm from '@/Component/SpecificEventDetails/Speaker/SpeakerForm';
 import { toast } from 'react-toastify';
 
@@ -84,7 +84,7 @@ export default function Speaker() {
                     eventId={Id}
                 />
             )}
-           {(!formOpen && !edit.value) && <SpecificEventCard
+           {(!formOpen && !edit.value) && <SpecificSpeakerCard
                 onDelete={onDelete}
                 setEdit={setEdit}
                 data={speakers}

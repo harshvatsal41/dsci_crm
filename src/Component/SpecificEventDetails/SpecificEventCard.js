@@ -4,10 +4,13 @@ import Image from 'next/image';
 import Modal from '../UI/Modal';
 import { Button } from '@/Component/UI/TableFormat';
 import { FaTrash } from 'react-icons/fa';
-import { BroadFocusAreaApi } from '@/utilities/ApiManager';
+import { BroadFocusAreaApi, SpeakerApi } from '@/utilities/ApiManager';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { setLoading } from '@/Redux/Reducer/menuSlice';
 
 export default function SpecificEventCard({ setEdit, data, type = 'focusArea', onDelete }) {
+  const dispatch = useDispatch();
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // Configuration for different card types
@@ -83,16 +86,18 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
   };
 
   const deleteItem = async (item) => {
+    dispatch(setLoading(true));
+    closeModal();
     try {
-      console.log("Item", item)
       const response = await BroadFocusAreaApi(null, 'DELETE', { Id: item._id });
       if (response.statusCode === 200 || response.statusCode === 203 || response.status === "success") {
         toast.success(response.message || 'Item deleted successfully');
         onDelete();
-        closeModal();
       }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to delete item');
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
