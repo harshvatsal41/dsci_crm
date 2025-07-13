@@ -39,7 +39,7 @@ export async function POST(request) {
 
         // Check for form-data instead of application/json
         const contentType = request.headers.get('content-type');
-        if (!contentType || !contentType.includes('multipart/form-data')) {
+        if (!contentType) {
             return NextResponse.json(
                 apiResponse({
                     message: "Invalid content type. Expected multipart/form-data",
