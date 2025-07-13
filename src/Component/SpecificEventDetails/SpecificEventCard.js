@@ -84,6 +84,7 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
 
   const deleteItem = async (item) => {
     try {
+      console.log("Item", item)
       const response = await BroadFocusAreaApi(null, 'DELETE', { Id: item._id });
       if (response.statusCode === 200 || response.statusCode === 203 || response.status === "success") {
         toast.success(response.message || 'Item deleted successfully');

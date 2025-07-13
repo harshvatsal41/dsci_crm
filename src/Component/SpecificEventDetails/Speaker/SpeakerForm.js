@@ -9,6 +9,7 @@ import { Button } from '@/Component/UI/TableFormat';
 import Image from 'next/image';
 import { FiPlus, FiTrash2, FiEdit2, FiMinus } from 'react-icons/fi';
 import Modal from '@/Component/UI/Modal';
+import { useParams } from 'next/navigation';
 
 const initialState = {
     name: '', position: '', organization: '', title: '', bio: '',
@@ -18,24 +19,31 @@ const initialState = {
     dob: '', gender: '', internalNote: '', yeaslyEventId: null
 };
 
-const SpeakerForm = ({ edit, onSuccess, onClose, eventId }) => {
+const SpeakerForm = ({ edit, onSuccess, onClose }) => {
     const dispatch = useDispatch();
     const [formData, setFormData] = useState(initialState);
     const [newExpertise, setNewExpertise] = useState('');
     const [newAward, setNewAward] = useState('');
     const [imageFile, setImageFile] = useState(null);
     const [validationErrors, setValidationErrors] = useState({});
+    const { Id } = useParams();
 
     useEffect(() => {
         if (edit?.value) {
             const { dob, ...data } = edit.data;
+            console.log("Edit Data", edit.data)
             setFormData({
+                ...initialState,
                 ...data,
+                socialLinks: {
+                    ...initialState.socialLinks,
+                    ...(data.socialLinks || {})
+                },
                 dob: dob ? new Date(dob).toISOString().split('T')[0] : '',
-                yeaslyEventId: eventId
+                yeaslyEventId: Id
             });
         }
-    }, [edit, eventId]);
+    }, [edit]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -103,14 +111,16 @@ const SpeakerForm = ({ edit, onSuccess, onClose, eventId }) => {
                     submitData.append(key, typeof val === 'object' ? JSON.stringify(val) : val);
                 }
             });
+            submitData.append('yeaslyEventId', Id);
             if (imageFile) submitData.append('photo', imageFile);
 
             const response = edit?.value 
                 ? await SpeakerApi(submitData, 'POST', { Id: edit.data._id })
                 : await SpeakerApi(submitData, 'POST');
-
-            toast.success(`Speaker ${edit?.value ? 'updated' : 'created'} successfully`);
-            onSuccess(response.data);
+             if(response.statusCode === 201){
+                toast.success(`Speaker ${edit?.value ? 'updated' : 'created'} successfully`);
+                onSuccess(response.data);
+            }
         } catch (error) {
             toast.error(error.response?.data?.message || 'Operation failed');
         } finally {
@@ -123,33 +133,33 @@ const SpeakerForm = ({ edit, onSuccess, onClose, eventId }) => {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
                     {/* Basic Info */}
-                    <InputField label="Full Name *" name="name" value={formData?.name} onChange={handleChange} error={validationErrors.name} />
-                    <InputField label="Position *" name="position" value={formData?.position} onChange={handleChange} error={validationErrors.position} />
-                    <InputField label="Organization" name="organization" value={formData?.organization} onChange={handleChange} />
-                    <InputField label="Title" name="title" value={formData?.title} onChange={handleChange} />
+                    <InputField label="Full Name *" name="name" value={formData?.name || ''} onChange={handleChange} error={validationErrors.name} />
+                    <InputField label="Position *" name="position" value={formData?.position || ''} onChange={handleChange} error={validationErrors.position} />
+                    <InputField label="Organization" name="organization" value={formData?.organization || ''} onChange={handleChange} />
+                    <InputField label="Title" name="title" value={formData?.title || ''} onChange={handleChange} />
                     
                     {/* Contact Info */}
-                    <InputField label="Phone *" name="phone" value={formData?.phone} onChange={handleChange} error={validationErrors.phone} />
-                    <InputField label="Official Email *" type="email" name="emailOfficial" value={formData?.emailOfficial} onChange={handleChange} error={validationErrors.emailOfficial} />
-                    <InputField label="Personal Email" type="email" name="emailPersonal" value={formData?.emailPersonal} onChange={handleChange} />
+                    <InputField label="Phone *" name="phone" value={formData?.phone || ''} onChange={handleChange} error={validationErrors.phone} />
+                    <InputField label="Official Email *" type="email" name="emailOfficial" value={formData?.emailOfficial || ''} onChange={handleChange} error={validationErrors.emailOfficial} />
+                    <InputField label="Personal Email" type="email" name="emailPersonal" value={formData?.emailPersonal || ''} onChange={handleChange} />
                     
                     {/* Social Links */}
-                    <InputField label="LinkedIn" name="linkedin" value={formData?.socialLinks?.linkedin} onChange={handleSocialLinkChange} placeholder="https://linkedin.com/in/username" />
-                    <InputField label="Twitter" name="twitter" value={formData?.socialLinks?.twitter} onChange={handleSocialLinkChange} placeholder="https://twitter.com/username" />
+                    <InputField label="LinkedIn" name="linkedin" value={formData?.socialLinks?.linkedin || ''} onChange={handleSocialLinkChange} placeholder="https://linkedin.com/in/username" />
+                    <InputField label="Twitter" name="twitter" value={formData?.socialLinks?.twitter || ''} onChange={handleSocialLinkChange} placeholder="https://twitter.com/username" />
                     
                     {/* Personal Details */}
-                    <InputField label="Date of Birth" type="date" name="dob" value={formData?.dob} onChange={handleChange} />
+                    <InputField label="Date of Birth" type="date" name="dob" value={formData?.dob || ''} onChange={handleChange} />
                     <NativeSelectField 
                         label="Gender" 
                         name="gender" 
-                        value={formData?.gender} 
+                        value={formData?.gender || ''} 
                         onChange={handleChange}
                         options={['', 'Male', 'Female', 'Other'].map(g => ({ value: g, label: g || 'Select Gender' }))}
                     />
                 </div>
 
                 {/* Bio */}
-                <TextAreaField label="Bio *" name="bio" value={formData?.bio} onChange={handleChange} rows={3} error={validationErrors.bio} />
+                <TextAreaField label="Bio *" name="bio" value={formData?.bio || ''} onChange={handleChange} rows={3} error={validationErrors.bio} />
 
                 {/* Expertise */}
                 <div className="space-y-2">
