@@ -25,14 +25,22 @@ export default function FocusArea() {
     return (
         <div>
             <DashboardLoading />
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-3">
         <h1 className="text-2xl font-bold text-gray-800">Focus Area</h1>
-          <button 
+          {/* <button 
             onClick={() => setEdit({value:true, data:{}})}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Add New
-          </button>
+          </button> */}
+            {/* Floating Add Button */}
+         
+            <button 
+              onClick={() => setEdit(true)}
+              className="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center justify-center text-2xl"
+            >
+              +
+            </button>
       </div>
             
             <SpecificEventCard setEdit={setEdit} data={focusArea} type="focusArea"/>

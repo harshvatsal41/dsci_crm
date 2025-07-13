@@ -1,94 +1,214 @@
 'use client'
-import { useParams } from 'next/navigation';
+import { useState } from 'react';
 import Image from 'next/image';
-import Link from 'next/link';
 import Modal from '../UI/Modal';
 
 export default function SpecificEventCard({ setEdit, data, type = 'focusArea' }) {
-  const { Id } = useParams();
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Configuration for different card types
   const cardConfig = {
     focusArea: {
       title: 'Focus Areas',
       emptyMessage: 'No focus areas found',
-      basePath: 'focusArea',
-      imageSize: 80
+      icon: '🌍',
+      accentColor: 'bg-emerald-100 text-emerald-800'
     },
     speaker: {
       title: 'Speakers',
       emptyMessage: 'No speakers found',
-      basePath: 'speaker',
-      imageSize: 80
+      icon: '🎤',
+      accentColor: 'bg-blue-100 text-blue-800'
     },
+    agenda: {
+        title: 'Agenda',
+        emptyMessage: 'No agenda found',
+        icon: '📅',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },  
     sponsor: {
       title: 'Sponsors',
       emptyMessage: 'No sponsors found',
-      basePath: 'sponsor',
-      imageSize: 100
+      icon: '🏢',
+      accentColor: 'bg-purple-100 text-purple-800'
     },
+    faq: {
+        title: 'FAQ',
+        emptyMessage: 'No FAQ found',
+        icon: '❓',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },
+    testimonial: {
+        title: 'Testimonials',
+        emptyMessage: 'No testimonials found',
+        icon: '💬',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },
     navbar: {
-      title: 'Navigation Items',
+      title: 'Navigation',
       emptyMessage: 'No navigation items found',
-      basePath: 'navbar',
-      imageSize: 60
+      icon: '🧭',
+      accentColor: 'bg-amber-100 text-amber-800'
     },
+    ticketing: {
+        title: 'Ticketing',
+        emptyMessage: 'No ticketing found',
+        icon: '🎟️',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },
+    blogs: {
+        title: 'Blogs',
+        emptyMessage: 'No blogs found',
+        icon: '📝',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },
+  
     default: {
       title: 'Event Items',
       emptyMessage: 'No items found',
-      basePath: 'item',
-      imageSize: 70
+      icon: '📅',
+      accentColor: 'bg-gray-100 text-gray-800'
     }
   };
 
   const config = cardConfig[type] || cardConfig.default;
 
+  const openModal = (item) => {
+    setSelectedItem(item);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedItem(null);
+  };
+
   return (
-    <div className="p-4">
-      
-      {data?.data?.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">{config.emptyMessage}</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data?.data?.map((item) => (
-            <Link 
-              key={item._id} 
-              href={`/administration/dashboard/specificEventCard/${Id}/${config.basePath}/${item._id}`}
-              className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="p-4">
-                <div className="flex items-center space-x-4">
-                  {item.imageUrlPath && (
-                    <div className="flex-shrink-0">
-                      <Image
-                        src={item.imageUrlPath}
-                        alt={item.name}
-                        width={config.imageSize}
-                        height={config.imageSize}
-                        className="rounded-lg object-cover"
-                      />
+    <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {data?.data?.map((item) => (
+              <div 
+                key={item._id}
+                onClick={() => openModal(item)}
+                className="group relative cursor-pointer"
+              >
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
+                <div className="relative h-full bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
+                  <div className={`h-2 ${config.accentColor}`}></div>
+                  <div className="p-5">
+                    <div className="flex items-start space-x-4">
+                      {item.imageUrlPath ? (
+                        <div className="flex-shrink-0 relative w-14 h-14 rounded-lg overflow-hidden">
+                          <Image
+                            src={item.imageUrlPath}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ) : (
+                        <div className={`flex-shrink-0 w-14 h-14 rounded-lg ${config.accentColor} flex items-center justify-center text-2xl`}>
+                          {config.icon}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
+                        <p className="text-gray-500 text-sm mt-1 line-clamp-2">
+                          {item.description}
+                        </p>
+                      </div>
                     </div>
-                  )}
-                  <div>
-                    <h3 className="font-semibold text-lg text-gray-800">{item.name}</h3>
-                    <p className="text-gray-600 text-sm mt-1 line-clamp-2">
-                      {item.description}
-                    </p>
+                    <div className="mt-4 flex justify-between items-center text-xs text-gray-400">
+                      <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                      {item.isDeleted && (
+                        <span className="text-red-500">Deleted</span>
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
-                  <span>Created: {new Date(item.createdAt).toLocaleDateString()}</span>
-                  {item.isDeleted && (
-                    <span className="text-red-500">Deleted</span>
-                  )}
+              </div>
+            ))}
+          </div>
+
+      {/* Detail Modal */}
+      <Modal 
+        isOpen={isModalOpen} 
+        onClose={closeModal}
+        title={selectedItem?.name || ''}
+        subtitle={type.charAt(0).toUpperCase() + type.slice(1)}
+      >
+        {selectedItem && (
+          <div className="space-y-6">
+            <div className="flex items-center space-x-4">
+              {selectedItem.imageUrlPath ? (
+                <div className="flex-shrink-0 relative w-20 h-20 rounded-lg overflow-hidden">
+                  <Image
+                    src={selectedItem.imageUrlPath}
+                    alt={selectedItem.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className={`flex-shrink-0 w-20 h-20 rounded-lg ${config.accentColor} flex items-center justify-center text-4xl`}>
+                  {config.icon}
+                </div>
+              )}
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">{selectedItem.name}</h3>
+                <p className="text-gray-500">{new Date(selectedItem.createdAt).toLocaleDateString()}</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-medium text-gray-500">Description</h4>
+                <p className="mt-1 text-gray-800">{selectedItem.description}</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Status</h4>
+                  <p className="mt-1">
+                    {selectedItem.isDeleted ? (
+                      <span className="text-red-500">Deleted</span>
+                    ) : (
+                      <span className="text-green-500">Active</span>
+                    )}
+                  </p>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-gray-500">Created</h4>
+                  <p className="mt-1 text-gray-800">
+                    {new Date(selectedItem.createdAt).toLocaleString()}
+                  </p>
                 </div>
               </div>
-            </Link>
-          ))}
-        </div>
-      )}
+            </div>
+
+            <div className="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  closeModal();
+                  setEdit(selectedItem);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              >
+                Edit
+              </button>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
