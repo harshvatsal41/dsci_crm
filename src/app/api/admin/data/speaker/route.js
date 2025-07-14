@@ -24,7 +24,7 @@ export async function GET(req) {
         const eventId = sanitizeInput(searchParams.get("eventId"));
 
         // Build query
-        const query = {};
+        const query = {isDeleted: false};
         if (eventId) query.yeaslyEventId = eventId;
 
         const speakers = await Speaker.find(query)

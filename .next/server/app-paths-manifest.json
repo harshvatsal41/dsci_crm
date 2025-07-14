@@ -1,14 +1,1 @@
-{
-  "/administration/dashboard/page": "app/administration/dashboard/page.js",
-  "/administration/dashboard/specificEventCard/[Id]/page": "app/administration/dashboard/specificEventCard/[Id]/page.js",
-  "/administration/dashboard/specificEventCard/[Id]/specificEventArea/focusArea/page": "app/administration/dashboard/specificEventCard/[Id]/specificEventArea/focusArea/page.js",
-  "/administration/dashboard/specificEventCard/[Id]/specificEventArea/testimonial/page": "app/administration/dashboard/specificEventCard/[Id]/specificEventArea/testimonial/page.js",
-  "/administration/login/page": "app/administration/login/page.js",
-  "/api/admin/auth/login/route": "app/api/admin/auth/login/route.js",
-  "/api/admin/data/eventoutreach/[id]/route": "app/api/admin/data/eventoutreach/[id]/route.js",
-  "/api/admin/data/eventoutreach/route": "app/api/admin/data/eventoutreach/route.js",
-  "/api/admin/data/focusarea/route": "app/api/admin/data/focusarea/route.js",
-  "/api/admin/data/testimonial/route": "app/api/admin/data/testimonial/route.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/page": "app/page.js"
-}
+{}
