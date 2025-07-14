@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react';
 import Image from 'next/image';
-import Modal from '../UI/Modal';
+import Modal from '../../UI/Modal';
 import { Button } from '@/Component/UI/TableFormat';
 import { FaTrash } from 'react-icons/fa';
 import { BroadFocusAreaApi, SpeakerApi } from '@/utilities/ApiManager';

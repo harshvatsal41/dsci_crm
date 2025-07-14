@@ -5,7 +5,7 @@ import {BroadFocusAreaApi} from '@/utilities/ApiManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import DashboardLoading from '@/app/administration/dashboard/loading';
-import SpecificEventCard from '@/Component/SpecificEventDetails/SpecificEventCard';
+import SpecificEventCard from '@/Component/SpecificEventDetails/FocusArea/SpecificEventCard';
 import FocusAreaForm from '@/Component/SpecificEventDetails/FocusArea/FocusAreaForm';
 import { toast } from 'react-toastify';
 
@@ -58,12 +58,15 @@ export default function FocusArea() {
             {!isLoading && (
             <div className="flex justify-between items-center mb-3">
                 <h1 className="text-2xl font-bold text-gray-800">Focus Area</h1>
+                <div>
+                    
                 <button 
                     onClick={() => setFormOpen(true)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                     Add New
                 </button>
+                </div>
                 {/* Floating Add Button */}
                 <button 
                     onClick={() => setFormOpen(true)}
