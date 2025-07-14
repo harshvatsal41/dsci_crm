@@ -4,7 +4,7 @@ import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import { NextResponse } from "next/server";
 import { handleError } from "@/Helper/errorHandler";
-
+import sanitizeInput from "@/Helper/sanitizeInput";
 
 export async function POST(req) {
     try {
@@ -24,7 +24,7 @@ export async function POST(req) {
         }
 
         const { searchParams } = new URL(req.url);
-        const faqId = searchParams.get("faqId");
+        const faqId = sanitizeInput(searchParams.get("faqId"));
 
         const faq = await Faq.findById(faqId);
         if (!faq) {
@@ -35,8 +35,8 @@ export async function POST(req) {
         }
 
         const formData = await req.formData();
-        const question = formData.get("question")?.toString().trim();
-        const answer = formData.get("answer")?.toString().trim();
+        const question = sanitizeInput(formData.get("question")?.toString().trim());
+        const answer = sanitizeInput(formData.get("answer")?.toString().trim());
 
         if (!question || !answer) {
             return NextResponse.json(apiResponse({

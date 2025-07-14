@@ -10,7 +10,8 @@ import EventOutreach from '@/Mongo/Model/DataModels/yeaslyEvent';
 import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
-
+import sanitizeInput from "@/Helper/sanitizeInput";
+        
 const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp",];
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -20,7 +21,7 @@ export async function GET(req) {
         await util.connectDB();
 
         const { searchParams } = new URL(req.url);
-        const eventId = searchParams.get("eventId");
+        const eventId = sanitizeInput(searchParams.get("eventId"));
 
         // Build query
         const query = {};
@@ -97,22 +98,22 @@ export async function POST(req) {
         }
 
         // Extract and validate fields
-        const name = (formData.get("name") || "").trim();
-        const title = (formData.get("title") || "").trim();
-        const organization = (formData.get("organization") || "").trim();
-        const position = (formData.get("position") || "").trim();
-        const bio = (formData.get("bio") || "").trim();
+        const name = sanitizeInput(formData.get("name") || "").trim();
+        const title = sanitizeInput(formData.get("title") || "").trim();
+        const organization = sanitizeInput(formData.get("organization") || "").trim();
+        const position = sanitizeInput(formData.get("position") || "").trim();
+        const bio = sanitizeInput(formData.get("bio") || "").trim();
         const experience = parseInt(formData.get("experience") || "0");
         const expertise = JSON.parse(formData.get("expertise") || "[]");
-        const phone = (formData.get("phone") || "").trim();
-        const emailOfficial = (formData.get("emailOfficial") || "").trim();
-        const emailPersonal = (formData.get("emailPersonal") || "").trim();
+        const phone = sanitizeInput(formData.get("phone") || "").trim();
+        const emailOfficial = sanitizeInput(formData.get("emailOfficial") || "").trim();
+        const emailPersonal = sanitizeInput(formData.get("emailPersonal") || "").trim();
         const socialLinks = JSON.parse(formData.get("socialLinks") || "{}");
-        const dob = formData.get("dob");
-        const gender = formData.get("gender");
-        const internalNote = (formData.get("internalNote") || "").trim();
+        const dob = sanitizeInput(formData.get("dob") || "").trim();
+        const gender = sanitizeInput(formData.get("gender") || "").trim();
+        const internalNote = sanitizeInput(formData.get("internalNote") || "").trim();
         const awards = JSON.parse(formData.get("awards") || "[]");
-        const yeaslyEventId = formData.get("yeaslyEventId");
+        const yeaslyEventId = sanitizeInput(formData.get("yeaslyEventId") || "").trim();
         const photo = formData.get("photo");
         const createdBy = decodedToken.id;
 

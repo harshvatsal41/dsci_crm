@@ -4,7 +4,7 @@ import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import { NextResponse } from "next/server";
 import { handleError } from "@/Helper/errorHandler";
-
+import sanitizeInput from "@/Helper/sanitizeInput";
 
 export async function POST(req) {
     try {
@@ -24,7 +24,7 @@ export async function POST(req) {
         }
 
         const { searchParams } = new URL(req.url);
-        const faqId = searchParams.get("faqId");
+        const faqId = sanitizeInput(searchParams.get("faqId"));
 
         const faq = await Faq.findById(faqId);
         if (!faq) {
@@ -34,11 +34,14 @@ export async function POST(req) {
             }), { status: STATUS_CODES.NOT_FOUND });
         }
 
-        faq.isDeleted = true;
-        faq.deletedAt = new Date();
-        faq.deletedBy = decodedToken.id;
+        if(faq.isDeleted){
+            return NextResponse.json(apiResponse({
+                message: "Faq already deleted",
+                statusCode: STATUS_CODES.BAD_REQUEST,
+            }), { status: STATUS_CODES.BAD_REQUEST });
+        }
 
-        await faq.save();
+        await faq.updateOne({ isDeleted: true });
 
         return NextResponse.json(apiResponse({
             message: "Faq deleted successfully",

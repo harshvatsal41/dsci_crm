@@ -4,6 +4,7 @@ import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import util from '@/Helper/apiUtils';
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
+import sanitizeInput from '@/Helper/sanitizeInput';
 
 export async function GET(request) {
     try {
@@ -76,6 +77,17 @@ export async function POST(request) {
         }
 
         body.createdBy = decodedToken?.id;
+        body = sanitizeInput(rawBody);
+
+        // 🔎 Optional: add required field checks here
+        if (!body.name || !body.description || !body.createdBy) {
+            return NextResponse.json(apiResponse({
+                message: "Missing required fields",
+                statusCode: STATUS_CODES.BAD_REQUEST
+            }), { status: STATUS_CODES.BAD_REQUEST });
+        }
+
+
         // Rest of your validation and creation logic remains the same...
         const newEvent = await EventOutreach.create(body);
 

@@ -9,6 +9,7 @@ import path from "path";
 import fs from "fs";
 import { mkdir } from "fs/promises";
 import crypto from "crypto";
+import sanitizeInput from "@/Helper/sanitizeInput";
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
@@ -27,7 +28,7 @@ export async function POST(req) {
         }
 
         const { searchParams } = new URL(req.url);
-        const id = searchParams.get("testimonialId");
+        const id = sanitizeInput(searchParams.get("testimonialId"));
         if (!id) {
             return NextResponse.json(apiResponse({
                 message: "testimonialId is required",
@@ -52,13 +53,13 @@ export async function POST(req) {
         }
 
         const formData = await req.formData();
-        const name = formData.get("name");
-        const organization = formData.get("organization");
+        const name = sanitizeInput(formData.get("name")?.toString().trim());
+        const organization = sanitizeInput(formData.get("organization")?.toString().trim());
         const photo = formData.get("image");
-        const body = formData.get("body");
-        const description = formData.get("description");
-        const email = formData.get("email");
-        const contentWeight = formData.get("contentWeight");
+        const body = sanitizeInput(formData.get("body")?.toString().trim());
+        const description = sanitizeInput(formData.get("description")?.toString().trim());
+        const email = sanitizeInput(formData.get("email")?.toString().trim());
+        const contentWeight = sanitizeInput(formData.get("contentWeight")?.toString().trim());
 
         testimonial.name = name || testimonial.name;
         testimonial.organization = organization || testimonial.organization;
