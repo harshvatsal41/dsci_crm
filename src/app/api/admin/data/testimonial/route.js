@@ -5,7 +5,7 @@ import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import { handleError } from "@/Helper/errorHandler";
 import Testimonial from "@/Mongo/Model/DataModels/Testimonial";
 import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
-import mongoose from "mongoose";
+import sanitizeInput from "@/Helper/sanitizeInput";
 import path from "path";
 import fs from "fs";
 import { mkdir } from "fs/promises";
@@ -31,7 +31,7 @@ export async function GET(req) {
         }
 
         const { searchParams } = new URL(req.url);
-        const eventId = searchParams.get("eventId");
+        const eventId = sanitizeInput(searchParams.get("eventId"));
 
         if (!eventId) {
             return NextResponse.json(
@@ -83,7 +83,7 @@ export async function POST(req) {
         }
 
         const { searchParams } = new URL(req.url);
-        const eventId = searchParams.get("eventId");
+        const eventId = sanitizeInput(searchParams.get("eventId"));
         const event = await EventOutreach.findById(eventId);
 
         if (!eventId) {
@@ -105,13 +105,13 @@ export async function POST(req) {
 
 
         const formData = await req.formData();
-        const name = formData.get("name");
-        const organization = formData.get("organization");
+        const name = sanitizeInput(formData.get("name")?.toString().trim());
+        const organization = sanitizeInput(formData.get("organization")?.toString().trim());
         const photo = formData.get("image");
-        const body = formData.get("body");
-        const description = formData.get("description");
-        const email = formData.get("email");
-        const contentWeight = formData.get("contentWeight");
+        const body = sanitizeInput(formData.get("body")?.toString().trim());
+        const description = sanitizeInput(formData.get("description")?.toString().trim());
+        const email = sanitizeInput(formData.get("email")?.toString().trim());
+        const contentWeight = sanitizeInput(formData.get("contentWeight")?.toString().trim());
 
         if (!name || !organization || !body || !description || !email || !contentWeight) {
             return NextResponse.json(

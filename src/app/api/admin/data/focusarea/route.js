@@ -9,6 +9,7 @@ import util from "@/Helper/apiUtils";
 import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
+import sanitizeInput from "@/Helper/sanitizeInput";
 
 const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "svg"];
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
@@ -22,7 +23,7 @@ export async function GET(req) {
 
 
         const { searchParams } = new URL(req.url);
-        const eventId = searchParams.get("eventId");
+        const eventId = sanitizeInput(searchParams.get("eventId"));
 
         const filter = {
             isDeleted: false,
@@ -82,9 +83,9 @@ export async function POST(req) {
         }
 
         // 3. Process fields with better sanitization
-        const name = (formData.get("name") || "").trim();
-        const description = (formData.get("description") || "").trim();
-        const eventId = formData.get("eventId");
+        const name = sanitizeInput(formData.get("name")?.toString().trim());
+        const description = sanitizeInput(formData.get("description")?.toString().trim());
+        const eventId = sanitizeInput(formData.get("eventId")?.toString().trim());
         const createdBy = decodedToken?.id;
         const image = formData.get("image");
 

@@ -4,8 +4,7 @@ import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import { handleError } from "@/Helper/errorHandler";
 import Testimonial from "@/Mongo/Model/DataModels/Testimonial";
-import mongoose from "mongoose";
-
+import sanitizeInput from "@/Helper/sanitizeInput";
 
 export async function POST(req) {
     try {
@@ -21,7 +20,7 @@ export async function POST(req) {
         }
         
         const { searchParams } = new URL(req.url);
-        const id = searchParams.get("testimonialId");
+        const id = sanitizeInput(searchParams.get("testimonialId"));
 
         const testimonial = await Testimonial.findById(id);
         if (!testimonial) {
@@ -29,6 +28,13 @@ export async function POST(req) {
                 message: "Testimonial not found",
                 statusCode: STATUS_CODES.NOT_FOUND,
             }), { status: STATUS_CODES.NOT_FOUND });
+        }
+
+        if(testimonial.isDeleted){
+            return NextResponse.json(apiResponse({
+                message: "Testimonial already deleted",
+                statusCode: STATUS_CODES.BAD_REQUEST,
+            }), { status: STATUS_CODES.BAD_REQUEST });
         }
 
         testimonial.isDeleted = true;

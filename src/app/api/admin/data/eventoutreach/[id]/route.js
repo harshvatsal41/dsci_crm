@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import util from "@/Helper/apiUtils";
+import sanitizeInput from "@/Helper/sanitizeInput";
 
 // This function gets called with route parameters
 export async function GET(req, { params }) {
@@ -10,8 +11,8 @@ export async function GET(req, { params }) {
         await util.connectDB();
 
         const { id } = await params;
-
-        const event = await EventOutreach.findById(id);
+        const eventId = sanitizeInput(id);
+        const event = await EventOutreach.findById(eventId);
 
         if (!event) {
             return NextResponse.json(

@@ -5,7 +5,7 @@ import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import { NextResponse } from "next/server";
 import { handleError } from "@/Helper/errorHandler";
 import mongoose from "mongoose";
-
+import sanitizeInput from "@/Helper/sanitizeInput";
 
 export async function POST(req) {
     try {
@@ -25,7 +25,7 @@ export async function POST(req) {
 
         
         const { searchParams } = new URL(req.url);
-        const focusAreaId = searchParams.get("focusAreaId");
+        const focusAreaId = sanitizeInput(searchParams.get("focusAreaId"));
 
         if (!mongoose.isValidObjectId(focusAreaId)) {
             return NextResponse.json(apiResponse({
@@ -41,6 +41,13 @@ export async function POST(req) {
                 message: "Focus area not found",
                 statusCode: STATUS_CODES.NOT_FOUND,
             }), { status: STATUS_CODES.NOT_FOUND });
+        }
+
+        if(focusArea.isDeleted){
+            return NextResponse.json(apiResponse({
+                message: "Focus area already deleted",
+                statusCode: STATUS_CODES.BAD_REQUEST,
+            }), { status: STATUS_CODES.BAD_REQUEST });
         }
         
         focusArea.isDeleted = true;
