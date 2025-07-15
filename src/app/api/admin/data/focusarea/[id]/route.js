@@ -80,6 +80,17 @@ export async function POST(req, { params }) {
         );
       }
 
+      const extension = path.extname(image.name).slice(1);
+      if (!ALLOWED_EXTENSIONS.includes(extension)) {
+        return NextResponse.json(
+          apiResponse({
+            message: "Invalid image extension",
+            statusCode: STATUS_CODES.BAD_REQUEST,
+          }),
+          { status: STATUS_CODES.BAD_REQUEST }
+        );
+      }
+
       // Delete old image
       if (existingFocusArea.imageUrlPath) {
         const oldPath = path.join(process.cwd(), "public", existingFocusArea.imageUrlPath);
@@ -88,7 +99,7 @@ export async function POST(req, { params }) {
 
       // Save new image
       const event = await EventOutreach.findById(existingFocusArea.yearlyEventId);
-      const extension = path.extname(image.name).slice(1);
+      
       const folderPath = path.join(process.cwd(), "public", `${event.year}`, "focusarea");
       const randomId = crypto.randomBytes(8).toString("hex");
       const fileName = `${Date.now()}-${randomId}.${extension}`;
