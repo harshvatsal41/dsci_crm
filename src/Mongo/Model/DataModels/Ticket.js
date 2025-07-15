@@ -11,6 +11,14 @@ const ticketSchema = new mongoose.Schema({
         trim: true,
     },
 
+    paymentUrl: {
+        type: String,
+        trim: true,
+        required: [true, "Payment URL is required"],
+        index: true,
+        unique: true,
+    },
+
     // Price details
     priceReference: [{
         price: {
@@ -32,10 +40,12 @@ const ticketSchema = new mongoose.Schema({
     },
     originalPrice: {
         type: Number,
+        required: [true, "Original price is required"],
         min: [0, "Original price must be non-negative"],
     },
     discountPercentage: {
         type: Number,
+        required: [true, "Discount percentage is required"],
         min: [0, "Discount must be 0 or greater"],
         max: [100, "Discount cannot exceed 100%"],
     },
@@ -114,8 +124,6 @@ const ticketSchema = new mongoose.Schema({
         ref: "Event",
         required: true,
     },
-
-
 
 }, {
     timestamps: true, // Adds createdAt and updatedAt automatically
