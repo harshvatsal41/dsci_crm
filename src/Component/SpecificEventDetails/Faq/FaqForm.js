@@ -3,11 +3,11 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { FaqApi } from '@/utilities/ApiManager';
-import { toast } from 'react-toastify';
 import { InputField, TextAreaField } from '@/Component/UI/ReusableCom';
 import { Button } from '@/Component/UI/TableFormat';
 import Modal from '@/Component/UI/Modal';
 import { useParams } from 'next/navigation';
+import {toast} from 'sonner';
 
 const initialState = {
     question: '',

@@ -70,7 +70,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       'FAQ': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/faq`,
       'Testimonial': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/testimonial`,
       'Navbar': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/navbar`,
-      'Ticketing': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/ticketing`
+      'Ticketing': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/ticketing`,
+      'Blogs': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/blogs`
     };
 
     const path = basePaths[item.title] || item.path;
@@ -95,6 +96,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       case 'menu': return <FiMenu className="w-5 h-5" />;
       case 'ticket': return <FiRotateCcw className="w-5 h-5" />;
       case 'image': return <FiImage className="w-5 h-5" />;
+      case 'blogs': return <FiImage className="w-5 h-5" />;
       default: return <FiGrid className="w-5 h-5" />;
     }
   };

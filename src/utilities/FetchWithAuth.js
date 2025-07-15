@@ -1,7 +1,7 @@
 'use client';
 
 import { store } from "@/Redux/Store/store";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 import Cookies from "js-cookie";
 
 /**
@@ -56,9 +56,9 @@ export const FetchWithAuth = async (
 
     // Handle token expiration
     if (response.status === 401) {
+      toast.error("Your session has expired. Please login again.");
       store.dispatch({ type: "auth/logout" });
       localStorage.removeItem("dsciAuthToken");
-      if (!suppressToast) toast.error("Your session has expired. Please login again.");
       window.location.href = `${loginPath}?redirect=${encodeURIComponent(window.location.pathname)}`;
       return;
     }
@@ -70,14 +70,15 @@ export const FetchWithAuth = async (
 
     if (!response.ok) {
       const message = responseData?.error || responseData?.message || "Something went wrong";
-      // if (!suppressToast) toast.error(message);
+      toast.error(message);
       throw new Error(message);
+    }else{
+      toast.success(responseData?.message || "Request successful");
+      return responseData;
     }
-
-    return responseData;
   } catch (error) {
     const finalMessage = error.message || "Network error";
-    // if (!suppressToast) toast.error(finalMessage);
+    toast.error(finalMessage);
     throw new Error(finalMessage);
   }
 };

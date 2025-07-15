@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { InputField, TextAreaField } from '@/Component/UI/ReusableCom';
 import Modal from '@/Component/UI/Modal';
 import { EventApi } from '@/utilities/ApiManager';
@@ -119,7 +119,6 @@ export default function EventForm({ onSuccess, onClose, eventData = {} }) {
       }
     } catch (error) {
       toast.error(error.message || 'Failed to save event');
-      console.error('Error:', error);
     } finally {
       setIsSubmitting(false);
     }

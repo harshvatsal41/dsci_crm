@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { SpeakerApi } from '@/utilities/ApiManager';
-import { toast } from 'react-toastify';
 import { InputField, NativeSelectField, TextAreaField } from '@/Component/UI/ReusableCom';
 import { Button } from '@/Component/UI/TableFormat';
 import Image from 'next/image';
 import { FiPlus, FiTrash2, FiEdit2, FiMinus } from 'react-icons/fi';
 import Modal from '@/Component/UI/Modal';
 import { useParams } from 'next/navigation';
+import {toast} from 'sonner';
 
 const initialState = {
     name: '', position: '', organization: '', title: '', bio: '',

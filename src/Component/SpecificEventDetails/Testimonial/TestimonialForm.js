@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { TestimonialApi } from '@/utilities/ApiManager';
-import { toast } from 'react-toastify';
+import {toast} from 'sonner';
 import { InputField, TextAreaField, NativeSelectField } from '@/Component/UI/ReusableCom';
 import { Button } from '@/Component/UI/TableFormat';
 import Modal from '@/Component/UI/Modal';
