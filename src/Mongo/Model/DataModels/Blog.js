@@ -31,6 +31,11 @@ const blogSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    yeaslyEventId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "EventOutreach",
+      required: true,
+    },
 
     // User references
     createdBy: {

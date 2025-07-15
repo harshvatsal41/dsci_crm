@@ -5,6 +5,7 @@ import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import { handleError } from "@/Helper/errorHandler";
 import Blog from "@/Mongo/Model/DataModels/Blog";
 import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
+import Employee from "@/Mongo/Model/AcessModels/Employee";
 import sanitizeInput from "@/Helper/sanitizeInput";
 import path from "path";
 import fs from "fs";
@@ -17,19 +18,42 @@ const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
 export async function POST(req) {
     try {
         await util.connectDB();
+        
+        const token = req.cookies.get("dsciAuthToken")?.value || req.headers.get("Authorization")?.split(" ")[1];
+        const decodedToken = decodeTokenPayload(token);
+        if (!decodedToken?.id) {
+            return NextResponse.json(
+                apiResponse({
+                    message: "Unauthorized: Invalid or missing token",
+                    statusCode: STATUS_CODES.UNAUTHORIZED,
+                }),
+                { status: STATUS_CODES.UNAUTHORIZED }
+            );
+        }
+
+        const user = await Employee.findById(decodedToken.id);
+        if (!user) {
+            return NextResponse.json(
+                apiResponse({
+                    message: "Unauthorized: User not found",
+                    statusCode: STATUS_CODES.UNAUTHORIZED,
+                }),
+                { status: STATUS_CODES.UNAUTHORIZED }
+            );
+        }
 
         const { searchParams } = new URL(req.url);
-        const eventId = sanitizeInput(searchParams.get("eventId"));
+        const blogId = sanitizeInput(searchParams.get("blogId"));
         const formData = await req.formData();
         const title = sanitizeInput(formData.get("title") || "").trim();
         const content = sanitizeInput(formData.get("content") || "").trim();
-        const image = formData.get("image");
+        const photo = formData.get("image");
         const externalLink = formData.get("externalLink");
-        const createdBy = decodedToken.id;
+        const updatedBy = decodedToken.id;
         const body = sanitizeInput(formData.get("body") || "").trim();
         const contentWeight = parseInt(formData.get("contentWeight") || "0");
-
-        if (!title || !content || !image || !externalLink || !body || !contentWeight) {
+        
+        if (!title || !content || !externalLink || !body || !contentWeight) {
             return NextResponse.json(
                 apiResponse({
                     message: "Missing required fields",
@@ -39,18 +63,7 @@ export async function POST(req) {
             );
         }
 
-        const event = await EventOutreach.findById(eventId);
-        if (!event) {
-            return NextResponse.json(
-                apiResponse({
-                    message: "Event not found",
-                    statusCode: STATUS_CODES.NOT_FOUND,
-                }),
-                { status: STATUS_CODES.NOT_FOUND }
-            );
-        }
-
-        const blog = await Blog.findOne({ yeaslyEventId: eventId });
+        const blog = await Blog.findOne({ _id: blogId });
         if (!blog) {
             return NextResponse.json(
                 apiResponse({
@@ -105,49 +118,12 @@ export async function POST(req) {
         blog.body = body;
         blog.contentWeight = contentWeight;
 
-        if (image) {
-            const imageFile = image;
-            const imageType = imageFile.type;
-            const imageExtension = path.extname(imageFile.name).toLowerCase();
-
-            if (!ALLOWED_IMAGE_TYPES.includes(imageType) || !ALLOWED_EXTENSIONS.includes(imageExtension)) {
-                return NextResponse.json(
-                    apiResponse({
-                        message: "Invalid image type or extension",
-                        statusCode: STATUS_CODES.BAD_REQUEST,
-                    }),
-                    { status: STATUS_CODES.BAD_REQUEST }
-                );
-            }
-
-            const imageBuffer = await imageFile.arrayBuffer();
-            const imageBufferArray = Array.from(new Uint8Array(imageBuffer));
-            const imageHash = crypto.createHash("sha256").update(imageBufferArray).digest("hex");
-            const imagePath = path.join("public", "images", `${event.year}`, "blogs", `${imageHash}${imageExtension}`);
-            const imageFilePath = path.resolve(imagePath);
-
-            try {
-                await mkdir(path.dirname(imageFilePath), { recursive: true });
-                await writeFile(imageFilePath, Buffer.from(imageBufferArray));
-            } catch (error) {
-                console.error("Error saving image:", error);
-                return NextResponse.json(
-                    apiResponse({
-                        message: "Failed to save image",
-                        statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR,
-                    }),
-                    { status: STATUS_CODES.INTERNAL_SERVER_ERROR }
-                );
-            }
-
-            blog.image = `/${event.year}/blogs/${imageHash}${imageExtension}`;
-        }
-
         await blog.save();
 
         return NextResponse.json(
             apiResponse({
                 message: "Blog updated successfully",
+                data: blog,
                 statusCode: STATUS_CODES.UPDATESUCCESS,
             }),
             { status: STATUS_CODES.UPDATESUCCESS }
