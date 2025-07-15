@@ -31,6 +31,7 @@ const EventOutreachSchema = new mongoose.Schema({
     speakers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Speaker" }],
     faqIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Faq" }],
     testimonialIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Testimonial" }],
+    ticketIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ticket" }],
     blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Blog" }],
     isDeleted: { type: Boolean, default: false },
     deletedAt: { type: Date },
