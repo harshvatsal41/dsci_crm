@@ -7,6 +7,7 @@ import Ticket from "@/Mongo/Model/DataModels/Ticket";
 import sanitizeInput from "@/Helper/sanitizeInput";
 import Employee from "@/Mongo/Model/AcessModels/Employee";
 import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
+import { fillOffset } from "framer-motion";
 
 export async function GET(req) {
     try {
@@ -161,6 +162,22 @@ export async function POST(req) {
         const venue = sanitizeInput(formData.get("venue") || "").trim();
         const yeaslyEventId = sanitizeInput(formData.get("yeaslyEventId") || "").trim();
         const createdBy = decodedToken.id;
+
+        filter = {
+            isDeleted: false,
+        };
+
+        filter.paymentUrl = paymentUrl;
+        ticketDoc = await Ticket.find(filter);
+        if (ticketDoc){
+            return NextResponse.json(
+                apiResponse({
+                    message: "Ticket already exists with this payment link",
+                    statusCode: STATUS_CODES.BAD_REQUEST,
+                }),
+                { status: STATUS_CODES.BAD_REQUEST }
+            );
+        }
 
         // Calculate expected discounted price
         const expectedPrice = originalPrice - Math.round(originalPrice * (discountPercentage / 100));
