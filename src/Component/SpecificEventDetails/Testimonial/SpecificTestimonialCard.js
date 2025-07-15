@@ -32,7 +32,7 @@ export default function SpecificTestimonialCard({ setEdit, data, onDelete }) {
     
     dispatch(setLoading(true));
     try {
-      const response = await TestimonialApi(null, 'DELETE', { Id: testimonialToDelete._id });
+      const response = await TestimonialApi(null, 'DEL', { Id: testimonialToDelete._id });
       if (response.statusCode === 200 || response.statusCode === 203 || response.status === "success") {
         toast.success(response.message || 'Testimonial deleted successfully');
         onDelete();

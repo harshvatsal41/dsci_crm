@@ -99,7 +99,7 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
     
     dispatch(setLoading(true));
     try {
-      const response = await BroadFocusAreaApi(null, 'DELETE', { Id: itemToDelete._id });
+      const response = await BroadFocusAreaApi(null, 'DEL', { Id: itemToDelete._id });
       if (response.statusCode === 200 || response.statusCode === 203 || response.status === "success") {
         toast.success(response.message || 'Item deleted successfully');
         onDelete();

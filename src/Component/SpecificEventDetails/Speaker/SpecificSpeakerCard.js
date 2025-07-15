@@ -32,7 +32,7 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
     
     dispatch(setLoading(true));
     try {
-      const response = await SpeakerApi(null, 'DELETE', { Id: speakerToDelete._id });
+      const response = await SpeakerApi(null, 'DEL', { Id: speakerToDelete._id });
       if (response.statusCode === 200 || response.statusCode === 203 || response.status === "success") {
         toast.success(response.message || 'Speaker deleted successfully');
         onDelete();

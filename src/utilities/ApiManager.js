@@ -58,7 +58,7 @@ const BroadFocusAreaApi = async(data, method, params={}) => {
         const url='/api/admin/data/focusarea';
         const res = await FetchWithAuth(url, "POST", data);
         return res;
-    }else if(method==="DELETE"){
+    }else if(method==="DEL"){
         const url=`/api/admin/data/focusarea/delete?focusAreaId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST");
         return res;
@@ -88,7 +88,7 @@ const SpeakerApi=async(data, method, params={}) => {
         const url='/api/admin/data/speaker';
         const res = await FetchWithAuth(url, "POST", data);
         return res;
-    }else if(method==="DELETE"){
+    }else if(method==="DEL"){
         const url=`/api/admin/data/speaker/delete?speakerId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST");
         return res;
@@ -117,7 +117,7 @@ const FaqApi=async(data, method, params={}) => {
         const url=`/api/admin/data/faq/update?faqId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST", data);
         return res;
-    }else if(method==="DELETE"){
+    }else if(method==="DEL"){
         const url=`/api/admin/data/faq/delete?faqId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST");
         return res;
@@ -146,7 +146,7 @@ const TestimonialApi=async(data, method, params={}) => {
         const url=`/api/admin/data/testimonial/update?testimonialId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST", data);
         return res;
-    }else if(method==="DELETE"){
+    }else if(method==="DEL"){
         const url=`/api/admin/data/testimonial/delete?testimonialId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST");
         return res;
