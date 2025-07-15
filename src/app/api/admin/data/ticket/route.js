@@ -48,6 +48,12 @@ export async function GET(req) {
             );
         }
 
+        const filter = {
+            isDeleted: false,
+        };
+
+        
+
         const event = await EventOutreach.findById(eventId);
         if (!event) {
             return NextResponse.json(
@@ -59,7 +65,11 @@ export async function GET(req) {
             );
         }
 
-        const tickets = await Ticket.find({ eventId: event._id });
+        if (eventId) {
+            filter.yeaslyEventId = event._id;
+        }
+
+        const tickets = await Ticket.find(filter);
 
         return NextResponse.json(
             apiResponse({
@@ -141,7 +151,9 @@ export async function POST(req) {
         const price = sanitizeInput(formData.get("price") || "").trim();
         const originalPrice = sanitizeInput(formData.get("originalPrice") || "").trim();
         const discountPercentage = sanitizeInput(formData.get("discountPercentage") || "").trim();
-        const availableStatus = sanitizeInput(formData.get("availableStatus") || "").trim();
+        const availableStatus = ["active", "inactive", "soldOut"].includes(formData.get("availableStatus"))
+        ? formData.get("availableStatus")
+        : "inactive";
         const accessIncludes = JSON.parse(formData.get("accessIncludes") || "[]");
         const validityPeriod = JSON.parse(formData.get("validityPeriod") || "{}");
         const applicableDate = sanitizeInput(formData.get("applicableDate") || "").trim();
@@ -150,15 +162,11 @@ export async function POST(req) {
         const yeaslyEventId = sanitizeInput(formData.get("yeaslyEventId") || "").trim();
         const createdBy = decodedToken.id;
 
-        originalPrice = parseInt(originalPrice);
-        price = parseInt(price);
-        discountPercentage = parseInt(discountPercentage);
-
         // Calculate expected discounted price
         const expectedPrice = originalPrice - Math.round(originalPrice * (discountPercentage / 100));
 
         // Validate discounted price
-        if (price !== expectedPrice) {
+        if (Number(price) !== Number(expectedPrice)) {
             return NextResponse.json(
                 apiResponse({
                     message: `Expected price after ${discountPercentage}% discount is ${expectedPrice}, but received ${price}`,
@@ -167,6 +175,13 @@ export async function POST(req) {
                 { status: STATUS_CODES.BAD_REQUEST }
             );
         }
+
+        if (!Array.isArray(priceReference)) throw new Error("priceReference must be an array");
+
+        if (!Array.isArray(accessIncludes)) throw new Error("accessIncludes must be an array");
+
+        if (typeof validityPeriod !== 'object') throw new Error("validityPeriod must be an object");
+
 
 
 
@@ -185,11 +200,11 @@ export async function POST(req) {
             passType,
             venue,
             createdBy,
-            yeaslyEventId,
+            yeaslyEventId:eventId,
         });
 
 
-        await EventOutreach.findByIdAndUpdate(yeaslyEventId, {
+        await EventOutreach.findByIdAndUpdate(eventId, {
             $push: { ticketIds: ticket._id },
         });
 
@@ -202,14 +217,14 @@ export async function POST(req) {
             { status: STATUS_CODES.SUCCESS }
         );
     } catch (error) {
-        console.error(error);
-
         handleError(error);
+
         return NextResponse.json(
             apiResponse({
-                message: error.message || "Internal server error",
-                httpStatus: error.statusCode || 500,
-            })
+                message: error.message || STATUS_CODES.INTERNAL_ERROR,
+                statusCode: STATUS_CODES.INTERNAL_ERROR,
+            }),
+            { status: STATUS_CODES.INTERNAL_ERROR }
         );
     }
 }

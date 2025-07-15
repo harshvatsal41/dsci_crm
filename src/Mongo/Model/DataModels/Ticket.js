@@ -125,7 +125,7 @@ const ticketSchema = new mongoose.Schema({
     },
 
     // Event references
-    eventId: {
+    yeaslyEventId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Event",
         required: true,
