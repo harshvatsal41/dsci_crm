@@ -7,21 +7,18 @@ import Ticket from "@/Mongo/Model/DataModels/Ticket";
 import sanitizeInput from "@/Helper/sanitizeInput";
 import Employee from "@/Mongo/Model/AcessModels/Employee";
 import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
-
-
+import mongoose from "mongoose";
 
 export async function POST(req) {
     try {
         await util.connectDB();
 
+        // Authenticate
         const token = req.cookies.get("dsciAuthToken")?.value || req.headers.get("Authorization")?.split(" ")[1];
         const decodedToken = decodeTokenPayload(token);
         if (!decodedToken?.id) {
             return NextResponse.json(
-                apiResponse({
-                    message: "Unauthorized: Invalid or missing token",
-                    statusCode: STATUS_CODES.UNAUTHORIZED,
-                }),
+                apiResponse({ message: "Unauthorized: Invalid or missing token", statusCode: STATUS_CODES.UNAUTHORIZED }),
                 { status: STATUS_CODES.UNAUTHORIZED }
             );
         }
@@ -29,23 +26,17 @@ export async function POST(req) {
         const user = await Employee.findById(decodedToken.id);
         if (!user) {
             return NextResponse.json(
-                apiResponse({
-                    message: "Unauthorized: User not found",
-                    statusCode: STATUS_CODES.UNAUTHORIZED,
-                }),
+                apiResponse({ message: "Unauthorized: User not found", statusCode: STATUS_CODES.UNAUTHORIZED }),
                 { status: STATUS_CODES.UNAUTHORIZED }
             );
         }
 
+        // Extract ticketId
         const { searchParams } = new URL(req.url);
         const ticketId = sanitizeInput(searchParams.get("ticketId"));
-
-        if (!ticketId) {
+        if (!ticketId || !mongoose.Types.ObjectId.isValid(ticketId)) {
             return NextResponse.json(
-                apiResponse({
-                    message: "Ticket ID is required",
-                    statusCode: STATUS_CODES.BAD_REQUEST,
-                }),
+                apiResponse({ message: "Valid Ticket ID is required", statusCode: STATUS_CODES.BAD_REQUEST }),
                 { status: STATUS_CODES.BAD_REQUEST }
             );
         }
@@ -53,14 +44,12 @@ export async function POST(req) {
         const ticketDoc = await Ticket.findById(ticketId);
         if (!ticketDoc) {
             return NextResponse.json(
-                apiResponse({
-                    message: "Ticket not found",
-                    statusCode: STATUS_CODES.NOT_FOUND,
-                }),
+                apiResponse({ message: "Ticket not found", statusCode: STATUS_CODES.NOT_FOUND }),
                 { status: STATUS_CODES.NOT_FOUND }
             );
         }
 
+        // Parse form data
         const formData = await req.formData();
         const name = sanitizeInput(formData.get("name") || "").trim();
         const subHeading = sanitizeInput(formData.get("subHeading") || "").trim();
@@ -74,12 +63,31 @@ export async function POST(req) {
             : "inactive";
         const accessIncludes = JSON.parse(formData.get("accessIncludes") || "[]");
         const validityPeriod = JSON.parse(formData.get("validityPeriod") || "{}");
-        const applicableDate = sanitizeInput(formData.get("applicableDate") || "").trim();
+        const applicableDateRaw = sanitizeInput(formData.get("applicableDate") || "").trim();
         const passType = sanitizeInput(formData.get("passType") || "").trim();
         const venue = sanitizeInput(formData.get("venue") || "").trim();
         const updatedBy = decodedToken.id;
 
-        // Validate price
+        const applicableDate = applicableDateRaw ? new Date(applicableDateRaw) : null;
+
+        // Validate uniqueness of paymentUrl (excluding current ticket)
+        const existingTicket = await Ticket.findOne({
+            paymentUrl,
+            isDeleted: false,
+            _id: { $ne: ticketId }
+        });
+
+        if (existingTicket) {
+            return NextResponse.json(
+                apiResponse({
+                    message: "This payment link is already linked to another ticket",
+                    statusCode: STATUS_CODES.BAD_REQUEST,
+                }),
+                { status: STATUS_CODES.BAD_REQUEST }
+            );
+        }
+
+        // Validate discounted price
         const expectedPrice = originalPrice - Math.round(originalPrice * (discountPercentage / 100));
         if (price !== expectedPrice) {
             return NextResponse.json(
@@ -96,36 +104,41 @@ export async function POST(req) {
         if (!Array.isArray(accessIncludes)) throw new Error("accessIncludes must be an array");
         if (typeof validityPeriod !== "object") throw new Error("validityPeriod must be an object");
 
-        const updatedTicket = await Ticket.findByIdAndUpdate(ticketId, {
-            name,
-            subHeading,
-            paymentUrl,
-            priceReference,
-            price,
-            originalPrice,
-            discountPercentage,
-            availableStatus,
-            accessIncludes,
-            validityPeriod,
-            applicableDate,
-            passType,
-            venue,
-            updatedBy,
-        }, { new: true });
+        // Update the ticket
+        const updatedTicket = await Ticket.findByIdAndUpdate(
+            ticketId,
+            {
+                name,
+                subHeading,
+                paymentUrl,
+                priceReference,
+                price,
+                originalPrice,
+                discountPercentage,
+                availableStatus,
+                accessIncludes,
+                validityPeriod,
+                applicableDate,
+                passType,
+                venue,
+                updatedBy,
+            },
+            { new: true }
+        );
 
         return NextResponse.json(
             apiResponse({
                 message: "Ticket updated successfully",
                 data: updatedTicket,
-                statusCode: STATUS_CODES.SUCCESS,
+                statusCode: STATUS_CODES.UPDATESUCCESS,
             }),
-            { status: STATUS_CODES.SUCCESS }
+            { status: STATUS_CODES.UPDATESUCCESS }
         );
     } catch (error) {
         handleError(error);
         return NextResponse.json(
             apiResponse({
-                message: error.message || STATUS_CODES.INTERNAL_ERROR,
+                message: error.message || "Internal server error",
                 statusCode: STATUS_CODES.INTERNAL_ERROR,
             }),
             { status: STATUS_CODES.INTERNAL_ERROR }

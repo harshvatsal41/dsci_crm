@@ -69,9 +69,9 @@ export async function POST(req) {
         return NextResponse.json(
             apiResponse({
                 message: "Ticket deleted successfully",
-                statusCode: STATUS_CODES.SUCCESS,
+                statusCode: STATUS_CODES.SUCCESSDELETE,
             }),
-            { status: STATUS_CODES.SUCCESS }
+            { status: STATUS_CODES.SUCCESSDELETE }
         );
     } catch (error) {
         handleError(error);
