@@ -9,6 +9,9 @@ import { handleError } from "@/Helper/errorHandler";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import sanitizeInput from "@/Helper/sanitizeInput";
 
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp",];
+const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
+
 export async function GET(req, { params }) {
   try {
     await util.connectDB();
