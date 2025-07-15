@@ -1,0 +1,156 @@
+'use client';
+import { FetchWithAuth } from "./FetchWithAuth";
+
+
+const LoginApi = async(formData) => {
+    const res = await FetchWithAuth("/api/admin/auth/login", "POST", formData);
+    return res;
+}
+
+const RegisterApi = async(formData) => {
+    const url='/api/admin/auth/register';
+    const res = await FetchWithAuth(url, "POST", formData);
+    return res;
+}
+
+const EventApi = async(data=null, method="GET", params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/eventoutreach/'+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/eventoutreach';
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST"){
+        const url='/api/admin/data/eventoutreach';
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="PUT"){
+        const url='/api/admin/data/eventoutreach/'+params.Id;
+        const res = await FetchWithAuth(url, "PUT", data);
+        return res;
+    }
+}
+
+// Event Post api is still in page
+
+const BroadFocusAreaApi = async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/focusarea?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/focusarea?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url='/api/admin/data/focusarea/'+params.Id;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="POST"){
+        const url='/api/admin/data/focusarea';
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DELETE"){
+        const url=`/api/admin/data/focusarea/delete?focusAreaId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
+        return res;
+    }
+    
+}
+
+
+// Speaker Api
+const SpeakerApi=async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/speaker?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/speaker?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url='/api/admin/data/speaker/'+params.Id;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="POST"){
+        const url='/api/admin/data/speaker';
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DELETE"){
+        const url=`/api/admin/data/speaker/delete?speakerId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
+        return res;
+    }   
+}
+
+
+// Faq Api
+const FaqApi=async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/faq?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/faq?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url=`/api/admin/data/faq?eventId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="PUT" && params.Id){
+        const url=`/api/admin/data/faq/update?faqId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DELETE"){
+        const url=`/api/admin/data/faq/delete?faqId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
+        return res;
+    }   
+}
+
+
+// Testimonial Api
+const TestimonialApi=async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/testimonial?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/testimonial?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url=`/api/admin/data/testimonial?eventId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="PUT" && params.Id){
+        const url=`/api/admin/data/testimonial/update?testimonialId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DELETE"){
+        const url=`/api/admin/data/testimonial/delete?testimonialId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
+        return res;
+    }   
+}
+
+export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi, SpeakerApi, FaqApi, TestimonialApi}
