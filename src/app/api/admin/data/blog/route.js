@@ -193,7 +193,7 @@ export async function POST(req) {
         return NextResponse.json(apiResponse({
             message: "Blog created successfully",
             data: blog,
-            statusCode: STATUS_CODES.OK,
+            statusCode: STATUS_CODES.CREATED,
         }));
     } catch (error) {
         console.error(error);
