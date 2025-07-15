@@ -23,14 +23,32 @@ export async function GET(req) {
         const { searchParams } = new URL(req.url);
         const eventId = sanitizeInput(searchParams.get("eventId"));
 
+        if (!eventId) {
+            return NextResponse.json(
+                apiResponse({
+                    message: "Event ID is required",
+                    statusCode: STATUS_CODES.BAD_REQUEST,
+                }),
+                { status: STATUS_CODES.BAD_REQUEST }
+            );
+        }
+
+        const event = await EventOutreach.findById(eventId);
+        if (!event) {
+            return NextResponse.json(
+                apiResponse({
+                    message: "Event not found",
+                    statusCode: STATUS_CODES.NOT_FOUND,
+                }),
+                { status: STATUS_CODES.NOT_FOUND }
+            );
+        }
+
         // Build query
         const query = {isDeleted: false};
         if (eventId) query.yeaslyEventId = eventId;
 
-        const speakers = await Speaker.find(query)
-            .populate("yeaslyEventId", "title year")
-            .populate("createdBy", "name email")
-            .sort({ createdAt: -1 });
+        const speakers = await Speaker.find(query);
 
         return NextResponse.json(
             apiResponse(
