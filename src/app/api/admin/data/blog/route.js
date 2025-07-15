@@ -5,11 +5,15 @@ import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import { handleError } from "@/Helper/errorHandler";
 import Blog from "@/Mongo/Model/DataModels/Blog";
 import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
+import Employee from "@/Mongo/Model/AcessModels/Employee";
 import sanitizeInput from "@/Helper/sanitizeInput";
 import path from "path";
 import fs from "fs";
-import { mkdir } from "fs/promises";
+import { mkdir, writeFile } from "fs/promises";
 import crypto from "crypto";
+
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp",];
+const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
 
 
 export async function GET(req) {
@@ -50,6 +54,31 @@ export async function GET(req) {
 export async function POST(req) {
     try {
         await util.connectDB();
+
+        const token = req.cookies.get("dsciAuthToken")?.value || req.headers.get("Authorization")?.split(" ")[1];
+
+        const decodedToken = decodeTokenPayload(token);
+        if (!decodedToken?.id) {
+            return NextResponse.json(
+                apiResponse({
+                    message: "Unauthorized: Invalid or missing token",
+                    statusCode: STATUS_CODES.UNAUTHORIZED,
+                }),
+                { status: STATUS_CODES.UNAUTHORIZED }
+            );
+        }
+
+        const user = await Employee.findById(decodedToken.id);
+        if (!user) {
+            return NextResponse.json(
+                apiResponse({
+                    message: "Unauthorized: User not found",
+                    statusCode: STATUS_CODES.UNAUTHORIZED,
+                }),
+                { status: STATUS_CODES.UNAUTHORIZED }
+            );
+        }
+
 
         const { searchParams } = new URL(req.url);
         const eventId = sanitizeInput(searchParams.get("eventId"));
@@ -150,7 +179,7 @@ export async function POST(req) {
         const blog = new Blog({
             title,
             content,
-            imageUrl,
+            image: imageUrl,
             externalLink,
             yeaslyEventId: eventId,
             createdBy,
@@ -160,7 +189,7 @@ export async function POST(req) {
 
         await blog.save();
 
-        await event.findByIdAndUpdate(eventId, { $push: { blogs: blog._id } });
+        await EventOutreach.findByIdAndUpdate(eventId, { $push: { blogs: blog._id } });
         return NextResponse.json(apiResponse({
             message: "Blog created successfully",
             data: blog,
