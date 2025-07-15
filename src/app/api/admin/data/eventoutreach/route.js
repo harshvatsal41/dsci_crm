@@ -53,7 +53,7 @@ export async function POST(request) {
 
         // Parse FormData
         const formData = await request.formData();
-        const body = {};
+        let body = {};
 
         // Convert FormData to object
         for (const [key, value] of formData.entries()) {

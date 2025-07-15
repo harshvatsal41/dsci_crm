@@ -1,1 +1,8 @@
-{}
+{
+  "/administration/dashboard/page": "app/administration/dashboard/page.js",
+  "/administration/login/page": "app/administration/login/page.js",
+  "/api/admin/auth/login/route": "app/api/admin/auth/login/route.js",
+  "/api/admin/data/eventoutreach/route": "app/api/admin/data/eventoutreach/route.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/page": "app/page.js"
+}
