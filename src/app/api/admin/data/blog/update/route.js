@@ -9,7 +9,7 @@ import Employee from "@/Mongo/Model/AcessModels/Employee";
 import sanitizeInput from "@/Helper/sanitizeInput";
 import path from "path";
 import fs from "fs";
-import { mkdir, writeFile } from "fs/promises";
+import { mkdir } from "fs/promises";
 import crypto from "crypto";
 
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp",];
@@ -68,6 +68,18 @@ export async function POST(req) {
             return NextResponse.json(
                 apiResponse({
                     message: "Blog not found",
+                    statusCode: STATUS_CODES.NOT_FOUND,
+                }),
+                { status: STATUS_CODES.NOT_FOUND }
+            );
+        }
+
+        const event = await EventOutreach.findById(blog.yeaslyEventId);
+        
+        if (!event) {
+            return NextResponse.json(
+                apiResponse({
+                    message: "Event not found",
                     statusCode: STATUS_CODES.NOT_FOUND,
                 }),
                 { status: STATUS_CODES.NOT_FOUND }
