@@ -1,9 +1,11 @@
-import { NextResponse } from "next/server";
+import { writeFile, mkdir } from "fs/promises";
+import path from "path";
+import fs from "fs";
+import crypto from "crypto";
 import FocusArea from "@/Mongo/Model/DataModels/FocusArea";
 import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
+import { NextResponse } from "next/server";
 import util from "@/Helper/apiUtils";
-import path from "path";
-import fs from "fs/promises";
 import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
@@ -120,10 +122,11 @@ export async function POST(req, { params }) {
 
         focusAreaDoc.imageUrlPath = publicPath;
       } catch (fileError) {
+        console.error("Failed to save image:", fileError);
         return NextResponse.json(apiResponse({
           message: "Failed to save image",
-          statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR
-        }), { status: STATUS_CODES.INTERNAL_SERVER_ERROR });
+          statusCode: STATUS_CODES.INTERNAL_ERROR
+        }), { status: STATUS_CODES.INTERNAL_ERROR });
       }
     }
 
