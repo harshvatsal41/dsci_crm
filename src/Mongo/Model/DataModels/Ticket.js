@@ -138,4 +138,3 @@ const ticketSchema = new mongoose.Schema({
 });
 
 export default mongoose.models.Ticket || mongoose.model("Ticket", ticketSchema);
-
