@@ -42,95 +42,103 @@ export async function GET(req, { params }) {
 export async function POST(req, { params }) {
   try {
     await util.connectDB();
+
     const { id } = await params;
     const focusAreaId = sanitizeInput(id);
-
-    // Authentication
     const token = req.cookies.get("dsciAuthToken")?.value || req.headers.get("Authorization")?.split(" ")[1];
     const decodedToken = decodeTokenPayload(token);
+    const userId = decodedToken?.id;
 
-    // Get existing focus area
-    const existingFocusArea = await FocusArea.findById(focusAreaId);
-    if (!existingFocusArea) {
-      return NextResponse.json(
-        apiResponse({ message: "Focus area not found", statusCode: 404 }),
-        { status: 404 }
-      );
+    const contentType = req.headers.get("content-type") || "";
+    if (!contentType.startsWith("multipart/form-data")) {
+      return NextResponse.json(apiResponse({
+        message: "Content-Type must be multipart/form-data",
+        statusCode: STATUS_CODES.BAD_REQUEST
+      }), { status: STATUS_CODES.BAD_REQUEST });
     }
 
-    // Parse form data
     const formData = await req.formData();
-    const name = sanitizeInput(formData.get("name")?.toString().trim());
-    const description = sanitizeInput(formData.get("description")?.toString().trim());
+    const name = sanitizeInput(formData.get("name")?.toString()?.trim());
+    const description = sanitizeInput(formData.get("description")?.toString()?.trim());
     const image = formData.get("image");
 
-    // Prepare update data        
-    const updateData = { name, description };
+    if (!focusAreaId || !userId) {
+      return NextResponse.json(apiResponse({
+        message: "Missing focusAreaId or authorization",
+        statusCode: STATUS_CODES.BAD_REQUEST
+      }), { status: STATUS_CODES.BAD_REQUEST });
+    }
 
-    // Handle image update if provided
-    if (image && image instanceof File) {
-      // Validate image
-      if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
-        return NextResponse.json(
-          apiResponse({
-            message: "Invalid image type",
-            statusCode: STATUS_CODES.BAD_REQUEST,
-          }),
-          { status: STATUS_CODES.BAD_REQUEST }
-        );
+    const focusAreaDoc = await FocusArea.findById(focusAreaId);
+    if (!focusAreaDoc) {
+      return NextResponse.json(apiResponse({
+        message: "FocusArea not found",
+        statusCode: STATUS_CODES.NOT_FOUND
+      }), { status: STATUS_CODES.NOT_FOUND });
+    }
+
+    if (name) focusAreaDoc.name = name;
+    if (description) focusAreaDoc.description = description;
+    focusAreaDoc.updatedBy = userId;
+
+    // If new image is uploaded
+    if (image && typeof image !== "string" && image instanceof File) {
+      const originalFilename = image.name || "image";
+      const sanitizedFilename = originalFilename
+        .replace(/[^a-zA-Z0-9\-._]/g, "_")
+        .replace(/\s+/g, "_")
+        .replace(/_{2,}/g, "_")
+        .substring(0, 100);
+
+      const extension = path.extname(sanitizedFilename).slice(1).toLowerCase();
+
+      if (!ALLOWED_IMAGE_TYPES.includes(image.type) || !ALLOWED_EXTENSIONS.includes(extension)) {
+        return NextResponse.json(apiResponse({
+          message: `Invalid image type or extension`,
+          statusCode: STATUS_CODES.BAD_REQUEST
+        }), { status: STATUS_CODES.BAD_REQUEST });
       }
 
-      const extension = path.extname(image.name).slice(1);
-      if (!ALLOWED_EXTENSIONS.includes(extension)) {
-        return NextResponse.json(
-          apiResponse({
-            message: "Invalid image extension",
-            statusCode: STATUS_CODES.BAD_REQUEST,
-          }),
-          { status: STATUS_CODES.BAD_REQUEST }
-        );
-      }
-
-      // Delete old image
-      if (existingFocusArea.imageUrlPath) {
-        const oldPath = path.join(process.cwd(), "public", existingFocusArea.imageUrlPath);
-        await fs.unlink(oldPath).catch(() => {});
-      }
-
-      // Save new image
-      const event = await EventOutreach.findById(existingFocusArea.yearlyEventId);
-      
+      const event = await EventOutreach.findById(focusAreaDoc.yeaslyEventId);
       const folderPath = path.join(process.cwd(), "public", `${event.year}`, "focusarea");
       const randomId = crypto.randomBytes(8).toString("hex");
       const fileName = `${Date.now()}-${randomId}.${extension}`;
       const filePath = path.join(folderPath, fileName);
       const publicPath = `/${event.year}/focusarea/${fileName}`;
 
-      await fs.mkdir(folderPath, { recursive: true });
-      const buffer = Buffer.from(await image.arrayBuffer());
-      await fs.writeFile(filePath, buffer);
+      try {
+        await mkdir(folderPath, { recursive: true });
 
-      updateData.imageUrlPath = publicPath;
+        const buffer = Buffer.from(await image.arrayBuffer());
+        await fs.promises.writeFile(filePath, buffer);
+
+        // Delete old image if it exists
+        if (focusAreaDoc.imageUrlPath) {
+          const oldPath = path.join(process.cwd(), "public", focusAreaDoc.imageUrlPath);
+          try { await unlink(oldPath); } catch (e) { console.warn("Old image not found:", oldPath); }
+        }
+
+        focusAreaDoc.imageUrlPath = publicPath;
+      } catch (fileError) {
+        return NextResponse.json(apiResponse({
+          message: "Failed to save image",
+          statusCode: STATUS_CODES.INTERNAL_SERVER_ERROR
+        }), { status: STATUS_CODES.INTERNAL_SERVER_ERROR });
+      }
     }
 
-    // Update focus area
-    const updatedFocusArea = await FocusArea.findByIdAndUpdate(
-      focusAreaId,
-      updateData,
-      { new: true }
-    );
+    await focusAreaDoc.save();
 
-    return NextResponse.json(
-      apiResponse({
-        message: "Focus area updated successfully",
-        data: updatedFocusArea,
-        statusCode: STATUS_CODES.UPDATEDSUCCESS,
-      })
-    );
+    return NextResponse.json(apiResponse({
+      message: "FocusArea updated successfully",
+      data: focusAreaDoc,
+      statusCode: STATUS_CODES.OK
+    }), { status: STATUS_CODES.OK });
+
   } catch (error) {
     const handledError = handleError(error);
     return NextResponse.json(handledError, {
-      status: handledError.httpStatus || 500,
+      status: handledError.httpStatus || STATUS_CODES.INTERNAL_ERROR,
     });
   }
 }
