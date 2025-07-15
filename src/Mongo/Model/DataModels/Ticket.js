@@ -57,11 +57,6 @@ const ticketSchema = new mongoose.Schema({
         default: "active",
     },
 
-    isComplimentary: {
-        type: Boolean,
-        default: false,
-    },
-
     accessIncludes: {
         type: [
           {
