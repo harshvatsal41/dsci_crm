@@ -5,7 +5,7 @@ import { TicketApi } from '@/utilities/ApiManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import DashboardLoading from '@/app/administration/dashboard/loading';
-// import SpecificTicketCard from '@/Component/SpecificEventDetails/Tickets/SpecificTicketCard';
+import SpecificTicketCard from '@/Component/SpecificEventDetails/Ticketing/SpecificTicketCard';
 import TicketForm from '@/Component/SpecificEventDetails/Ticketing/TicketingForm';
 import { toast } from 'react-toastify';
 import { FiSearch } from 'react-icons/fi';
@@ -38,7 +38,7 @@ export default function Ticketing() {
         dispatch(setLoading(true));
         try {
             const res = await TicketApi(null, "GET", { Id });
-            if (res.statusCode === 200) {
+            if (res.statusCode === 200 || res.statusCode === 203 || res.status === "success") {
                 setTickets(res);
                 toast.success(res.message || 'Tickets loaded successfully');
             }
@@ -112,12 +112,12 @@ export default function Ticketing() {
                     eventId={Id}
                 />
             )}
-            {/* {(!formOpen && !edit.value) && <SpecificTicketCard
+            {(!formOpen && !edit.value) && <SpecificTicketCard
                 onDelete={onDelete}
                 setEdit={setEdit}
                 data={filteredTickets}
                 type="ticket"
-            />} */}
+            />}
         </>
     );
 }

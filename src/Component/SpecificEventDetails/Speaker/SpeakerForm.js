@@ -9,7 +9,7 @@ import Image from 'next/image';
 import { FiPlus, FiTrash2, FiEdit2, FiMinus } from 'react-icons/fi';
 import Modal from '@/Component/UI/Modal';
 import { useParams } from 'next/navigation';
-import {toast} from 'sonner';
+import { toast } from 'sonner';
 
 const initialState = {
     name: '', position: '', organization: '', title: '', bio: '',
@@ -117,7 +117,7 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
             const response = edit?.value 
                 ? await SpeakerApi(submitData, 'POST', { Id: edit.data._id })
                 : await SpeakerApi(submitData, 'POST');
-             if(response.statusCode === 201){
+             if(response.statusCode === 201 || response.statusCode === 200 || response.status === "success"){
                 toast.success(`Speaker ${edit?.value ? 'updated' : 'created'} successfully`);
                 onSuccess(response.data);
             }

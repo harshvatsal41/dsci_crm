@@ -182,7 +182,7 @@ const BlogApi=async(data, method, params={}) => {
 }
 
 // Ticket Api
-const TicketApi=async()=>{
+const TicketApi=async(data, method, params={}) => {
     if(params.Id && method === "GET"){
         const url='/api/admin/data/ticket?eventId='+params.Id;
         const res = await FetchWithAuth(url);
@@ -203,6 +203,7 @@ const TicketApi=async()=>{
         const res = await FetchWithAuth(url, "POST", data);
         return res;
     }else if(method==="DEL"){
+        alert("Hi")
         const url=`/api/admin/data/ticket/delete?ticketId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST");
         return res;

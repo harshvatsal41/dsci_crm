@@ -389,7 +389,7 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
               >
                 Edit Speaker
               </button>
-              <button
+              {/* <button
                 type="button"
                 onClick={() => {
                   handleDeleteClick(selectedSpeaker);
@@ -397,7 +397,7 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
                 className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
               >
                 Delete Speaker
-              </button>
+              </button> */}
             </div>
           </div>
         )}
