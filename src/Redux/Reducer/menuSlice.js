@@ -33,9 +33,9 @@ const initialState = {
       accessRoles: ['ADMIN', 'REPORT_MANAGER'],
     },
     {
-      id: 'Sponser',
-      title: 'Sponser',
-      icon: 'image',
+      id: 'Collaboration',
+      title: 'Collaboration',
+      icon: 'FcCollaboration',
       accessRoles: ['ADMIN', 'REPORT_MANAGER'],
     },
     {
