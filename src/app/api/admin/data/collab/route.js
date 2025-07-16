@@ -57,3 +57,66 @@ export async function GET(req){
         });
     }
 }
+
+export async function POST(req) {
+    try {
+        await util.connectDB();
+
+        const token = req.cookies.get("dsciAuthToken")?.value || req.headers.get("Authorization")?.split(" ")[1];
+        const decodedToken = decodeTokenPayload(token);
+        if (!decodedToken?.id) {
+            return NextResponse.json(apiResponse({
+                message: "Unauthorized: Invalid or missing token",
+                statusCode: STATUS_CODES.UNAUTHORIZED,
+            }), { status: STATUS_CODES.UNAUTHORIZED });
+        }
+
+        const { searchParams } = new URL(req.url);
+        const eventId = sanitizeInput(searchParams.get("eventId"));
+
+        if (!eventId) {
+            return NextResponse.json(apiResponse({
+                message: "Event ID is required",
+                statusCode: STATUS_CODES.BAD_REQUEST,
+            }), { status: STATUS_CODES.BAD_REQUEST });
+        }
+
+        const event = await EventOutreach.findById(eventId);
+        if (!event) {
+            return NextResponse.json(apiResponse({
+                message: "Event not found",
+                statusCode: STATUS_CODES.NOT_FOUND,
+            }), { status: STATUS_CODES.NOT_FOUND });
+        }
+
+        const formData = await req.formData();
+
+        const image  = formData.get("image");
+
+        const collaboration = new Collaboration({
+            title: formData.get("title"),
+            body: formData.get("body"),
+            about: formData.get("about"),
+            websiteLink: formData.get("websiteLink"),
+            description: formData.get("description"),
+            subCategory: formData.get("subCategory"),
+            contentWeight: formData.get("contentWeight"),
+            socialMediaLinks: formData.get("socialMediaLinks"),
+            yeaslyEventId: event._id,
+            createdBy: decodedToken.id,
+        });
+
+        
+        
+
+        return NextResponse.json(apiResponse({
+            message: "Collaborations fetched successfully",
+            data: collaborations,
+            statusCode: STATUS_CODES.SUCCESS,
+        }), { status: STATUS_CODES.SUCCESS });
+    } catch (error) {
+        return NextResponse.json(handleError(error), {
+            status: STATUS_CODES.INTERNAL_ERROR,
+        });
+    }
+}
