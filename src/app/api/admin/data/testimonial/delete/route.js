@@ -37,6 +37,13 @@ export async function POST(req) {
             }), { status: STATUS_CODES.BAD_REQUEST });
         }
 
+        if(testimonial.isDeleted){
+            return NextResponse.json(apiResponse({
+                message: "Testimonial already deleted",
+                statusCode: STATUS_CODES.BAD_REQUEST,
+            }), { status: STATUS_CODES.BAD_REQUEST });
+        }
+
         testimonial.isDeleted = true;
         testimonial.deletedAt = new Date();
         testimonial.deletedBy = decodedToken.id;
