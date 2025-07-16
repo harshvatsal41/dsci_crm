@@ -80,7 +80,7 @@ const SpeakerApi=async(data, method, params={}) => {
         return res;
     }
     else if(method==="POST" && params.Id){
-        const url='/api/admin/data/speaker/'+params.Id;
+        const url=`/api/admin/data/speaker/update?speakerId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST", data);
         return res;
     }
@@ -153,4 +153,62 @@ const TestimonialApi=async(data, method, params={}) => {
     }   
 }
 
-export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi, SpeakerApi, FaqApi, TestimonialApi}
+// Blog Api
+const BlogApi=async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/blog?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/blog?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url=`/api/admin/data/blog?eventId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="PUT" && params.Id){
+        const url=`/api/admin/data/blog/update?blogId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DEL"){
+        const url=`/api/admin/data/blog/delete?blogId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
+        return res;
+    }   
+}
+
+// Ticket Api
+const TicketApi=async(data, method, params={}) => {
+    if(params.Id && method === "GET"){
+        const url='/api/admin/data/ticket?eventId='+params.Id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="GET"){
+        const url='/api/admin/data/ticket?eventId='+params.id;
+        const res = await FetchWithAuth(url);
+        return res;
+    }
+    else if(method==="POST" && params.Id){
+        const url=`/api/admin/data/ticket?eventId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }
+    else if(method==="PUT" && params.Id){
+        const url=`/api/admin/data/ticket/update?ticketId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST", data);
+        return res;
+    }else if(method==="DEL"){
+        alert("Hi")
+        const url=`/api/admin/data/ticket/delete?ticketId=${params.Id}`;
+        const res = await FetchWithAuth(url, "POST");
+        return res;
+    }
+
+}
+
+export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi, SpeakerApi, FaqApi, TestimonialApi, BlogApi, TicketApi}

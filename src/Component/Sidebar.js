@@ -70,7 +70,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       'FAQ': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/faq`,
       'Testimonial': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/testimonial`,
       'Navbar': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/navbar`,
-      'Ticketing': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/ticketing`
+      'Ticketing': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/ticketing`,
+      'Blogs': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/blogs`
     };
 
     const path = basePaths[item.title] || item.path;
@@ -95,6 +96,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       case 'menu': return <FiMenu className="w-5 h-5" />;
       case 'ticket': return <FiRotateCcw className="w-5 h-5" />;
       case 'image': return <FiImage className="w-5 h-5" />;
+      case 'blogs': return <FiImage className="w-5 h-5" />;
       default: return <FiGrid className="w-5 h-5" />;
     }
   };
@@ -147,14 +149,14 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
         <div 
-          className="fixed inset-0  bg-opacity-150 z-1000 md:hidden"
+          className="fixed inset-0  bg-opacity-50 z-1 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
       
       {/* Sidebar */}
       <div className={`
-        fixed top-15  md:left-0  h-full   z-800 transition-all duration-300 ease-in-out font-sans
+        fixed top-15  md:left-0  h-full   z-1 transition-all duration-300 ease-in-out font-sans
         ${isOpen ? 'w-64' : 'w-16'} 
         ${isMobile ? (isOpen ? 'translate-x-0' : 'translate-x-[-16px]') : 'translate-x-0'}
         bg-white shadow-xl border-r border-gray-200

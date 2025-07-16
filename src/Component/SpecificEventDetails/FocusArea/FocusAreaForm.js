@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
-import { toast } from 'react-toastify';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Modal from '@/Component/UI/Modal';
@@ -10,7 +9,7 @@ import {InputField, TextAreaField} from '@/Component/UI/ReusableCom';
 import { Button } from '@/Component/UI/TableFormat';
 import {FiEdit2, FiUpload, FiTrash2} from 'react-icons/fi';
 import { BroadFocusAreaApi } from '@/utilities/ApiManager';
-
+import {toast} from 'sonner';
 
 const initialState = {
     name: '',
@@ -25,12 +24,18 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
   const [formData, setFormData] = useState(initialState);
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState('');
+  const [isNewImageUploaded, setIsNewImageUploaded] = useState(false);
 
   useEffect(() => {
     if (edit?.value) {
       loadFocusAreaData(edit.data);
+    } else {
+      setFormData({
+        ...initialState,
+        eventId: Id
+      });
     }
-  }, [edit]);
+  }, [edit, Id]);
 
   const loadFocusAreaData = async (data) => {
       try {
@@ -38,9 +43,13 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
         setFormData({
             name: data?.name || '',
             description: data?.description || '',
-            image: data?.imageUrlPath || '',
+            imageUrlPath: data?.imageUrlPath || '',
+            eventId: Id
         });
-        setPreviewImage(data?.imageUrlPath);
+        if (data?.imageUrlPath) {
+          setPreviewImage(`${data.imageUrlPath}?${new Date().getTime()}`);
+        }
+        setIsNewImageUploaded(false);
     } catch (error) {
       toast.error('Failed to load focus area data');
     } finally {
@@ -54,7 +63,6 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
       ...prev,
       [name]: value
     }));
-    
   };
 
   const handleImageChange = (e) => {
@@ -75,16 +83,17 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
 
     setImageFile(file);
     setPreviewImage(URL.createObjectURL(file));
+    setIsNewImageUploaded(true);
   };
 
   const removeImage = () => {
     setImageFile(null);
     setPreviewImage('');
+    setIsNewImageUploaded(true);
     if (!edit?.value) {
       setFormData(prev => ({ ...prev, imageUrlPath: '' }));
     }
   };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,26 +105,26 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
       submitData.append('name', formData.name);
       submitData.append('description', formData.description);
       submitData.append('eventId', Id);
-      if (imageFile) {
+      
+      // Only append image if it's a new upload
+      if (isNewImageUploaded && imageFile) {
         submitData.append('image', imageFile);
+      } else if (isNewImageUploaded && !imageFile) {
+        // Handle case where image was removed
+        submitData.append('removeImage', 'true');
       }
 
       let response;
       if (edit?.value) {
         response = await BroadFocusAreaApi(submitData, 'POST', { Id: edit?.data?._id });
-        console.log("Response", response)
-        if(response.statusCode === 200 || response.statusCode === 201 || response.status=="success"){
-            onSuccess();
-          toast.success(response.message || 'Focus area updated successfully');
-        }
       } else {
         response = await BroadFocusAreaApi(submitData, 'POST');
       }
-      if(response.statusCode === 201){
-        onSuccess();
-        toast.success(response.message || 'Operation Success');
-      }
 
+      if (response.statusCode === 200 || response.statusCode === 201 || response.status === "success") {
+        toast.success(response.message || `Focus area ${edit?.value ? 'updated' : 'created'} successfully`);
+        onSuccess(response.data);
+      }
     } catch (error) {
       toast.error(error.response?.data?.message || 'Operation failed');
     } finally {
@@ -160,6 +169,13 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
                         width={400}
                         height={300}
                         className="w-full h-auto object-cover"
+                        unoptimized={isNewImageUploaded}
+                        onError={(e) => {
+                          // Fallback to original image if new one fails to load
+                          if (edit?.value && formData.imageUrlPath) {
+                            setPreviewImage(`${formData.imageUrlPath}?${new Date().getTime()}`);
+                          }
+                        }}
                       />
                     </div>
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
