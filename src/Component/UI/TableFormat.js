@@ -302,7 +302,7 @@ export function ConfirmDialog({
   return (
     <DialogPrimitive.Root open={open} onOpenChange={onClose}>
       <DialogPrimitive.Portal>
-        <DialogPrimitive.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50" />
+        <DialogPrimitive.Overlay className="fixed inset-0 bg-black/40 backdrop-blur-sm z-3" />
         <DialogPrimitive.Content
           className="fixed z-50 bg-white rounded-xl shadow-2xl top-1/2 left-1/2 w-[95%] sm:w-[400px] transform -translate-x-1/2 -translate-y-1/2 max-h-[90vh] overflow-y-auto font-sans"
         >

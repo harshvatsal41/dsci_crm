@@ -74,7 +74,7 @@ export default function SpecificBlogCard({ setEdit, data, onDelete }) {
       />
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data?.data?.map((blog) => (
+       {data?.data.length>0 ? data?.data?.map((blog) => (
           <div 
             key={blog._id}
             onClick={() => openModal(blog)}
@@ -144,7 +144,7 @@ export default function SpecificBlogCard({ setEdit, data, onDelete }) {
               </div>
             </div>
           </div>
-        ))}
+        )) : <p>No blogs found</p>}  
       </div>
 
       {/* Blog Detail Modal */}

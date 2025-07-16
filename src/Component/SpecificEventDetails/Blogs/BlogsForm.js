@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
-import { toast } from 'react-toastify';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Modal from '@/Component/UI/Modal';
