@@ -47,14 +47,14 @@ const EventCard = ({ event, onView, onEdit, onDelete }) => {
       />
 
       {/* Header with gradient background */}
-      <div className="relative h-40 bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center p-6 z-10">
+      <div className="relative h-40 bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center p-6 z-1">
         <h3 className="text-xl font-semibold text-gray-800 text-center line-clamp-2">
           {event.title}
         </h3>
       </div>
 
       {/* Content area */}
-      <div className="relative flex flex-col flex-grow p-5 z-10">
+      <div className="relative flex flex-col flex-grow p-5 z-1">
         {/* Date information */}
         <div className="flex items-center text-gray-500 mb-4">
           <FiCalendar className="w-5 h-5 mr-2 flex-shrink-0" />

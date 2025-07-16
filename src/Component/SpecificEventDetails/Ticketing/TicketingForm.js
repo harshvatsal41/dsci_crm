@@ -14,9 +14,9 @@ const initialState = {
     name: '',
     subHeading: '',
     paymentUrl: '',
-    price: 0,
-    originalPrice: 0,
-    discountPercentage: 0,
+    price: '',
+    originalPrice: '',
+    discountPercentage: '',
     availableStatus: 'active',
     isComplimentary: false,
     accessIncludes: [],
@@ -57,9 +57,9 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                 name: data?.name || '',
                 subHeading: data?.subHeading || '',
                 paymentUrl: data?.paymentUrl || '',
-                price: data?.price || 0,
-                originalPrice: data?.originalPrice || data?.price || 0,
-                discountPercentage: data?.discountPercentage || 0,
+                price: data?.price || '',
+                originalPrice: data?.originalPrice || data?.price || '',
+                discountPercentage: data?.discountPercentage || '',
                 availableStatus: data?.availableStatus || 'active',
                 isComplimentary: data?.isComplimentary || false,
                 accessIncludes: data?.accessIncludes || [],
@@ -258,7 +258,7 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                             error={validationErrors.paymentUrl}
                         />
 
-                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <InputField
                                 label="Original Price *"
                                 name="originalPrice"
@@ -376,11 +376,11 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                         />
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                            {/* <label className="block text-sm font-medium text-gray-700 mb-2">
                                 Access Includes
-                            </label>
+                            </label> */}
                             <div className="space-y-2">
-                                {formData.accessIncludes.map((item, index) => (
+                                {formData?.accessIncludes?.map((item, index) => (
                                     <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
                                         <span>
                                             {item.label} 
@@ -398,8 +398,7 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                                     </div>
                                 ))}
 
-                                <div className="flex items-end space-x-2">
-                                    <div className="flex-1">
+                                <div className="flex items-end grid grid-cols-3 gap-2">
                                         <InputField
                                             label="New Access Include"
                                             name="label"
@@ -407,15 +406,14 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                                             onChange={handleAccessIncludeChange}
                                             noMargin
                                         />
-                                    </div>
-                                    <div className="flex items-center mb-1">
+                                    <div className="flex items-center">
                                         <input
                                             id="isComplimentaryInclude"
                                             name="isComplimentary"
                                             type="checkbox"
                                             checked={newAccessInclude.isComplimentary}
                                             onChange={handleAccessIncludeChange}
-                                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                            className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                                         />
                                         <label htmlFor="isComplimentaryInclude" className="ml-2 block text-sm text-gray-700">
                                             Complimentary
@@ -424,7 +422,7 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                                     <button
                                         type="button"
                                         onClick={addAccessInclude}
-                                        className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        className="py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                                     >
                                         Add
                                     </button>

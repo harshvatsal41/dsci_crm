@@ -22,7 +22,7 @@ const EventDetails = () => {
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
           transition={{ type: 'spring', damping: 25 }}
-          className="fixed inset-y-0 right-0 w-full md:w-1/2 lg:w-1/3 bg-white shadow-xl z-20 p-6 overflow-y-auto"
+          className="fixed inset-y-0 right-0 w-full md:w-1/2 lg:w-1/3 bg-white shadow-xl z-1 p-6 overflow-y-auto"
         >
           <button 
             onClick={handleClose}
