@@ -7,7 +7,7 @@ import { useParams } from 'next/navigation';
 import Modal from '@/Component/UI/Modal';
 import { InputField, NativeSelectField } from '@/Component/UI/ReusableCom';
 import { Button } from '@/Component/UI/TableFormat';
-import { FiEdit2, FiUpload, FiTrash2, FiDollarSign, FiPercent } from 'react-icons/fi';
+import { FiEdit2, FiUpload, FiTrash2, FiDollarSign, FiPercent, FiPlus } from 'react-icons/fi';
 import { TicketApi } from '@/utilities/ApiManager';
 
 const initialState = {
@@ -18,7 +18,6 @@ const initialState = {
     originalPrice: '',
     discountPercentage: '',
     availableStatus: 'active',
-    isComplimentary: false,
     accessIncludes: [],
     validityPeriod: {
         startDate: '',
@@ -27,7 +26,7 @@ const initialState = {
     applicableDate: '',
     passType: '',
     venue: '',
-    eventId: null
+    yeaslyEventId: null
 };
 
 const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
@@ -38,17 +37,18 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
         label: '',
         isComplimentary: false
     });
+    const [priceReferences, setPriceReferences] = useState([{
+        price: '',
+        eligibility: ''
+    }]);
 
     useEffect(() => {
         if (edit?.value) {
             loadTicketData(edit.data);
         } else {
-            setFormData({
-                ...initialState,
-                eventId: eventId
-            });
+            setFormData(initialState);
         }
-    }, [edit, eventId]);
+    }, [edit]);
 
     const loadTicketData = async (data) => {
         try {
@@ -61,7 +61,6 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                 originalPrice: data?.originalPrice || data?.price || '',
                 discountPercentage: data?.discountPercentage || '',
                 availableStatus: data?.availableStatus || 'active',
-                isComplimentary: data?.isComplimentary || false,
                 accessIncludes: data?.accessIncludes || [],
                 validityPeriod: {
                     startDate: data?.validityPeriod?.startDate ? new Date(data.validityPeriod.startDate).toISOString().split('T')[0] : '',
@@ -70,8 +69,14 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                 applicableDate: data?.applicableDate ? new Date(data.applicableDate).toISOString().split('T')[0] : '',
                 passType: data?.passType || '',
                 venue: data?.venue || '',
-                eventId: eventId
             });
+            
+            if (data?.priceReference) {
+                setPriceReferences(data.priceReference.map(ref => ({
+                    price: ref.price || '',
+                    eligibility: ref.eligibility || ''
+                })));
+            }
         } catch (error) {
             toast.error('Failed to load ticket data');
         } finally {
@@ -105,6 +110,23 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
 
         if (validationErrors[name]) {
             setValidationErrors(prev => ({ ...prev, [name]: undefined }));
+        }
+    };
+
+    const handlePriceReferenceChange = (index, field, value) => {
+        const updatedReferences = [...priceReferences];
+        updatedReferences[index][field] = value;
+        setPriceReferences(updatedReferences);
+    };
+
+    const addPriceReference = () => {
+        setPriceReferences([...priceReferences, { price: '', eligibility: '' }]);
+    };
+
+    const removePriceReference = (index) => {
+        if (priceReferences.length > 1) {
+            const updatedReferences = priceReferences.filter((_, i) => i !== index);
+            setPriceReferences(updatedReferences);
         }
     };
 
@@ -182,17 +204,14 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
     };
 
     const validateForm = () => {
-        const errors = {};
-        if (!formData.name.trim()) errors.name = 'Name is required';
-        if (!formData.paymentUrl.trim()) errors.paymentUrl = 'Payment URL is required';
-        if (formData.price < 0) errors.price = 'Price cannot be negative';
-        if (formData.originalPrice < 0) errors.originalPrice = 'Original price cannot be negative';
-        if (formData.discountPercentage < 0) errors.discountPercentage = 'Discount cannot be negative';
-        if (formData.discountPercentage > 100) errors.discountPercentage = 'Discount cannot exceed 100%';
-        if (!formData.passType.trim()) errors.passType = 'Pass type is required';
-
-        setValidationErrors(errors);
-        return Object.keys(errors).length === 0;
+        if (!formData.name.trim()) toast.error ('Name is required');
+        if (!formData.paymentUrl.trim()) toast.error ('Payment URL is required');
+        if (formData.price < 0) toast.error ('Price cannot be negative');
+        if (formData.originalPrice < 0) toast.error ('Original price cannot be negative');
+        if (formData.discountPercentage < 0) toast.error ('Discount cannot be negative');
+        if (formData.discountPercentage > 100) toast.error ('Discount cannot exceed 100%');
+        if (!formData.passType.trim()) toast.error ('Pass type is required');
+        return true;
     };
 
     const handleSubmit = async (e) => {
@@ -201,25 +220,35 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
 
         try {
             dispatch(setLoading(true));
-
-            const submitData = {
-                ...formData,
-                // Convert date strings to Date objects
-                validityPeriod: {
-                    startDate: formData.validityPeriod.startDate ? new Date(formData.validityPeriod.startDate) : null,
-                    endDate: formData.validityPeriod.endDate ? new Date(formData.validityPeriod.endDate) : null
-                },
-                applicableDate: formData.applicableDate ? new Date(formData.applicableDate) : null
-            };
+            const formDataToSend = new FormData();
+            formDataToSend.append('name', formData.name);
+            formDataToSend.append('subHeading', formData.subHeading);
+            formDataToSend.append('paymentUrl', formData.paymentUrl);
+            formDataToSend.append('price', formData.price);
+            formDataToSend.append('originalPrice', formData.originalPrice);
+            formDataToSend.append('discountPercentage', formData.discountPercentage);
+            formDataToSend.append('availableStatus', formData.availableStatus);
+            formDataToSend.append('passType', formData.passType);
+            formDataToSend.append('venue', formData.venue);
+            formDataToSend.append('applicableDate', formData.applicableDate);
+            
+            formDataToSend.append('accessIncludes', JSON.stringify(formData.accessIncludes));
+            formDataToSend.append('validityPeriod', JSON.stringify({
+                startDate: formData.validityPeriod.startDate,
+                endDate: formData.validityPeriod.endDate
+            }));
+            formDataToSend.append('priceReference', JSON.stringify(
+                priceReferences.filter(ref => ref.price && ref.eligibility)
+            ));
 
             let response;
             if (edit?.value) {
-                response = await TicketApi(submitData, 'PUT', { Id: edit?.data?._id });
+                response = await TicketApi(formDataToSend, 'PUT', { Id: edit?.data?._id });
             } else {
-                response = await TicketApi(submitData, 'POST', { Id: eventId });
+                response = await TicketApi(formDataToSend, 'POST', {Id: eventId});
             }
 
-            if (response.statusCode === 200 || response.statusCode === 201) {
+            if (response.statusCode === 200 || response.statusCode === 201 || response.status === "success") {
                 onSuccess(response.data);
                 toast.success(response.message || `Ticket ${edit?.value ? 'updated' : 'created'} successfully`);
             }
@@ -297,37 +326,64 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                             />
                         </div>
 
-                        <div className="flex items-center space-x-4">
-                            <NativeSelectField
-                                label="Status *"
-                                name="availableStatus"
-                                value={formData.availableStatus}
-                                onChange={handleChange}
-                                options={[
-                                    { value: 'active', label: 'Active' },
-                                    { value: 'inactive', label: 'Inactive' },
-                                    { value: 'soldOut', label: 'Sold Out' }
-                                ]}
-                            />
-
-                            <div className="flex items-center mt-6">
-                                <input
-                                    id="isComplimentary"
-                                    name="isComplimentary"
-                                    type="checkbox"
-                                    checked={formData.isComplimentary}
-                                    onChange={handleChange}
-                                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                />
-                                <label htmlFor="isComplimentary" className="ml-2 block text-sm text-gray-700">
-                                    Complimentary Ticket
-                                </label>
-                            </div>
+                        <div className="space-y-4">
+                            <label className="block text-sm font-medium text-gray-700">
+                                Price References
+                            </label>
+                            {priceReferences.map((ref, index) => (
+                                <div key={index} className="grid grid-cols-2 gap-4">
+                                    <InputField
+                                        label="Price"
+                                        type="number"
+                                        min="0"
+                                        step="0.01"
+                                        value={ref.price}
+                                        onChange={(e) => handlePriceReferenceChange(index, 'price', e.target.value)}
+                                        noMargin
+                                    />
+                                    <div className="flex items-end">
+                                        <InputField
+                                            label="Eligibility"
+                                            value={ref.eligibility}
+                                            onChange={(e) => handlePriceReferenceChange(index, 'eligibility', e.target.value)}
+                                            noMargin
+                                        />
+                                        {priceReferences.length > 1 && (
+                                            <button
+                                                type="button"
+                                                onClick={() => removePriceReference(index)}
+                                                className="ml-2 text-red-500 hover:text-red-700"
+                                            >
+                                                <FiTrash2 className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            <button
+                                type="button"
+                                onClick={addPriceReference}
+                                className="text-blue-600 hover:text-blue-800 text-sm flex items-center"
+                            >
+                                <FiPlus className="mr-1" /> Add Price Reference
+                            </button>
                         </div>
+
+                        <NativeSelectField
+                            label="Status *"
+                            name="availableStatus"
+                            value={formData.availableStatus}
+                            onChange={handleChange}
+                            options={[
+                                { value: 'active', label: 'Active' },
+                                { value: 'inactive', label: 'Inactive' },
+                                { value: 'soldOut', label: 'Sold Out' }
+                            ]}
+                        />
                     </div>
 
                     <div className="space-y-6">
-                        <NativeSelectField
+                        {/* <NativeSelectField
                             label="Pass Type *"
                             name="passType"
                             value={formData.passType}
@@ -339,6 +395,13 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                                 { value: 'student', label: 'Student' },
                                 { value: 'early-bird', label: 'Early Bird' }
                             ]}
+                            error={validationErrors.passType}
+                        /> */}
+                        <InputField
+                            label="Pass Type *"
+                            name="passType"
+                            value={formData.passType}
+                            onChange={handleChange}
                             error={validationErrors.passType}
                         />
 
@@ -375,58 +438,56 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
                             onChange={handleChange}
                         />
 
-                        <div>
-                            {/* <label className="block text-sm font-medium text-gray-700 mb-2">
+                        <div className="space-y-2">
+                            <label className="block text-sm font-medium text-gray-700">
                                 Access Includes
-                            </label> */}
-                            <div className="space-y-2">
-                                {formData?.accessIncludes?.map((item, index) => (
-                                    <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                                        <span>
-                                            {item.label} 
-                                            {item.isComplimentary && (
-                                                <span className="ml-2 px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Complimentary</span>
-                                            )}
-                                        </span>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeAccessInclude(index)}
-                                            className="text-red-500 hover:text-red-700"
-                                        >
-                                            <FiTrash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                ))}
-
-                                <div className="flex items-end grid grid-cols-3 gap-2">
-                                        <InputField
-                                            label="New Access Include"
-                                            name="label"
-                                            value={newAccessInclude.label}
-                                            onChange={handleAccessIncludeChange}
-                                            noMargin
-                                        />
-                                    <div className="flex items-center">
-                                        <input
-                                            id="isComplimentaryInclude"
-                                            name="isComplimentary"
-                                            type="checkbox"
-                                            checked={newAccessInclude.isComplimentary}
-                                            onChange={handleAccessIncludeChange}
-                                            className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                                        />
-                                        <label htmlFor="isComplimentaryInclude" className="ml-2 block text-sm text-gray-700">
-                                            Complimentary
-                                        </label>
-                                    </div>
+                            </label>
+                            {formData?.accessIncludes?.map((item, index) => (
+                                <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                    <span>
+                                        {item.label} 
+                                        {item.isComplimentary && (
+                                            <span className="ml-2 px-2 py-1 text-xs bg-green-100 text-green-800 rounded">Complimentary</span>
+                                        )}
+                                    </span>
                                     <button
                                         type="button"
-                                        onClick={addAccessInclude}
-                                        className="py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                        onClick={() => removeAccessInclude(index)}
+                                        className="text-red-500 hover:text-red-700"
                                     >
-                                        Add
+                                        <FiTrash2 className="w-4 h-4" />
                                     </button>
                                 </div>
+                            ))}
+
+                            <div className="flex items-end grid grid-cols-3 gap-2">
+                                <InputField
+                                    label="New Access Include"
+                                    name="label"
+                                    value={newAccessInclude.label}
+                                    onChange={handleAccessIncludeChange}
+                                    noMargin
+                                />
+                                <div className="flex items-center">
+                                    <input
+                                        id="isComplimentaryInclude"
+                                        name="isComplimentary"
+                                        type="checkbox"
+                                        checked={newAccessInclude.isComplimentary}
+                                        onChange={handleAccessIncludeChange}
+                                        className="h-3 w-3 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                                    />
+                                    <label htmlFor="isComplimentaryInclude" className="ml-2 block text-sm text-gray-700">
+                                        Complimentary
+                                    </label>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={addAccessInclude}
+                                    className="ml-6 bg-blue-600 text-white rounded-lg flex justify-center hover:bg-blue-700"
+                                >
+                                    <FiPlus className="w-6 h-6" /> 
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -182,29 +182,28 @@ const BlogApi=async(data, method, params={}) => {
 }
 
 // Ticket Api
-const TicketApi=async(data, method, params={}) => {
-    if(params.Id && method === "GET"){
-        const url='/api/admin/data/ticket?eventId='+params.Id;
-        const res = await FetchWithAuth(url);
-        return res;
-    }
-    else if(method==="GET"){
-        const url='/api/admin/data/ticket?eventId='+params.id;
-        const res = await FetchWithAuth(url);
-        return res;
-    }
-    else if(method==="POST" && params.Id){
-        const url=`/api/admin/data/ticket?eventId=${params.Id}`;
+const TicketApi = async (data = null, method = "GET", params = {}) => {
+    if (method === "GET") {
+        if (params.Id) {
+            const url = '/api/admin/data/ticket?eventId=' + params.Id;
+            const res = await FetchWithAuth(url);
+            return res;
+        } else {
+            const url = '/api/admin/data/ticket?eventId=' + params.id;
+            const res = await FetchWithAuth(url);
+            return res;
+        }
+    } else if (method === "POST" && params.Id) {
+        console.log("data", data);
+        const url = `/api/admin/data/ticket?eventId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST", data);
         return res;
-    }
-    else if(method==="PUT" && params.Id){
-        const url=`/api/admin/data/ticket/update?ticketId=${params.Id}`;
+    } else if (method === "PUT" && params.Id) {
+        const url = `/api/admin/data/ticket/update?ticketId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST", data);
         return res;
-    }else if(method==="DEL"){
-        alert("Hi")
-        const url=`/api/admin/data/ticket/delete?ticketId=${params.Id}`;
+    } else if (method === "DEL") {
+        const url = `/api/admin/data/ticket/delete?ticketId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST");
         return res;
     }
