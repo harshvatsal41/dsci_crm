@@ -413,7 +413,7 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                         onClick={onClose}
                     >
                         Cancel
-                    </Button>
+                    </Button>  
 
                     <Button type="submit">
                         {edit?.value ? (
