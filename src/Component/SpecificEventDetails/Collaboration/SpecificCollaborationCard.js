@@ -23,9 +23,6 @@ const SpecificCollaborationTable = ({ data, onDelete, setEdit }) => {
     return [];
   }, [data]);
 
-  console.log("Raw data:", data);
-  console.log("Safe data:", safeData);
-
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {

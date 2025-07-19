@@ -78,7 +78,6 @@ export default function Collaboration() {
 
             toast.success('Data loaded successfully');
         } catch (error) {
-            console.error('Fetch error:', error);
             toast.error('Failed to fetch data');
         } finally {
             dispatch(setLoading(false));
@@ -90,7 +89,7 @@ export default function Collaboration() {
         dispatch(setLoading(true));
         try {
             const api = type === 'main' ? CollaborationApi : ColabCategoryApi;
-            const res = await api({ [type === 'main' ? 'collaborationId' : 'categoryId']: id }, "DELETE", { Id });
+            const res = await api({ }, "DEL", { Id: id });
 
             if (res.statusCode === 200 || res.statusCode === 203 || res.status === "success") {
                 toast.success(`${type === 'main' ? 'Collaboration' : 'Category'} deleted successfully`);

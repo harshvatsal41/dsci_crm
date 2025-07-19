@@ -59,7 +59,9 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
         loadSubCategories();
 
         if (edit?.value) {
-            loadCollaborationData(edit.data);
+            console.log(
+                "data",edit.data.data)
+            loadCollaborationData(edit?.data?.data);
         } else {
             setFormData({
                 ...initialState,

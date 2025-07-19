@@ -22,11 +22,12 @@ const SubCollaborationForm = ({ edit, onSuccess, onClose }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const { Id } = useParams();
 
+
     useEffect(() => {
-        if (edit?.value) {
+        if (edit?.data?.value) {
             setFormData({
                 ...initialState,
-                ...edit.data,
+                ...edit?.data?.data,
                 yeaslyEventId: Id
             });
         } else {
@@ -60,13 +61,13 @@ const SubCollaborationForm = ({ edit, onSuccess, onClose }) => {
             const submitData = new FormData();
             submitData.append('title', formData.title);
             submitData.append('type', formData.type);
-            submitData.append('yeaslyEventId', Id);
+            submitData.append('eventId', Id); 
 
-            const response = edit?.value 
-                ? await ColabCategoryApi(submitData, 'PUT', { Id: edit.data._id })
+            const response = edit?.data?.value 
+                ? await ColabCategoryApi(submitData, 'PUT', { Id: edit?.data?.data._id })
                 : await ColabCategoryApi(submitData, 'POST', { Id });
 
-            if(response.statusCode === 201 || response.statusCode === 200) {
+            if(response.statusCode === 201 || response.statusCode === 200 || response.status=== "success") {
                 toast.success(`Sub Collaboration ${edit?.value ? 'updated' : 'created'} successfully`);
                 onSuccess(response.data);
             }
@@ -80,7 +81,7 @@ const SubCollaborationForm = ({ edit, onSuccess, onClose }) => {
     const typeOptions = [
         { value: '', label: 'Select Type' },
         { value: 'Sponsor', label: 'Sponsor' },
-        { value: 'Partner', label: 'Partner' }
+        { value: 'Partner', label: 'Partner' },
     ];
 
     return (
@@ -88,19 +89,30 @@ const SubCollaborationForm = ({ edit, onSuccess, onClose }) => {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-4">
                     <InputField 
-                        label="Title *" 
+                        label="Title" 
+                        required
                         name="title" 
                         value={formData.title} 
                         onChange={handleChange} 
                         error={validationErrors.title}
                     />
                     
-                    <InputField 
+                    {/* <InputField 
                         label="Type *" 
                         name="type" 
                         value={formData.type} 
                         onChange={handleChange} 
                         error={validationErrors.type}
+                    /> */}
+
+                    <NativeSelectField 
+                        label="Type" 
+                        name="type" 
+                        value={formData.type} 
+                        onChange={handleChange} 
+                        error={validationErrors.type}
+                        options={typeOptions}
+                        required
                     />
                 </div>
 

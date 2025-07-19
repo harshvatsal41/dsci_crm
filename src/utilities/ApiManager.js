@@ -269,7 +269,7 @@ const CollaborationApi= async(data=null, method="GET", params={}) => {
 }
 
 //SubCategory Api 
-const ColabCategoryApi= async(data=null, method="GET", params={}) => {
+const ColabCategoryApi= async(data={}, method="GET", params={}) => {
     if(params.Id && method === "GET"){
         const url='/api/admin/data/colabcatagory?eventId='+params.Id;
         const res = await FetchWithAuth(url);
@@ -286,12 +286,15 @@ const ColabCategoryApi= async(data=null, method="GET", params={}) => {
         return res;
     }
     else if(method==="PUT" && params.Id){
-        const url=`/api/admin/data/colabcatagory/update?colabcategoryId=${params.Id}`;
+        const url=`/api/admin/data/colabcatagory/update?subCatagoryId=${params.Id}`;
+        console.log("url", url, data)
         const res = await FetchWithAuth(url, "POST", data);
         return res;
     }else if(method==="DEL"){
-        const url=`/api/admin/data/colabcatagory/delete?colabcategoryId=${params.Id}`;
-        const res = await FetchWithAuth(url, "POST");
+        alert("DELETE")
+        const url=`/api/admin/data/colabcatagory/delete?subCatagoryId=${params.Id}`;
+        console.log("params", url)
+        const res = await FetchWithAuth(url, "POST", data);
         return res;
     }   
 }
