@@ -10,6 +10,7 @@ import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { handleError } from "@/Helper/errorHandler";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import sanitizeInput from "@/Helper/sanitizeInput";
+import { uploadImage } from "@/utilities/MediaUpload";
 
 const ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "svg"];
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
@@ -97,40 +98,18 @@ export async function POST(req) {
                 }),
                 { status: STATUS_CODES.BAD_REQUEST }
             );
-        }
-
-        // 5. Sanitize filename (especially for Mac screenshots)
-        const originalFilename = image.name || "image";
-        const sanitizedFilename = originalFilename
-            .replace(/[^a-zA-Z0-9\-._]/g, "_") // Replace special chars
-            .replace(/\s+/g, "_") // Replace spaces
-            .replace(/_{2,}/g, "_") // Remove duplicate underscores
-            .substring(0, 100); // Limit length
-
-        // 6. Validate MIME type and extension
-        const extension = path.extname(sanitizedFilename).slice(1).toLowerCase();
-
-        // ✅ Validate MIME type
-        if (!ALLOWED_IMAGE_TYPES.includes(image.type)) {
+        }       
+        
+        if (!name || !eventId || !createdBy) {
             return NextResponse.json(
                 apiResponse({
-                    message: "Invalid image MIME type",
+                    message: "Missing required fields",
                     statusCode: STATUS_CODES.BAD_REQUEST,
                 }),
                 { status: STATUS_CODES.BAD_REQUEST }
             );
         }
-
-        // ✅ Validate file extension
-        if (!ALLOWED_EXTENSIONS.includes(extension)) {
-            return NextResponse.json(
-                apiResponse({
-                    message: `Invalid image extension. Allowed extensions: ${ALLOWED_EXTENSIONS.join(", ")}`,
-                    statusCode: STATUS_CODES.BAD_REQUEST,
-                }),
-                { status: STATUS_CODES.BAD_REQUEST }
-            );
-        }
+        
 
         const event = await EventOutreach.findById(eventId);
         if (!event) {
@@ -150,35 +129,23 @@ export async function POST(req) {
         await EventOutreach.findByIdAndUpdate(
             eventId,
             { $push: { focusAreaIds: focusAreaDoc._id } },
-            { new: true }
         );
 
-        const folderPath = path.join(process.cwd(), "public", `${event.year}`, "focusarea");
-        const randomId = crypto.randomBytes(8).toString("hex"); // e.g., "a4f8c1d2b3e4f5a6"
-        const fileName = `${Date.now()}-${randomId}.${extension}`;
-        const filePath = path.join(folderPath, fileName);
-        const publicPath = `/${event.year}/focusarea/${fileName}`;
-
         try {
-            await mkdir(folderPath, { recursive: true });
-            
-            // Use streams for better memory handling with large files
-            const fileStream = fs.createWriteStream(filePath);
-            const buffer = Buffer.from(await image.arrayBuffer());
-            await new Promise((resolve, reject) => {
-                fileStream.write(buffer, (error) => {
-                    if (error) reject(error);
-                    else resolve();
-                });
-            });
-            
+            const { publicPath } = await uploadImage(image, `public/${event.year}/focusarea`, ALLOWED_IMAGE_TYPES, ALLOWED_EXTENSIONS);
             focusAreaDoc.imageUrlPath = publicPath;
             await focusAreaDoc.save();
         } catch (fileError) {
-            // Clean up if file saving fails
+            // If image upload fails, clean up DB entry
             await FocusArea.deleteOne({ _id: focusAreaDoc._id });
-            console.error("File save error:", fileError);
-            throw new Error("Failed to save image file");
+            console.error("Image upload failed:", fileError);
+            return NextResponse.json(
+                apiResponse({
+                    message: "Image upload failed",
+                    statusCode: STATUS_CODES.INTERNAL_ERROR,
+                }),
+                { status: STATUS_CODES.INTERNAL_ERROR }
+            );
         }
 
         return NextResponse.json(

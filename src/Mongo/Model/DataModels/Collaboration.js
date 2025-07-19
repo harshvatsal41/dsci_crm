@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-// Social Media Link Sub-schema
+// Sub-schema for social media links
 const SocialMediaLinkSchema = new mongoose.Schema(
   {
     title: {
@@ -17,24 +17,7 @@ const SocialMediaLinkSchema = new mongoose.Schema(
   { _id: false }
 );
 
-// SubCategory Sub-schema
-const SubCategorySchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    type: {
-      type: String,
-      enum: ["Sponsors", "Partners"],
-      required: true,
-    },
-  },
-  { _id: false }
-);
-
-// Main Collaboration Schema
+// Main schema
 const CollaborationSchema = new mongoose.Schema(
   {
     title: {
@@ -67,7 +50,8 @@ const CollaborationSchema = new mongoose.Schema(
       trim: true,
     },
     subCategory: {
-      type: SubCategorySchema,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "CollabSubCategory",
       required: true,
     },
     contentWeight: {
@@ -113,6 +97,4 @@ const CollaborationSchema = new mongoose.Schema(
   }
 );
 
-// Export model
-export default mongoose.models.Collaboration ||
-  mongoose.model("Collaboration", CollaborationSchema);
+export default mongoose.models.Collaboration || mongoose.model("Collaboration", CollaborationSchema);

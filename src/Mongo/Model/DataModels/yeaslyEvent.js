@@ -33,6 +33,21 @@ const EventOutreachSchema = new mongoose.Schema({
     testimonialIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Testimonial" }],
     ticketIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ticket" }],
     blogs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Blog" }],
+    sponsorGroups: [
+        {
+          subCategory: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "CollabSubCategory",
+            required: true,
+          },
+          sponsors: [
+            {
+              type: mongoose.Schema.Types.ObjectId,
+              ref: "Collaboration",
+            },
+          ],
+        },
+      ],
     isDeleted: { type: Boolean, default: false },
     deletedAt: { type: Date },
     deletedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

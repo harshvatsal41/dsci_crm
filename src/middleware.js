@@ -8,7 +8,7 @@ export function middleware(request) {
     const path = request.nextUrl.pathname;
     const isApiRoute = path.startsWith("/api/admin/data/");
 
-    console.log("Token:", token);
+    // console.log("Token:", token);
 
     if (!token || isTokenExpired(token)) {
         if (isApiRoute) {
