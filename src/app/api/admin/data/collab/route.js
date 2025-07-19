@@ -83,10 +83,7 @@ export async function GET(req) {
             subCategory: "$subCategoryDetails", // embedded full details
             socialMediaLinks: 1,
             createdBy: 1,
-            updatedBy: 1,
-            isDeleted: 1,
             createdAt: 1,
-            updatedAt: 1,
           },
         },
         { $sort: { contentWeight: -1, title: 1 } }, // optional sorting
