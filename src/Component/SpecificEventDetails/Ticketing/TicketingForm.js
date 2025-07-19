@@ -217,7 +217,7 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
-
+ 
         try {
             dispatch(setLoading(true));
             const formDataToSend = new FormData();

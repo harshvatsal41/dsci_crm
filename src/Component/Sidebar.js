@@ -67,6 +67,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       'Speakers': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/speaker`,
       'Agenda': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/agenda`,
       'Sponser': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/sponser`,
+      'Collaboration': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/collaboration`,
       'FAQ': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/faq`,
       'Testimonial': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/testimonial`,
       'Navbar': `/administration/dashboard/specificEventCard/${Id}/specificEventArea/navbar`,

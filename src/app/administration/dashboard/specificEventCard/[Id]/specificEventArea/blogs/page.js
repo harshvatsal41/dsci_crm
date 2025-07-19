@@ -10,7 +10,7 @@ import BlogsForm from '@/Component/SpecificEventDetails/Blogs/BlogsForm';
 import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
 
-export default function Testimonial() {
+export default function Blogs() {
     const { Id } = useParams();
     const [blogs, setBlogs] = useState({ data: [] });
     const [edit, setEdit] = useState({ value: false, data: {} });
