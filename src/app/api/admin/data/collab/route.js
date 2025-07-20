@@ -263,9 +263,9 @@ export async function GET(req) {
         apiResponse({
           message: "Collaboration created successfully",
           data: newCollab,
-          statusCode: STATUS_CODES.SUCCESS,
+          statusCode: STATUS_CODES.CREATED,
         }),
-        { status: STATUS_CODES.SUCCESS }
+        { status: STATUS_CODES.CREATED }
       );
     } catch (error) {
       return NextResponse.json(handleError(error), {

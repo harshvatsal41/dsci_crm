@@ -124,7 +124,7 @@ export async function POST(req) {
       apiResponse({
         message: "Collaboration updated successfully",
         data: updated,
-        statusCode: STATUS_CODES.SUCCESS,
+        statusCode: STATUS_CODES.UPDATESUCCESS,
       }),
       { status: STATUS_CODES.SUCCESS }
     );

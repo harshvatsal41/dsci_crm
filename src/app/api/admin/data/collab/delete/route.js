@@ -10,7 +10,8 @@ import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
 
 
 
-export default async function POST(req){
+export async function POST(req){
+    console.log("heiited")
     try {
         await util.connectDB();
 
@@ -55,7 +56,7 @@ export default async function POST(req){
         return NextResponse.json(
             apiResponse({
                 message: "Collaboration deleted successfully",
-                statusCode: STATUS_CODES.OK,
+                statusCode: STATUS_CODES.DELETESUCCESS,
             }),
             { status: STATUS_CODES.OK }
         );
