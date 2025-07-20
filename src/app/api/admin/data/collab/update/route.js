@@ -5,18 +5,14 @@ import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import { handleError } from "@/Helper/errorHandler";
 import sanitizeInput from "@/Helper/sanitizeInput";
 import Collaboration from "@/Mongo/Model/DataModels/Collaboration";
-import EventOutreach from "@/Mongo/Model/DataModels/EventOutreach";
-import CollabSubCategory from "@/Mongo/Model/DataModels/CollabSubCategory";
-import fs from "fs";
-import path from "path";
-import { mkdir } from "fs/promises";
-import crypto from "crypto";
+import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
+import CollabSubCategory from "@/Mongo/Model/DataModels/CollabSubCatagory";
 import { uploadImage } from "@/utilities/MediaUpload";
 
 const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp"];
 const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
-export async function PUT(req) {
+export async function POST(req) {
   try {
     await util.connectDB();
 
@@ -100,60 +96,13 @@ export async function PUT(req) {
       }
     }
 
-    if (newSubCategory && newSubCategory !== existingCollab.subCategory.toString()) {
-        const subCatDoc = await CollabSubCategory.findById(newSubCategory);
-        if (!subCatDoc || subCatDoc.isDeleted) {
-          return NextResponse.json(
-            apiResponse({
-              message: "Invalid SubCategory",
-              statusCode: STATUS_CODES.BAD_REQUEST,
-            }),
-            { status: STATUS_CODES.BAD_REQUEST }
-          );
-        }
-  
-        // Remove from old group
-        await EventOutreach.updateOne(
-          {
-            _id: event._id,
-            "sponsorGroups.subCategory": existingCollab.subCategory,
-          },
-          {
-            $pull: {
-              "sponsorGroups.$[group].sponsors": existingCollab._id,
-            },
-          },
-          {
-            arrayFilters: [{ "group.subCategory": existingCollab.subCategory }],
-          }
-        );
-  
-        // Add to new group
-        await EventOutreach.updateOne(
-          {
-            _id: event._id,
-            "sponsorGroups.subCategory": newSubCategory,
-          },
-          {
-            $push: {
-              "sponsorGroups.$[group].sponsors": existingCollab._id,
-            },
-          },
-          {
-            arrayFilters: [{ "group.subCategory": newSubCategory }],
-          }
-        );
-  
-        updatedFields.subCategory = newSubCategory;
-      }
-
     // Image Upload
     const photo = formData.get("image");
     try {
       const { publicPath } = await uploadImage(photo, `public/${event.year}/collaborations`, ALLOWED_IMAGE_TYPES, ALLOWED_EXTENSIONS, existingCollab.logoUrlPath);
       updatedFields.logoUrlPath = publicPath;
 
-      
+
     } catch (error) {
       return NextResponse.json(
         apiResponse({
@@ -180,6 +129,8 @@ export async function PUT(req) {
       { status: STATUS_CODES.SUCCESS }
     );
   } catch (err) {
+
+    console.log(err);
     return NextResponse.json(handleError(err), {
       status: STATUS_CODES.INTERNAL_ERROR,
     });
