@@ -138,7 +138,7 @@ export default function Collaboration() {
     if (isLoading) return <DashboardLoading />;
 
     return (
-        <div className="space-y-6">
+        <div className=" max-h-screen overflow-y-auto ">
             {/* Header Section */}
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
                 <div>
@@ -198,33 +198,10 @@ export default function Collaboration() {
             </div>
             <p className="text-gray-600 ">Manage event collaborations and partnerships</p>
 
-            {/* Stats Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                
-                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                    <div className="text-2xl font-bold text-blue-600">
-                        {collaborations?.data?.length || 0}
-                    </div>
-                    <div className="text-sm text-gray-500">Total Collaborations</div>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                    <div className="text-2xl font-bold text-green-600">
-                        {filteredCollaborations?.data?.length || 0}
-                    </div>
-                    <div className="text-sm text-gray-500">Filtered Results</div>
-                </div>
-                <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                    <div className="text-2xl font-bold text-purple-600">
-                        {new Set(collaborations?.data?.map(c => c.subCategory?.title).filter(Boolean)).size || 0}
-                    </div>
-                    <div className="text-sm text-gray-500">Categories</div>
-                </div>
-            </div>
-
             {/* Form Modals */}
             {forms.main.open && (
                 <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full ">
                         <CollaborationForm 
                             edit={forms.main.edit} 
                             onSuccess={() => handleFormSuccess('main')} 
@@ -237,7 +214,7 @@ export default function Collaboration() {
 
             {forms.sub.open && (
                 <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4">
-                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                    <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full ">
                         <SubCollaborationForm 
                             edit={forms.sub.edit} 
                             onSuccess={() => handleFormSuccess('sub')} 

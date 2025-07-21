@@ -36,17 +36,19 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
     const [imageFile, setImageFile] = useState(null);
     const [previewImage, setPreviewImage] = useState('');
     const [validationErrors, setValidationErrors] = useState({});
-    const [isNewImageUploaded, setIsNewImageUploaded] = useState(false);
+    const [imageChanged, setImageChanged] = useState(false);  // Changed from isNewImageUploaded
     const [newSocialLink, setNewSocialLink] = useState(socialMediaInitialState);
     const [subCategories, setSubCategories] = useState([]);
     const [loadingSubCategories, setLoadingSubCategories] = useState(false);
+    const [originalImagePath, setOriginalImagePath] = useState('');
+    const [imageRemoved, setImageRemoved] = useState(false);
 
     useEffect(() => {
         const loadSubCategories = async () => {
             try {
                 setLoadingSubCategories(true);
                 const response = await ColabCategoryApi(null, "GET", { Id });
-                if (response.statusCode === 200 || response.status=== "success") {
+                if (response.statusCode === 200 || response.status === "success") {
                     setSubCategories(response.data);
                 }
             } catch (error) {
@@ -59,16 +61,43 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
         loadSubCategories();
 
         if (edit?.value) {
-            console.log(
-                "data",edit.data.data)
             loadCollaborationData(edit?.data?.data);
         } else {
             setFormData({
                 ...initialState,
                 yeaslyEventId: Id
             });
+            // Reset image states for new creation
+            resetImageStates();
         }
     }, [edit, Id]);
+
+    const resetImageStates = () => {
+        setPreviewImage('');
+        setOriginalImagePath('');
+        setImageFile(null);
+        setImageChanged(false);
+        setImageRemoved(false);
+    };
+
+    const constructImageUrl = (imagePath) => {
+        if (!imagePath) return '';
+        
+        // If it's already a full URL (starts with http/https), return as is
+        if (imagePath.startsWith('http')) {
+            return imagePath;
+        }
+        
+        // If it starts with a slash, it's an absolute path
+        if (imagePath.startsWith('/')) {
+            return imagePath;
+        }
+        
+        // If it's a relative path, construct the full URL
+        // Adjust this base URL according to your API setup
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+        return `${baseUrl}/${imagePath}`;
+    };
 
     const loadCollaborationData = async (data) => {
         try {
@@ -85,11 +114,26 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                 socialMediaLinks: data?.socialMediaLinks || [],
                 yeaslyEventId: Id
             });
+            
+            // Handle existing image properly
             if (data?.logoUrlPath) {
-                setPreviewImage(`${data.logoUrlPath}?${new Date().getTime()}`);
+                const imagePath = data.logoUrlPath;
+                setOriginalImagePath(imagePath);
+                
+                // Construct proper image URL
+                const imageUrl = constructImageUrl(imagePath);
+                console.log('Loading image URL:', imageUrl); // Debug log
+                setPreviewImage(imageUrl);
+            } else {
+                setPreviewImage('');
+                setOriginalImagePath('');
             }
-            setIsNewImageUploaded(false);
+            
+            setImageChanged(false);  // No changes initially
+            setImageFile(null);
+            setImageRemoved(false);
         } catch (error) {
+            console.error('Error loading collaboration data:', error);
             toast.error('Failed to load collaboration data');
         } finally {
             dispatch(setLoading(false));
@@ -116,13 +160,13 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
     };
 
     const addSocialLink = () => {
-        if (!newSocialLink.title || !newSocialLink.link) {
+        if (!newSocialLink?.title || !newSocialLink?.link) {
             toast.error('Both title and link are required');
             return;
         }
         setFormData(prev => ({
             ...prev,
-            socialMediaLinks: [...prev.socialMediaLinks, newSocialLink]
+            socialMediaLinks: [...prev?.socialMediaLinks, newSocialLink]
         }));
         setNewSocialLink(socialMediaInitialState);
     };
@@ -130,7 +174,7 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
     const removeSocialLink = (index) => {
         setFormData(prev => ({
             ...prev,
-            socialMediaLinks: prev.socialMediaLinks.filter((_, i) => i !== index)
+            socialMediaLinks: prev?.socialMediaLinks?.filter((_, i) => i !== index)
         }));
     };
 
@@ -138,8 +182,8 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
-        if (!validTypes.includes(file.type)) {
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+        if (!validTypes?.includes(file.type)) {
             toast.error('Only JPG, PNG, and WEBP images are allowed');
             return;
         }
@@ -150,9 +194,11 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
         }
 
         setImageFile(file);
-        setPreviewImage(URL.createObjectURL(file));
-        setIsNewImageUploaded(true);
-        if (validationErrors.logoUrlPath) {
+        setPreviewImage(URL?.createObjectURL(file));
+        setImageChanged(true);  // Mark that image has changed
+        setImageRemoved(false);
+        
+        if (validationErrors?.logoUrlPath) {
             setValidationErrors(prev => ({ ...prev, logoUrlPath: undefined }));
         }
     };
@@ -160,67 +206,99 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
     const removeImage = () => {
         setImageFile(null);
         setPreviewImage('');
-        setIsNewImageUploaded(true);
-        if (!edit?.value) {
-            setFormData(prev => ({ ...prev, logoUrlPath: '' }));
-        }
+        setImageChanged(true);  // Mark that image has changed
+        setImageRemoved(true);
+        
+        // Clear the logoUrlPath from form data
+        setFormData(prev => ({ ...prev, logoUrlPath: '' }));
     };
 
     const validateForm = () => {
         const errors = {};
-        if (!formData.title.trim()) errors.title = 'Title is required';
-        if (!formData.body.trim()) errors.body = 'Body content is required';
-        if (!formData.about.trim()) errors.about = 'About section is required';
-        if (!formData.description.trim()) errors.description = 'Description is required';
-        if (!formData.subCategory) errors.subCategory = 'Subcategory is required';
-        if (formData.contentWeight < 0) errors.contentWeight = 'Weight cannot be negative';
-        if (!previewImage && !edit?.value) errors.logoUrlPath = 'Logo is required';
+        if (!formData?.title?.trim()) errors.title = 'Title is required';
+        if (!formData?.about?.trim()) errors.about = 'About section is required';
+        if (!formData?.description?.trim()) errors.description = 'Description is required';
+        if (!formData?.subCategory) errors.subCategory = 'Subcategory is required';
+        if (formData?.contentWeight < 0) errors.contentWeight = 'Weight cannot be negative';
+        
+        // For new items, require image. For edit, only require if no original image exists and no current preview
+        if (!edit?.value && !previewImage) {
+            errors.logoUrlPath = 'Logo is required';
+        } else if (edit?.value && !previewImage && !originalImagePath) {
+            errors.logoUrlPath = 'Logo is required';
+        }
 
         setValidationErrors(errors);
-        return Object.keys(errors).length === 0;
+        return Object?.keys(errors)?.length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // if (!validateForm()) return;
+        if (!validateForm()) return;
 
         try {
             dispatch(setLoading(true));
-
             const submitData = new FormData();
-            submitData.append('title', formData.title);
-            submitData.append('body', formData.body);
-            submitData.append('about', formData.about);
-            submitData.append('websiteLink', formData.websiteLink);
-            submitData.append('description', formData.description);
-            submitData.append('contentWeight', formData.contentWeight);
-            submitData.append('subCategory', formData.subCategory);
+            submitData.append('title', formData?.title);
+            submitData.append('body', formData?.body);
+            submitData.append('about', formData?.about);
+            submitData.append('websiteLink', formData?.websiteLink);
+            submitData.append('description', formData?.description);
+            submitData.append('contentWeight', formData?.contentWeight);
+            submitData.append('subCategory', formData?.subCategory);
             submitData.append('yeaslyEventId', Id);
-            submitData.append('socialMediaLinks', JSON.stringify(formData.socialMediaLinks));
+            submitData.append('socialMediaLinks', JSON.stringify(formData?.socialMediaLinks));
 
-            if (isNewImageUploaded && imageFile) {
-                submitData.append('image', imageFile);
-            } else if (isNewImageUploaded && !imageFile) {
-                submitData.append('removeLogo', 'true');
+            // Handle image upload logic
+            if (edit?.value) {
+                // Edit mode - only handle image if it has changed
+                if (imageChanged) {
+                    if (imageFile && !imageRemoved) {
+                        // New image uploaded
+                        submitData.append('image', imageFile);
+                        console.log('Uploading new image in edit mode');
+                    } else if (imageRemoved) {
+                        // Image removed
+                        submitData.append('removeLogo', 'true');
+                        console.log('Removing image in edit mode');
+                    }
+                }
+                // If imageChanged is false, don't send any image-related data to keep existing image
+            } else {
+                // Create mode - always require image
+                if (imageFile) {
+                    submitData.append('image', imageFile);
+                    console.log('Uploading image in create mode');
+                }
             }
 
             let response;
             if (edit?.value) {
-                response = await CollaborationApi(submitData, 'PUT', { Id: edit?.data?._id });
+                response = await CollaborationApi(submitData, 'PUT', { Id: edit?.data?.data?._id });
             } else {
-                response = await CollaborationApi(submitData, 'POST', {Id: Id });
+                response = await CollaborationApi(submitData, 'POST', { Id: Id });
             }
 
             if (response.statusCode === 200 || response.statusCode === 201 || response.status === "success") {
-                alert("Succefuly reponse")
                 toast.success(response.message || `Collaboration ${edit?.value ? 'updated' : 'created'} successfully`);
                 onSuccess(response.data);
+            } else {
+                toast.error(response.message || 'Operation failed');
             }
         } catch (error) {
+            console.error('Submit error:', error);
             toast.error(error.response?.data?.message || 'Operation failed');
         } finally {
             dispatch(setLoading(false));
         }
+    };
+
+    // Helper function to determine if we should show the image
+    const shouldShowImage = () => {
+        return previewImage && 
+               typeof previewImage === 'string' && 
+               previewImage.trim() !== '' &&
+               !imageRemoved;
     };
 
     return (
@@ -231,15 +309,15 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                         <InputField
                             label="Title *"
                             name="title"
-                            value={formData.title}
+                            value={formData?.title}
                             onChange={handleChange}
-                            error={validationErrors.title}
+                            error={validationErrors?.title}
                         />
 
                         <InputField
                             label="Website Link"
                             name="websiteLink"
-                            value={formData.websiteLink}
+                            value={formData?.websiteLink}
                             onChange={handleChange}
                             icon={<FiExternalLink className="text-gray-400" />}
                         />
@@ -247,17 +325,18 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                         <NativeSelectField
                             id="subCategory"
                             name="subCategory"
-                            label="Subcategory"
-                            value={formData.subCategory}
+                            label="Subcategory *"
+                            value={formData?.subCategory}
                             onChange={handleChange}
                             options={[
                                 { value: "", label: "Select a subcategory" },
-                                ...subCategories.map(cat => ({
+                                ...subCategories?.map(cat => ({
                                     value: cat._id,
                                     label: `${cat.title} (${cat.type})`
                                 }))
                             ]}
                             required={true}
+                            error={validationErrors?.subCategory}
                         />
 
                         <InputField
@@ -265,28 +344,28 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                             name="contentWeight"
                             type="number"
                             min="0"
-                            value={formData.contentWeight}
+                            value={formData?.contentWeight}
                             onChange={handleChange}
-                            error={validationErrors.contentWeight}
+                            error={validationErrors?.contentWeight}
                         />
 
                         <TextAreaField
                             label="About *"
                             name="about"
-                            value={formData.about}
+                            value={formData?.about}
                             onChange={handleChange}
                             rows={3}
-                            error={validationErrors.about}
+                            error={validationErrors?.about}
                         />
                     </div>
 
                     <div className="space-y-6">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                Logo *
+                                Logo {!edit?.value ? '*' : ''}
                             </label>
 
-                            {previewImage ? (
+                            {shouldShowImage() ? (
                                 <div className="relative group">
                                     <div className="border-2 border-dashed border-gray-300 rounded-lg overflow-hidden">
                                         <Image
@@ -295,27 +374,48 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                                             width={600}
                                             height={400}
                                             className="w-full h-48 object-contain bg-gray-100"
-                                            unoptimized={isNewImageUploaded}
+                                            unoptimized={previewImage.startsWith('blob:')}
                                             onError={(e) => {
-                                                if (edit?.value && formData.logoUrlPath) {
-                                                    setPreviewImage(`${formData.logoUrlPath}?${new Date().getTime()}`);
+                                                console.error('Image load error for:', previewImage);
+                                                // Try alternative image paths
+                                                if (originalImagePath && previewImage !== originalImagePath) {
+                                                    const alternativeUrl = constructImageUrl(originalImagePath);
+                                                    console.log('Trying alternative URL:', alternativeUrl);
+                                                    setPreviewImage(alternativeUrl);
+                                                } else {
+                                                    // If all fails, show upload area
+                                                    console.log('All image URLs failed, showing upload area');
+                                                    setPreviewImage('');
+                                                    toast.error('Failed to load image');
                                                 }
                                             }}
                                         />
                                     </div>
                                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                        <button
-                                            type="button"
-                                            onClick={removeImage}
-                                            className="p-2 bg-white rounded-full shadow-lg text-red-500 hover:bg-red-50"
-                                        >
-                                            <FiTrash2 className="w-5 h-5" />
-                                        </button>
+                                        <div className="flex gap-2">
+                                            <label className="p-2 bg-white rounded-full shadow-lg text-blue-500 hover:bg-blue-50 cursor-pointer">
+                                                <FiEdit2 className="w-5 h-5" />
+                                                <input
+                                                    type="file"
+                                                    className="sr-only"
+                                                    accept="image/*"
+                                                    onChange={handleImageChange}
+                                                />
+                                            </label>
+                                            <button
+                                                type="button"
+                                                onClick={removeImage}
+                                                className="p-2 bg-white rounded-full shadow-lg text-red-500 hover:bg-red-50"
+                                            >
+                                                <FiTrash2 className="w-5 h-5" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                                     <div className="space-y-1 text-center">
+                                        <FiUpload className="mx-auto h-12 w-12 text-gray-400" />
                                         <div className="flex text-sm text-gray-600 justify-center">
                                             <label className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                                                 <span>Upload a logo</span>
@@ -333,27 +433,27 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                                     </div>
                                 </div>
                             )}
-                            {validationErrors.logoUrlPath && (
-                                <p className="mt-1 text-sm text-red-600">{validationErrors.logoUrlPath}</p>
+                            {validationErrors?.logoUrlPath && (
+                                <p className="mt-1 text-sm text-red-600">{validationErrors?.logoUrlPath}</p>
                             )}
                         </div>
 
                         <TextAreaField
                             label="Description *"
                             name="description"
-                            value={formData.description}
+                            value={formData?.description}
                             onChange={handleChange}
                             rows={3}
-                            error={validationErrors.description}
+                            error={validationErrors?.description}
                         />
 
                         <TextAreaField
                             label="Body Content *"
                             name="body"
-                            value={formData.body}
+                            value={formData?.body}
                             onChange={handleChange}
                             rows={4}
-                            error={validationErrors.body}
+                            error={validationErrors?.body}
                         />
                     </div>
                 </div>
@@ -365,13 +465,13 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                         <InputField
                             label="Platform (e.g., Facebook)"
                             name="title"
-                            value={newSocialLink.title}
+                            value={newSocialLink?.title}
                             onChange={handleSocialLinkChange}
                         />
                         <InputField
                             label="Link URL"
                             name="link"
-                            value={newSocialLink.link}
+                            value={newSocialLink?.link}
                             onChange={handleSocialLinkChange}
                             icon={<FiExternalLink className="text-gray-400" />}
                         />
@@ -387,13 +487,13 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                         </div>
                     </div>
 
-                    {formData.socialMediaLinks.length > 0 && (
+                    {formData?.socialMediaLinks?.length > 0 && (
                         <div className="space-y-2">
-                            {formData.socialMediaLinks.map((link, index) => (
+                            {formData?.socialMediaLinks?.map((link, index) => (
                                 <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded">
                                     <div className="flex-1">
-                                        <p className="font-medium">{link.title}</p>
-                                        <p className="text-sm text-gray-600 truncate">{link.link}</p>
+                                        <p className="font-medium">{link?.title}</p>
+                                        <p className="text-sm text-gray-600 truncate">{link?.link}</p>
                                     </div>
                                     <button
                                         type="button"

@@ -32,7 +32,7 @@ export async function POST(req) {
     }
 
     const { searchParams } = new URL(req.url);
-    const collabId = sanitizeInput(searchParams.get("id"));
+    const collabId = sanitizeInput(searchParams.get("collaborationId"));
 
     if (!collabId) {
       return NextResponse.json(

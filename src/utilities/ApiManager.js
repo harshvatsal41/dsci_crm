@@ -252,7 +252,6 @@ const CollaborationApi= async(data=null, method="GET", params={}) => {
         return res;
     }
     else if(method==="POST" && params.Id){
-        alert("HI POST API ")
         const url=`/api/admin/data/collab?eventId=${params.Id}`;
         const res = await FetchWithAuth(url, "POST", data);
         return res;
@@ -291,7 +290,6 @@ const ColabCategoryApi= async(data={}, method="GET", params={}) => {
         const res = await FetchWithAuth(url, "POST", data);
         return res;
     }else if(method==="DEL"){
-        alert("DELETE")
         const url=`/api/admin/data/colabcatagory/delete?subCatagoryId=${params.Id}`;
         console.log("params", url)
         const res = await FetchWithAuth(url, "POST", data);

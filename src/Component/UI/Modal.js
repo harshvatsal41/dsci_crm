@@ -20,7 +20,7 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             exit={{ backdropFilter: 'blur(0px)' }}
             className="fixed inset-0 bg-black/30"
             onClick={onClose}
-          />
+          />a
 
           {/* Modal container */}
           <motion.div
