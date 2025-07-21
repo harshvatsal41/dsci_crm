@@ -1,5 +1,5 @@
 'use client';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { EventApi, BroadFocusAreaApi } from '@/utilities/ApiManager';
 import toast from 'react-hot-toast';
@@ -36,6 +36,7 @@ export default function SpecificEventCard() {
     const [showFocusArea, setShowFocusArea] = useState(false);
     const [activeTab, setActiveTab] = useState('overview');
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const router = useRouter();
 
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
@@ -48,7 +49,7 @@ export default function SpecificEventCard() {
                 EventApi(null, "GET", { Id }),
             ]);
             
-            if (eventRes.statusCode === 200) {
+            if (    eventRes.statusCode === 200) {
                 setEvent(eventRes.data);
             }
         } catch (error) {
@@ -61,6 +62,10 @@ export default function SpecificEventCard() {
     useEffect(() => {
         if (Id) fetchEvent();
     }, [Id]);
+
+    const exportToPDF = () => {
+        router.push(`/administration/dashboard/exportSpeaker/${Id}`);
+    };
 
     if (isLoading) {
         return <DashboardLoading />;
@@ -120,14 +125,14 @@ export default function SpecificEventCard() {
                         
                         <div className="flex items-center gap-2">
                             <div className="hidden sm:flex items-center gap-2">
-                                <button className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm">
+                                <button  className="flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors text-sm">
                                     <FaBookmark className="text-sm" />
                                     <span>Save</span>
                                 </button>
-                                {/* <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors text-sm">
+                                <button onClick={exportToPDF} className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors text-sm">
                                     <FaEdit className="text-sm" />
-                                    <span>Edit</span>
-                                </button> */}
+                                    <span>Export Speakers</span>
+                                </button>
                             </div>
                             <button 
                                 className="sm:hidden p-2 rounded-lg hover:bg-slate-100"
