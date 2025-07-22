@@ -1,8 +1,9 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { FiSave, FiImage, FiType, FiLayout, FiSquare, FiCircle, FiDownload, FiUpload, FiGrid, FiPalette } from 'react-icons/fi';
+import { FiSave, FiImage, FiType, FiLayout, FiDownload, FiUpload, FiCode } from 'react-icons/fi';
 import {SpeakerApi} from '@/utilities/ApiManager';
 import { useParams } from 'next/navigation';
+
 const defaultStyles = {
   container: {
     backgroundColor: '#f5f5f5',
@@ -17,12 +18,12 @@ const defaultStyles = {
     height: 'auto',
     padding: '20px',
     margin: '10px',
-    borderRadius: '12px',
-    backgroundColor: '#ffffff',
-    backgroundImage: '',
+    borderRadius: '0px',
+    backgroundColor: 'transparent',
+    backgroundImage: 'none',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+    boxShadow: 'none',
     display: 'flex',
     flexDirection: 'column',
     gap: '15px',
@@ -61,8 +62,6 @@ const defaultStyles = {
     fontFamily: 'Arial, sans-serif'
   }
 };
-
-
 
 export default function SpeakerCardDesigner() {
   const [speakers, setSpeakers] = useState([]);
@@ -116,17 +115,6 @@ export default function SpeakerCardDesigner() {
     fetchSpeakers();
   }, []);   
 
-  const handleCardBackgroundImageUpload = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        handleStyleChange('card', 'backgroundImage', `url(${e.target.result})`);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const calculateGridColumns = () => {
     const cardWidth = parseInt(styles.card.width) || 280;
     const cardMargin = parseInt(styles.card.margin) || 10;
@@ -145,14 +133,10 @@ export default function SpeakerCardDesigner() {
       const previewElement = previewRef.current;
       
       if (previewElement && printWindow) {
-        // Get all computed styles
-        const cardWidth = styles.card.width || '280px';
-        const cardMargin = styles.card.margin || '10px';
         const containerPadding = styles.container.padding || '20px';
         const containerBgColor = styles.container.backgroundColor || '#f5f5f5';
         const containerBgImage = styles.container.backgroundImage || '';
         
-        // Create PDF-optimized HTML with proper layout
         const pdfHTML = `
           <!DOCTYPE html>
           <html>
@@ -179,20 +163,17 @@ export default function SpeakerCardDesigner() {
                 display: flex;
                 flex-wrap: wrap;
                 justify-content: center;
-                gap: ${cardMargin};
+                gap: ${styles.card.margin || '10px'};
                 padding: ${containerPadding};
               }
               .speaker-card {
-                width: ${cardWidth};
+                width: ${styles.card.width || '280px'};
                 padding: ${styles.card.padding || '20px'};
                 margin: 0;
-                border-radius: ${styles.card.borderRadius || '12px'};
-                background-color: ${styles.card.backgroundColor || '#ffffff'};
-                ${styles.card.backgroundImage ? `background-image: ${styles.card.backgroundImage};` : ''}
-                background-size: cover;
-                background-position: center;
-                box-shadow: ${styles.card.boxShadow || '0 4px 12px rgba(0, 0, 0, 0.15)'};
-                opacity: ${styles.card.opacity || 1};
+                border-radius: ${styles.card.borderRadius || '0px'};
+                background-color: transparent;
+                background-image: none;
+                box-shadow: none;
                 display: flex;
                 flex-direction: column;
                 gap: ${styles.card.gap || '15px'};
@@ -233,8 +214,13 @@ export default function SpeakerCardDesigner() {
               }
               @media print {
                 body {
-                  padding: 0 !important;
-                  margin: 0 !important;
+                  padding: ${containerPadding} !important;
+                  background-color: ${containerBgColor} !important;
+                  ${containerBgImage ? `background-image: ${containerBgImage} !important;` : ''}
+                  background-size: cover !important;
+                  background-position: center !important;
+                  -webkit-print-color-adjust: exact !important;
+                  print-color-adjust: exact !important;
                 }
                 .speakers-container {
                   padding: 10mm !important;
@@ -254,7 +240,6 @@ export default function SpeakerCardDesigner() {
               `).join('')}
             </div>
             <script>
-              // Ensure images are loaded before printing
               window.onload = function() {
                 setTimeout(function() {
                   window.print();
@@ -276,6 +261,110 @@ export default function SpeakerCardDesigner() {
     }
   };
 
+  // Function to download HTML version
+  const downloadHTML = () => {
+    const containerPadding = styles.container.padding || '20px';
+    const containerBgColor = styles.container.backgroundColor || '#f5f5f5';
+    const containerBgImage = styles.container.backgroundImage || '';
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Speaker Cards</title>
+        <style>
+          body {
+            margin: 0;
+            padding: ${containerPadding};
+            font-family: Arial, sans-serif;
+            background-color: ${containerBgColor};
+            ${containerBgImage ? `background-image: ${containerBgImage};` : ''}
+            background-size: cover;
+            background-position: center;
+          }
+          .speakers-container {
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: ${styles.card.margin || '10px'};
+            padding: ${containerPadding};
+          }
+          .speaker-card {
+            width: ${styles.card.width || '280px'};
+            padding: ${styles.card.padding || '20px'};
+            margin: 0;
+            border-radius: ${styles.card.borderRadius || '0px'};
+            background-color: transparent;
+            background-image: none;
+            box-shadow: none;
+            display: flex;
+            flex-direction: column;
+            gap: ${styles.card.gap || '15px'};
+          }
+          .speaker-image {
+            width: ${styles.image.width || '120px'};
+            height: ${styles.image.height || '120px'};
+            border-radius: ${styles.image.borderRadius || '50%'};
+            object-fit: cover;
+            margin: 0 auto;
+            border: ${styles.image.border || '3px solid #e0e0e0'};
+          }
+          .speaker-name {
+            font-size: ${styles.name.fontSize || '20px'};
+            font-weight: ${styles.name.fontWeight || '600'};
+            color: ${styles.name.color || '#333333'};
+            text-align: ${styles.name.textAlign || 'center'};
+            margin: 0;
+            font-family: ${styles.name.fontFamily || 'Arial, sans-serif'};
+          }
+          .speaker-title {
+            font-size: ${styles.title.fontSize || '16px'};
+            font-weight: ${styles.title.fontWeight || '500'};
+            color: ${styles.title.color || '#555555'};
+            text-align: ${styles.title.textAlign || 'center'};
+            margin: 0;
+            font-family: ${styles.title.fontFamily || 'Arial, sans-serif'};
+          }
+          .speaker-organization {
+            font-size: ${styles.organization.fontSize || '14px'};
+            font-weight: ${styles.organization.fontWeight || '400'};
+            color: ${styles.organization.color || '#666666'};
+            text-align: ${styles.organization.textAlign || 'center'};
+            margin: 0;
+            font-family: ${styles.organization.fontFamily || 'Arial, sans-serif'};
+          }
+        </style>
+      </head>
+      <body>
+        <div class="speakers-container">
+          ${speakers.map(speaker => `
+            <div class="speaker-card">
+              <img src="${speaker.photoUrl || '/placeholder-speaker.jpg'}" alt="${speaker.name}" class="speaker-image" />
+              <h2 class="speaker-name">${speaker.name}</h2>
+              <p class="speaker-title">${speaker.position}</p>
+              <p class="speaker-organization">${speaker.organization}</p>
+            </div>
+          `).join('')}
+        </div>
+      </body>
+      </html>
+    `;
+
+    // Create download link
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'speaker-cards.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="flex flex-col lg:flex-row max-h-screen overflow-auto bg-gray-50">
       {/* Design Controls */}
@@ -293,9 +382,7 @@ export default function SpeakerCardDesigner() {
             className={`px-4 py-2 font-medium whitespace-nowrap ${activeTab === 'background' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
             onClick={() => setActiveTab('background')}
           >
-            {/* <FiPalette className="inline mr-2" /> */}
-             Background
-
+            Background
           </button>
           <button
             className={`px-4 py-2 font-medium whitespace-nowrap ${activeTab === 'image' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'}`}
@@ -341,8 +428,8 @@ export default function SpeakerCardDesigner() {
               <div className="grid grid-cols-4 gap-2">
                 <input
                   type="text"
-                  value={styles.card.paddingTop || ''}
-                  onChange={(e) => handleStyleChange('card', 'paddingTop', e.target.value)}
+                  value={styles.card.padding || ''}
+                  onChange={(e) => handleStyleChange('card', 'padding', e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded"
                   placeholder="Top"
                 />
@@ -389,80 +476,6 @@ export default function SpeakerCardDesigner() {
                 placeholder="15px"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Card Background</label>
-              <div className="flex items-center mb-2">
-                <input
-                  type="color"
-                  value={styles.card.backgroundColor}
-                  onChange={(e) => handleStyleChange('card', 'backgroundColor', e.target.value)}
-                  className="w-8 h-8 mr-2 rounded"
-                />
-                <input
-                  type="text"
-                  value={styles.card.backgroundColor}
-                  onChange={(e) => handleStyleChange('card', 'backgroundColor', e.target.value)}
-                  className="flex-1 p-2 border border-gray-300 rounded"
-                  placeholder="#ffffff"
-                />
-              </div>
-              <div className="flex items-center space-x-2 mb-2">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCardBackgroundImageUpload}
-                  className="hidden"
-                  id="card-bg-upload"
-                />
-                <label htmlFor="card-bg-upload" className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded cursor-pointer hover:bg-gray-50">
-                  <FiUpload className="mr-2" />
-                  Upload Image
-                </label>
-                {styles.card.backgroundImage && (
-                  <button
-                    onClick={() => handleStyleChange('card', 'backgroundImage', '')}
-                    className="px-3 py-2 text-red-600 border border-red-300 rounded hover:bg-red-50"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-              <div className="flex items-center mb-2">
-                <label className="block text-sm font-medium text-gray-700 mr-2">Opacity</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={styles.card.opacity || 1}
-                  onChange={(e) => handleStyleChange('card', 'opacity', e.target.value)}
-                  className="flex-1"
-                />
-                <span className="ml-2">{styles.card.opacity || 1}</span>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Border Radius</label>
-                  <input
-                    type="text"
-                    value={styles.card.borderRadius}
-                    onChange={(e) => handleStyleChange('card', 'borderRadius', e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded"
-                    placeholder="12px"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-gray-700 mb-1">Box Shadow</label>
-                  <input
-                    type="text"
-                    value={styles.card.boxShadow}
-                    onChange={(e) => handleStyleChange('card', 'boxShadow', e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded"
-                    placeholder="0 4px 12px rgba(0,0,0,0.15)"
-                  />
-                </div>
-              </div>
-            </div>
           </div>
         )}
 
@@ -471,21 +484,13 @@ export default function SpeakerCardDesigner() {
             <h3 className="font-medium">Background Settings</h3>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Background Color</label>
-              <div className="flex items-center">
-                <input
-                  type="color"
-                  value={styles.container.backgroundColor}
-                  onChange={(e) => handleStyleChange('container', 'backgroundColor', e.target.value)}
-                  className="w-8 h-8 mr-2 rounded"
-                />
-                <input
-                  type="text"
-                  value={styles.container.backgroundColor}
-                  onChange={(e) => handleStyleChange('container', 'backgroundColor', e.target.value)}
-                  className="flex-1 p-2 border border-gray-300 rounded"
-                  placeholder="#f5f5f5"
-                />
-              </div>
+              <input
+                type="text"
+                value={styles.container.backgroundColor}
+                onChange={(e) => handleStyleChange('container', 'backgroundColor', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="#f5f5f5"
+              />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Background Image</label>
@@ -549,24 +554,31 @@ export default function SpeakerCardDesigner() {
                   onClick={() => handleImageShapeChange('circle')}
                   className={`p-3 border rounded ${styles.image.borderRadius === '50%' ? 'bg-blue-100 border-blue-500' : 'border-gray-300'}`}
                 >
-                  <FiCircle className="w-6 h-6" />
                   <span className="block text-xs mt-1">Circle</span>
                 </button>
                 <button
                   onClick={() => handleImageShapeChange('rounded')}
                   className={`p-3 border rounded ${styles.image.borderRadius === '12px' ? 'bg-blue-100 border-blue-500' : 'border-gray-300'}`}
                 >
-                  <FiSquare className="w-6 h-6 rounded" />
                   <span className="block text-xs mt-1">Rounded</span>
                 </button>
                 <button
                   onClick={() => handleImageShapeChange('square')}
                   className={`p-3 border rounded ${styles.image.borderRadius === '0' ? 'bg-blue-100 border-blue-500' : 'border-gray-300'}`}
                 >
-                  <FiSquare className="w-6 h-6" />
                   <span className="block text-xs mt-1">Square</span>
                 </button>
               </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Image Border</label>
+              <input
+                type="text"
+                value={styles.image.border}
+                onChange={(e) => handleStyleChange('image', 'border', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="3px solid #e0e0e0"
+              />
             </div>
           </div>
         )}
@@ -575,144 +587,102 @@ export default function SpeakerCardDesigner() {
           <div className="space-y-4">
             <h3 className="font-medium">Text Settings</h3>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Name Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.name.fontSize}
-      onChange={(e) => handleStyleChange('name', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="20px"
-    />
-    <select
-      value={styles.name.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('name', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Name Font Size</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={styles.name.fontSize}
+                  onChange={(e) => handleStyleChange('name', 'fontSize', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                  placeholder="20px"
+                />
+                <select
+                  value={styles.name.fontFamily || 'Arial, sans-serif'}
+                  onChange={(e) => handleStyleChange('name', 'fontFamily', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                >
+                  <option value="Arial, sans-serif">Sans (Arial)</option>
+                  <option value="Georgia, serif">Serif (Georgia)</option>
+                  <option value="'Courier New', monospace">Mono (Courier New)</option>
+                </select>
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name Color</label>
-              <div className="flex items-center">
-                <input
-                  type="color"
-                  value={styles.name.color}
-                  onChange={(e) => handleStyleChange('name', 'color', e.target.value)}
-                  className="w-8 h-8 mr-2 rounded"
-                />
-                <input
-                  type="text"
-                  value={styles.name.color}
-                  onChange={(e) => handleStyleChange('name', 'color', e.target.value)}
-                  className="flex-1 p-2 border border-gray-300 rounded"
-                  placeholder="#333333"
-                />
-              </div>
+              <input
+                type="text"
+                value={styles.name.color}
+                onChange={(e) => handleStyleChange('name', 'color', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="#333333"
+              />
             </div>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Title Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.title.fontSize}
-      onChange={(e) => handleStyleChange('title', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="16px"
-    />
-    <select
-      value={styles.title.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('title', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Title Font Size</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={styles.title.fontSize}
+                  onChange={(e) => handleStyleChange('title', 'fontSize', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                  placeholder="16px"
+                />
+                <select
+                  value={styles.title.fontFamily || 'Arial, sans-serif'}
+                  onChange={(e) => handleStyleChange('title', 'fontFamily', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                >
+                  <option value="Arial, sans-serif">Sans (Arial)</option>
+                  <option value="Georgia, serif">Serif (Georgia)</option>
+                  <option value="'Courier New', monospace">Mono (Courier New)</option>
+                </select>
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Title Color</label>
-              <div className="flex items-center">
-                <input
-                  type="color"
-                  value={styles.title.color}
-                  onChange={(e) => handleStyleChange('title', 'color', e.target.value)}
-                  className="w-8 h-8 mr-2 rounded"
-                />
+              <input
+                type="text"
+                value={styles.title.color}
+                onChange={(e) => handleStyleChange('title', 'color', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="#555555"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Organization Font Size</label>
+              <div className="flex gap-2">
                 <input
                   type="text"
-                  value={styles.title.color}
-                  onChange={(e) => handleStyleChange('title', 'color', e.target.value)}
-                  className="flex-1 p-2 border border-gray-300 rounded"
-                  placeholder="#555555"
+                  value={styles.organization.fontSize}
+                  onChange={(e) => handleStyleChange('organization', 'fontSize', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                  placeholder="14px"
                 />
+                <select
+                  value={styles.organization.fontFamily || 'Arial, sans-serif'}
+                  onChange={(e) => handleStyleChange('organization', 'fontFamily', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                >
+                  <option value="Arial, sans-serif">Sans (Arial)</option>
+                  <option value="Georgia, serif">Serif (Georgia)</option>
+                  <option value="'Courier New', monospace">Mono (Courier New)</option>
+                </select>
               </div>
             </div>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Organization Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.organization.fontSize}
-      onChange={(e) => handleStyleChange('organization', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="14px"
-    />
-    <select
-      value={styles.organization.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('organization', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
-            <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Organization Color</label>
-              <div className="flex items-center">
-                <input
-                  type="color"
-                  value={styles.organization.color}
-                  onChange={(e) => handleStyleChange('organization', 'color', e.target.value)}
-                  className="w-8 h-8 mr-2 rounded"
-                />
-                <input
-                  type="text"
-                  value={styles.organization.color}
-                  onChange={(e) => handleStyleChange('organization', 'color', e.target.value)}
-                  className="flex-1 p-2 border border-gray-300 rounded"
-                  placeholder="#666666"
-                />
-              </div>
+              <input
+                type="text"
+                value={styles.organization.color}
+                onChange={(e) => handleStyleChange('organization', 'color', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="#666666"
+              />
             </div>
           </div>
         )}
 
         <div className="flex flex-col space-y-3 mt-6">
-          <button
-            // onClick={saveDesign}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded flex items-center justify-center hover:bg-blue-700 transition-colors"
-            disabled={isLoading}
-          >
-            <FiSave className="mr-2" />
-            {isLoading ? 'Saving...' : 'Save Design'}
-          </button>
-          
           <button
             onClick={exportToPDF}
             className="w-full bg-green-600 text-white py-2 px-4 rounded flex items-center justify-center hover:bg-green-700 transition-colors"
@@ -720,6 +690,14 @@ export default function SpeakerCardDesigner() {
           >
             <FiDownload className="mr-2" />
             {isLoading ? 'Exporting...' : 'Export to PDF'}
+          </button>
+          
+          <button
+            onClick={downloadHTML}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded flex items-center justify-center hover:bg-blue-700 transition-colors"
+          >
+            <FiCode className="mr-2" />
+            Download HTML
           </button>
         </div>
       </div>
