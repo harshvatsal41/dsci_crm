@@ -239,14 +239,42 @@ export default function SpeakerCardDesigner() {
                 </div>
               `).join('')}
             </div>
-            <script>
-              window.onload = function() {
-                setTimeout(function() {
-                  window.print();
-                  window.close();
-                }, 500);
-              };
-            </script>
+         <script>
+  function waitForImagesToLoad(callback) {
+    const images = document.images;
+    let loadedCount = 0;
+
+    if (images.length === 0) {
+      callback();
+      return;
+    }
+
+    for (let i = 0; i < images.length; i++) {
+      if (images[i].complete) {
+        loadedCount++;
+        if (loadedCount === images.length) callback();
+      } else {
+        images[i].addEventListener('load', () => {
+          loadedCount++;
+          if (loadedCount === images.length) callback();
+        });
+        images[i].addEventListener('error', () => {
+          loadedCount++;
+          if (loadedCount === images.length) callback();
+        });
+      }
+    }
+  }
+
+  window.onload = function() {
+    waitForImagesToLoad(function() {
+      setTimeout(function() {
+        window.print();
+        window.close();
+      }, 300); // slight delay after load
+    });
+  };
+</script>
           </body>
           </html>
         `;
