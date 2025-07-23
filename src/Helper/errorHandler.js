@@ -1,4 +1,4 @@
-import { apiResponse, STATUS_CODES } from '@/Helper/response';
+import { apiResponse, STATUS_CODES } from '@/Helper/response.js';
 
 export class AppError extends Error {
     constructor(message, statusCode = 500) {

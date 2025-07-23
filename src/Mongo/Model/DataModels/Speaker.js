@@ -32,7 +32,9 @@ const speakerSchema = new mongoose.Schema({
 
      // Additional personal and internal data
      dob: { type: Date },
-     gender: { type: String, enum: ["Male", "Female", "Other"] },
+     gender: { type: String, enum: ["Male", "Female", "Null"],
+        default: "Null"
+      },
      internalNote: { type: String },
 
      // Other

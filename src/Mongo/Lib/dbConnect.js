@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-
+import seedAdmin from './seeder.js';
 let isConnected = false; // Maintain the connection state
 
 const connectDB = async () => {
@@ -7,6 +7,14 @@ const connectDB = async () => {
         console.log("Already connected to MongoDB");
         return;
     }
+    
+    (async () => {
+      try {
+        await seedAdmin();
+      } catch (err) {
+        console.error("❌ Admin seed failed:", err);
+      }
+    })();
 
     if (!process.env.DB_USERNAME || !process.env.DB_PASSWORD) {
         throw new Error("Database credentials are missing in environment variables");

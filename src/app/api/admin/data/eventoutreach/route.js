@@ -6,6 +6,10 @@ import util from '@/Helper/apiUtils';
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import sanitizeInput from '@/Helper/sanitizeInput';
 
+function cleanISOString(value) {
+    return value.replace(/(\.\d{3})\d*Z$/, '$1Z');
+  }
+
 export async function GET(request) {
     try {
         await util.connectDB();
@@ -77,15 +81,60 @@ export async function POST(request) {
         }
 
         body.createdBy = decodedToken?.id;
-        body = sanitizeInput(rawBody);
+        body = body;
 
+        console.log(body);
+        if (body.dates) {
+            body.dates.start = new Date(body.dates.start);
+            body.dates.end = new Date(body.dates.end);
+          }
+
+        
         // 🔎 Optional: add required field checks here
-        if (!body.name || !body.description || !body.createdBy) {
+        if (!body.title || !body.description || !body.createdBy) {
             return NextResponse.json(apiResponse({
                 message: "Missing required fields",
                 statusCode: STATUS_CODES.BAD_REQUEST
             }), { status: STATUS_CODES.BAD_REQUEST });
         }
+
+        body.globalFetch = (title= body.title, edition= body.edition, year= body.year) => {
+            const combined = `${title} ${edition} ${year}`;
+            return combined
+              .toLowerCase()
+              .replace(/[^a-z0-9\s]/g, '')  // remove special characters
+              .trim()
+              .replace(/\s+/g, '-');        // convert spaces to hyphens
+          };
+
+          const requiredFields = {
+            'title': body.title,
+            'year': body.year,
+            'edition': body.edition,
+            'dates.start': body.dates?.start,
+            'dates.end': body.dates?.end,
+            'location.address': body.location?.address,
+            'location.googleMapsLink': body.location?.googleMapsLink,
+            'location.city': body.location?.city,
+            'location.state': body.location?.state,
+            'location.country': body.location?.country,
+            'location.pincode': body.location?.pincode,
+            'createdBy': body.createdBy
+          };
+          
+          const missingFields = Object.entries(requiredFields)
+            .filter(([_, value]) => !value)
+            .map(([field]) => field);
+          
+          if (missingFields.length > 0) {
+            return NextResponse.json(
+              apiResponse({
+                message: `The following required fields are missing: ${missingFields.join(', ')}`,
+                statusCode: STATUS_CODES.BAD_REQUEST
+              }),
+              { status: STATUS_CODES.BAD_REQUEST }
+            );
+          }
 
 
         // Rest of your validation and creation logic remains the same...
