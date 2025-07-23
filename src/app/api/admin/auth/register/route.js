@@ -1,5 +1,6 @@
 import dbConnect from "@/Mongo/Lib/dbConnect";
 import Employee from "@/Mongo/Model/AcessModels/Employee";
+import Role from "@/Mongo/Model/AcessModels/Role";
 
 
 export async function POST(req) {
@@ -24,8 +25,10 @@ export async function POST(req) {
             );
         }
 
+        const normalRole = await Role.findOne({ name: "Normal" });
 
-        const user = await Employee.create({ username, email, password: password, contactNo });
+
+        const user = await Employee.create({ username, email, password: password, contactNo, role: normalRole._id});
 
         return new Response(
             JSON.stringify({

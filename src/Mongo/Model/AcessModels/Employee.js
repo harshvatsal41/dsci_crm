@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import Role from "./Role.js";
 
 // Updated user schema
 const employeeSchema = new mongoose.Schema({
@@ -12,7 +13,8 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide an email"],
         unique: true,
-    },contactNo: {
+    },
+    contactNo: {
         type: String,
         required: [true, "Please provide a contact number"],
         validate: {
@@ -31,11 +33,20 @@ const employeeSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    isAdmin: {
+    role: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Role",
+        default: null,
+    },
+    isDisabled: {
         type: Boolean,
         default: false,
     },
-    isDisabled: {
+    isSuperAdmin: {
+        type: Boolean,
+        default: false,
+    },
+    isDeleted: {
         type: Boolean,
         default: false,
     },

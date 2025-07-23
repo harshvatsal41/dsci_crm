@@ -12,61 +12,61 @@ const initialState = {
       id: 'Dashboard',
       title: 'Dashboard',
       icon: 'dashboard',
-      accessRoles: ['ADMIN', 'EVENT_MANAGER', 'CONTENT_MANAGER'],
+      accessRoles: ['Admin', 'EVENT_MANAGER', 'CONTENT_MANAGER'],
     },
     {
       id: 'Focus',
       title: 'Focus Area',
       icon: 'event',
-      accessRoles: ['ADMIN', 'EVENT_MANAGER', 'CONTENT_MANAGER'],
+      accessRoles: ['Admin', 'EVENT_MANAGER', 'CONTENT_MANAGER'],
     },
     {
       id: 'Speakers',
       title: 'Speakers',
       icon: 'users',
-      accessRoles: ['ADMIN', 'REPORT_MANAGER'],
+      accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
     {
       id: 'Agenda',
       title: 'Agenda',
       icon: 'file-text',
-      accessRoles: ['ADMIN', 'REPORT_MANAGER'],
+      accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
     {
       id: 'Collaboration',
       title: 'Collaboration',
       icon: 'FcCollaboration',
-      accessRoles: ['ADMIN', 'REPORT_MANAGER'],
+      accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
     {
       id: 'FAQ',
       title: 'FAQ',
       icon: 'file-text',
-      accessRoles: ['ADMIN', 'REPORT_MANAGER'],
+      accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
     {
       id: 'Testimonial',
       title: 'Testimonial',
       icon: 'message-square', // Using FiMessageSquare icon
-      accessRoles: ['ADMIN', 'REPORT_MANAGER'],
+      accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
     {
       id: 'Navbar',
       title: 'Navbar',
       icon: 'menu', // Using FiMenu icon
-      accessRoles: ['ADMIN', 'REPORT_MANAGER'],
+      accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
     {
       id: 'Ticketing',
       title: 'Ticketing',
       icon: 'ticket', 
-      accessRoles: ['ADMIN', 'REPORT_MANAGER'],
+      accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
     {
       id: 'Blogs',
       title: 'Blogs',
       icon: 'file-text', 
-      accessRoles: ['ADMIN', 'REPORT_MANAGER'],
+      accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
     
     
