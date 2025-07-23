@@ -141,109 +141,93 @@ export default function SpeakerCardDesigner() {
   const exportToPDF = async () => {
     setIsLoading(true);
     try {
+      // Create a new window for PDF generation
       const printWindow = window.open('', '_blank');
       const previewElement = previewRef.current;
       
       if (previewElement && printWindow) {
-        // Get all computed styles
-        const cardWidth = styles.card.width || '280px';
-        const cardMargin = styles.card.margin || '10px';
-        const containerPadding = styles.container.padding || '20px';
-        const containerBgColor = styles.container.backgroundColor || '#f5f5f5';
-        const containerBgImage = styles.container.backgroundImage || '';
+        // Clone the preview content
+        const clonedContent = previewElement.cloneNode(true);
         
-        // Create PDF-optimized HTML with proper layout
+        // Create PDF-optimized HTML
         const pdfHTML = `
           <!DOCTYPE html>
           <html>
           <head>
             <title>Speaker Cards</title>
             <style>
-              @page {
-                size: A4;
-                margin: 10mm;
-              }
               body { 
                 margin: 0; 
-                padding: ${containerPadding}; 
+                padding: 20px; 
                 font-family: Arial, sans-serif;
-                background-color: ${containerBgColor};
-                ${containerBgImage ? `background-image: ${containerBgImage};` : ''}
+                background: ${styles.container.backgroundColor};
+                ${styles.container.backgroundImage ? `background-image: ${styles.container.backgroundImage};` : ''}
                 background-size: cover;
                 background-position: center;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
               }
-              .speakers-container {
-                width: 100%;
-                display: flex;
-                flex-wrap: wrap;
+              .speakers-grid {
+                display: grid;
+                grid-template-columns: repeat(${cardsPerRow}, ${styles.card.width});
+                gap: ${parseInt(styles.card.margin) * 2}px;
                 justify-content: center;
-                gap: ${cardMargin};
-                padding: ${containerPadding};
+                padding: ${styles.container.padding};
               }
               .speaker-card {
-                width: ${cardWidth};
-                padding: ${styles.card.padding || '20px'};
+                width: ${styles.card.width};
+                height: auto;
+                padding: ${styles.card.paddingTop || styles.card.padding || '20px'} ${styles.card.paddingRight || styles.card.padding || '20px'} ${styles.card.paddingBottom || styles.card.padding || '20px'} ${styles.card.paddingLeft || styles.card.padding || '20px'};
                 margin: 0;
-                border-radius: ${styles.card.borderRadius || '12px'};
-                background-color: ${styles.card.backgroundColor || '#ffffff'};
+                border-radius: ${styles.card.borderRadius};
+                background-color: ${styles.card.backgroundColor};
                 ${styles.card.backgroundImage ? `background-image: ${styles.card.backgroundImage};` : ''}
                 background-size: cover;
                 background-position: center;
-                box-shadow: ${styles.card.boxShadow || '0 4px 12px rgba(0, 0, 0, 0.15)'};
+                box-shadow: ${styles.card.boxShadow};
                 opacity: ${styles.card.opacity || 1};
                 display: flex;
                 flex-direction: column;
-                gap: ${styles.card.gap || '15px'};
+                gap: ${styles.card.gap};
                 break-inside: avoid;
-                page-break-inside: avoid;
               }
               .speaker-image {
-                width: ${styles.image.width || '120px'};
-                height: ${styles.image.height || '120px'};
-                border-radius: ${styles.image.borderRadius || '50%'};
+                width: ${styles.image.width};
+                height: ${styles.image.height};
+                border-radius: ${styles.image.borderRadius};
                 object-fit: cover;
                 margin: 0 auto;
-                border: ${styles.image.border || '3px solid #e0e0e0'};
+                border: ${styles.image.border};
               }
               .speaker-name {
-                font-size: ${styles.name.fontSize || '20px'};
-                font-weight: ${styles.name.fontWeight || '600'};
-                color: ${styles.name.color || '#333333'};
-                text-align: ${styles.name.textAlign || 'center'};
+                font-size: ${styles.name.fontSize};
+                font-weight: ${styles.name.fontWeight};
+                color: ${styles.name.color};
+                text-align: ${styles.name.textAlign};
                 margin: 0;
-                font-family: ${styles.name.fontFamily || 'Arial, sans-serif'};
+                font-family: ${styles.name.fontFamily};
               }
               .speaker-title {
-                font-size: ${styles.title.fontSize || '16px'};
-                font-weight: ${styles.title.fontWeight || '500'};
-                color: ${styles.title.color || '#555555'};
-                text-align: ${styles.title.textAlign || 'center'};
+                font-size: ${styles.title.fontSize};
+                font-weight: ${styles.title.fontWeight};
+                color: ${styles.title.color};
+                text-align: ${styles.title.textAlign};
                 margin: 0;
-                font-family: ${styles.title.fontFamily || 'Arial, sans-serif'};
+                font-family: ${styles.title.fontFamily};
               }
               .speaker-organization {
-                font-size: ${styles.organization.fontSize || '14px'};
-                font-weight: ${styles.organization.fontWeight || '400'};
-                color: ${styles.organization.color || '#666666'};
-                text-align: ${styles.organization.textAlign || 'center'};
+                font-size: ${styles.organization.fontSize};
+                font-weight: ${styles.organization.fontWeight};
+                color: ${styles.organization.color};
+                text-align: ${styles.organization.textAlign};
                 margin: 0;
-                font-family: ${styles.organization.fontFamily || 'Arial, sans-serif'};
+                font-family: ${styles.organization.fontFamily};
               }
               @media print {
-                body {
-                  padding: 0 !important;
-                  margin: 0 !important;
-                }
-                .speakers-container {
-                  padding: 10mm !important;
-                }
+                body { -webkit-print-color-adjust: exact; }
               }
             </style>
           </head>
           <body>
-            <div class="speakers-container">
+            <div class="speakers-grid">
               ${speakers.map(speaker => `
                 <div class="speaker-card">
                   <img src="${speaker.photoUrl || '/placeholder-speaker.jpg'}" alt="${speaker.name}" class="speaker-image" />
@@ -253,24 +237,34 @@ export default function SpeakerCardDesigner() {
                 </div>
               `).join('')}
             </div>
-            <script>
-              // Ensure images are loaded before printing
-              window.onload = function() {
-                setTimeout(function() {
-                  window.print();
-                  window.close();
-                }, 500);
-              };
-            </script>
           </body>
           </html>
         `;
         
         printWindow.document.write(pdfHTML);
         printWindow.document.close();
+        
+        // Wait for images to load then print
+        setTimeout(() => {
+          printWindow.print();
+          printWindow.close();
+        }, 1000);
       }
     } catch (error) {
       console.error('PDF export failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const saveDesign = async () => {
+    setIsLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('Design saved successfully!');
+    } catch (error) {
+      console.error('Failed to save design');
     } finally {
       setIsLoading(false);
     }
@@ -575,29 +569,15 @@ export default function SpeakerCardDesigner() {
           <div className="space-y-4">
             <h3 className="font-medium">Text Settings</h3>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Name Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.name.fontSize}
-      onChange={(e) => handleStyleChange('name', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="20px"
-    />
-    <select
-      value={styles.name.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('name', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Name Font Size</label>
+              <input
+                type="text"
+                value={styles.name.fontSize}
+                onChange={(e) => handleStyleChange('name', 'fontSize', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="20px"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name Color</label>
               <div className="flex items-center">
@@ -617,29 +597,15 @@ export default function SpeakerCardDesigner() {
               </div>
             </div>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Title Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.title.fontSize}
-      onChange={(e) => handleStyleChange('title', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="16px"
-    />
-    <select
-      value={styles.title.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('title', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Title Font Size</label>
+              <input
+                type="text"
+                value={styles.title.fontSize}
+                onChange={(e) => handleStyleChange('title', 'fontSize', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="16px"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Title Color</label>
               <div className="flex items-center">
@@ -659,29 +625,15 @@ export default function SpeakerCardDesigner() {
               </div>
             </div>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Organization Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.organization.fontSize}
-      onChange={(e) => handleStyleChange('organization', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="14px"
-    />
-    <select
-      value={styles.organization.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('organization', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Organization Font Size</label>
+              <input
+                type="text"
+                value={styles.organization.fontSize}
+                onChange={(e) => handleStyleChange('organization', 'fontSize', e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+                placeholder="14px"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Organization Color</label>
               <div className="flex items-center">
@@ -705,7 +657,7 @@ export default function SpeakerCardDesigner() {
 
         <div className="flex flex-col space-y-3 mt-6">
           <button
-            // onClick={saveDesign}
+            onClick={saveDesign}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded flex items-center justify-center hover:bg-blue-700 transition-colors"
             disabled={isLoading}
           >
