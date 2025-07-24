@@ -6,6 +6,12 @@ import { createSelector } from '@reduxjs/toolkit';
 const initialState = {
   userRole: typeof window !== "undefined" ? localStorage.getItem("dsciAuthRole") || "" : "", 
   loading: false,
+  isUpdate: false,
+  formData:{
+    action:null,
+    data:{},
+    status:''
+  },
   error: null,
   menuItems: [
     {
@@ -80,9 +86,19 @@ const menuSlice = createSlice({
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
+    setIsUpdate: (state, action) => {
+      state.isUpdate = action.payload;
+    },
     setError: (state, action) => {
       state.error = action.payload;
     },
+    setFormData: (state, action) => {
+      state.formData = {
+        ...state.formData,
+        ...action.payload
+      };
+      console.log(state.formData);
+    }
   }
 });
 
@@ -125,5 +141,5 @@ export const selectHasAccessToPath = (path) => (state) => {
   return checkAccess(state.menu.menuItems);
 };
 
-export const { setLoading, setError } = menuSlice.actions;
+export const { setLoading, setIsUpdate, setError, setFormData } = menuSlice.actions;
 export default menuSlice.reducer;

@@ -296,4 +296,30 @@ const ColabCategoryApi= async(data={}, method="GET", params={}) => {
         return res;
     }   
 }
-export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi, SpeakerApi, FaqApi, TestimonialApi, BlogApi, TicketApi, AgendaApi, CollaborationApi, ColabCategoryApi}
+
+
+// User Management
+const Roles= async(data=null, method="GET", params={}) => {
+   let url='/api/admin/data/roles';
+//    For update the roles
+   if(params.Id && method === "POST"){
+    url=`/api/admin/data/roles/update?roleId=${params.Id}`;
+   }
+   const res = await FetchWithAuth(url, method, data);
+   return res;
+}
+
+
+//Get Employee
+const Employee= async(data=null, method="GET", params={}) => {
+    let url='/api/admin/data/employee';
+    console.log("data", data, method, params)
+    
+    if(params.Id && method === "POST"){
+        url=`/api/admin/data/employee?employeeId=${params.Id}`;
+    }
+    const res = await FetchWithAuth(url, method, data);
+    return res;
+}
+
+export {LoginApi, RegisterApi, EventApi, BroadFocusAreaApi, SpeakerApi, FaqApi, TestimonialApi, BlogApi, TicketApi, AgendaApi, CollaborationApi, ColabCategoryApi, Roles, Employee}
