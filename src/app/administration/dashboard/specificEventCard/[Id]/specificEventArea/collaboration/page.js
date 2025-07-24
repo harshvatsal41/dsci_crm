@@ -19,7 +19,6 @@ export default function Collaboration() {
     const isLoading = useSelector((state) => state.menu.loading);
     userPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
-    console.log(permissions);
     // State management
     const [state, setState] = useState({
         collaborations: { data: [] },

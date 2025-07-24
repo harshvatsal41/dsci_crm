@@ -5,10 +5,11 @@ import Modal from '@/Component/UI/Modal';
 import { Button } from '@/Component/UI/TableFormat';
 import { FaTrash, FaEdit, FaEnvelope, FaBuilding, FaCalendarAlt } from 'react-icons/fa';
 import { TestimonialApi } from '@/utilities/ApiManager';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
+import { userPermissions } from '@/Component/UserPermission';
 
 export default function SpecificTestimonialCard({ setEdit, data, onDelete }) {
   const dispatch = useDispatch();
@@ -16,6 +17,8 @@ export default function SpecificTestimonialCard({ setEdit, data, onDelete }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [testimonialToDelete, setTestimonialToDelete] = useState(null);
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
 
   const openModal = (testimonial) => {
     setSelectedTestimonial(testimonial);
@@ -23,6 +26,10 @@ export default function SpecificTestimonialCard({ setEdit, data, onDelete }) {
   };
 
   const handleDeleteClick = (testimonial) => {
+    if(permissions?.testimonial.includes('delete') === false){
+        toast.error('You are not authorized to delete testimonial');
+        return
+    }
     setTestimonialToDelete(testimonial);
     setConfirmOpen(true);
   };
@@ -271,6 +278,10 @@ export default function SpecificTestimonialCard({ setEdit, data, onDelete }) {
                 type="button"
                 onClick={() => {
                   closeModal();
+                  if(permissions?.testimonial.includes('update') === false){
+                      toast.error('You are not authorized to update testimonial');
+                      return
+                  }
                   setEdit({value: true, data: selectedTestimonial});
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center"

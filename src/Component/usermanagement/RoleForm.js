@@ -29,7 +29,6 @@ const RoleForm = () => {
   const dispatch = useDispatch();
   const formData = useSelector((state) => state.menu.formData);
   const [roleData, setRoleData] = useState(initialState);
-  const [isOpen, setIsOpen] = useState(false);
 
   // Permission categories for display
   const permissionCategories = [
@@ -48,7 +47,6 @@ const RoleForm = () => {
   // Initialize form when modal opens
   useEffect(() => {
     if (formData.status === 'true') {
-      setIsOpen(true);
       
       if (formData.action === 'editRole' && formData.data) {
         setRoleData({
@@ -127,7 +125,6 @@ const RoleForm = () => {
   };
 
   const onClose = () => {
-    setIsOpen(false);
     dispatch(setFormData({ action: null, data: {}, status: '' }));
   };
 
@@ -221,7 +218,7 @@ const RoleForm = () => {
 
   return (
     <Modal 
-      isOpen={isOpen} 
+      isOpen={formData.status== 'true' && (formData.action === 'editRole' || formData.action === 'createRole') } 
       onClose={onClose} 
       title={formData.action === 'editRole' ? "Edit Role" : "Create New Role"}
       width="max-w-3xl"

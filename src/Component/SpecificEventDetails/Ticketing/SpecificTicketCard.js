@@ -6,9 +6,10 @@ import { Button } from '@/Component/UI/TableFormat';
 import { FaTrash, FaEdit, FaCalendarAlt, FaTicketAlt, FaLink, FaPercent, FaTag } from 'react-icons/fa';
 import { TicketApi } from '@/utilities/ApiManager';
 import { toast } from 'sonner';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
+import { userPermissions } from '@/Component/UserPermission';
 
 export default function SpecificTicketCard({ setEdit, data, onDelete }) {
   const dispatch = useDispatch();
@@ -16,6 +17,8 @@ export default function SpecificTicketCard({ setEdit, data, onDelete }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [ticketToDelete, setTicketToDelete] = useState(null);
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
 
   const openModal = (ticket) => {
     setSelectedTicket(ticket);
@@ -23,6 +26,10 @@ export default function SpecificTicketCard({ setEdit, data, onDelete }) {
   };
 
   const handleDeleteClick = (ticket) => {
+    if(permissions?.ticket.includes('delete') === false){
+        toast.error('You are not authorized to delete tickets');
+        return 
+    }
     setTicketToDelete(ticket);
     setConfirmOpen(true);
   };
@@ -162,6 +169,10 @@ export default function SpecificTicketCard({ setEdit, data, onDelete }) {
                   icon={<FaEdit />} 
                   onClick={(e) => {
                     e.stopPropagation();
+                    if(permissions?.ticket.includes('update') === false){
+                        toast.error('You are not authorized to update tickets');
+                        return 
+                    }
                     setEdit({value: true, data: ticket});
                   }}
                 />

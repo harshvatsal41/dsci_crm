@@ -7,9 +7,11 @@ import { setLoading } from '@/Redux/Reducer/menuSlice';
 import DashboardLoading from '@/app/administration/dashboard/loading';
 import TestimonialForm from '@/Component/SpecificEventDetails/Testimonial/TestimonialForm';
 import SpecificTestimonialCard from '@/Component/SpecificEventDetails/Testimonial/SpecificTestimonialCard';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { Button } from '@/Component/UI/TableFormat';
 import { FiSearch } from 'react-icons/fi';
+import { userPermissions } from '@/Component/UserPermission';
+
 
 export default function TestimonialPage() {
     const { Id } = useParams();
@@ -19,7 +21,8 @@ export default function TestimonialPage() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-
+    userPermissions();
+    const permissions = useSelector((state) => state.menu.permissions);
     const onSuccess = () => {
         setFormOpen(false);
         fetchTestimonials();
@@ -45,7 +48,6 @@ export default function TestimonialPage() {
             }
         } catch (error) {
             toast.error('Failed to fetch testimonials');
-            console.error(error);
         } finally {
             dispatch(setLoading(false));
         }
@@ -64,6 +66,11 @@ export default function TestimonialPage() {
         ...testimonials,
         data: testimonials.data.filter(t => (t.name || '').toLowerCase().includes(search.toLowerCase()))
     };
+
+    if(permissions?.testimonial.includes('read') === false){
+        toast.error('You are not authorized to view testimonials');
+        return 
+    }
 
     return (
         <>
@@ -84,7 +91,13 @@ export default function TestimonialPage() {
                             />
                         </div>
                         <Button 
-                            onClick={() => setFormOpen(true)}
+                            onClick={() => { 
+                                if(permissions?.testimonial.includes('create')===true){
+                                    setFormOpen(true)
+                                }else{
+                                    toast.error('You are not authorized to add testimonial')
+                                }
+                            }}
                             variant="primary"
                             className="w-full sm:w-auto"
                         >
@@ -93,7 +106,13 @@ export default function TestimonialPage() {
                     </div>
                     {/* Floating Add Button */}
                     <button 
-                        onClick={() => setFormOpen(true)}
+                        onClick={() => {
+                            if(permissions?.testimonial.includes('create')===true){
+                                setFormOpen(true)
+                            }else{
+                                toast.error('You are not authorized to add testimonial')
+                            }
+                        }}
                         className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center justify-center text-2xl z-50"
                         aria-label="Add New Testimonial"
                     >

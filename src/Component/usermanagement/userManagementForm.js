@@ -27,7 +27,6 @@ const UserManagementForm = () => {
   const dispatch = useDispatch();
   const [formOpen, setFormOpen] = useState(false);
   const data = useSelector((state) => state.menu.formData);
-
   // Load initial data and roles when modal opens
   const fetchRoles = async () => {
     const rolesData = await Roles();
@@ -129,7 +128,7 @@ const onClose = () => {
 
   return (
     <Modal 
-      isOpen={data.status== 'true'} 
+      isOpen={data.status== 'true' && data.action === 'editUser' } 
       onClose={onClose} 
       title={data.action === 'editUser' ? "Edit User" : "Add New User"}
     >

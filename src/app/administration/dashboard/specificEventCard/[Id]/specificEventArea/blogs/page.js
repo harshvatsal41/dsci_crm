@@ -9,6 +9,8 @@ import SpecificBlogCard from '@/Component/SpecificEventDetails/Blogs/SpecificBlo
 import BlogsForm from '@/Component/SpecificEventDetails/Blogs/BlogsForm';
 import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
+import { userPermissions } from '@/Component/UserPermission';
+
 
 export default function Blogs() {
     const { Id } = useParams();
@@ -18,6 +20,8 @@ export default function Blogs() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
+    userPermissions();
+    const permissions = useSelector((state) => state.menu.permissions);
 
     const onSuccess = () => {
         setFormOpen(false);
@@ -66,7 +70,11 @@ export default function Blogs() {
         })
     };
 
-    console.log(filteredBlogs);
+    if(permissions?.blog.includes('read') === false){
+        toast.error('You are not authorized to view blogs');
+        return 
+    }
+
 
     if (isLoading) {
         return <DashboardLoading />;
@@ -91,7 +99,9 @@ export default function Blogs() {
                             />
                         </div>
                         <button 
-                            onClick={() => setFormOpen(true)}
+                            onClick={() => {
+                                if(permissions?.blog.includes('create') === false){toast.error('You are not authorized to add blog');return }
+                                setFormOpen(true)}}
                             className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             Add New Blog
@@ -99,7 +109,9 @@ export default function Blogs() {
                     </div>
                     {/* Floating Add Button */}
                     <button 
-                        onClick={() => setFormOpen(true)}
+                        onClick={() => {
+                            if(permissions?.blog.includes('create') === false){toast.error('You are not authorized to add blog');return }
+                            setFormOpen(true)}}
                         className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center justify-center text-2xl z-50"
                         aria-label="Add New Testimonial"
                     >

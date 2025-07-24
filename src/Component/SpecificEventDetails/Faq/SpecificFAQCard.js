@@ -3,22 +3,35 @@ import { useState } from 'react';
 import { Button } from '@/Component/UI/TableFormat';
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import { FaqApi } from '@/utilities/ApiManager';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
+import { userPermissions } from '@/Component/UserPermission';
+
 
 export default function SpecificFAQCard({ onDelete, setEdit, data }) {
     const dispatch = useDispatch();
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [faqToDelete, setFaqToDelete] = useState(null);
 
+    userPermissions();
+    const permissions = useSelector((state) => state.menu.permissions);
+
     const handleDelete = async (id) => {
+        if(permissions?.faq?.includes("delete") === false){
+            toast.error("You don't have permission to delete this faq");
+            return
+        }
         setFaqToDelete(id);
         setConfirmOpen(true);
     };
 
     const handleConfirmDelete = async () => {
+        if(permissions?.faq?.includes("delete") === false){
+            toast.error("You don't have permission to delete this faq");
+            return
+        }
         if (!faqToDelete) return;
         
         dispatch(setLoading(true));
@@ -67,7 +80,12 @@ export default function SpecificFAQCard({ onDelete, setEdit, data }) {
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    onClick={() => setEdit({ value: true, data: faq })}
+                                    onClick={() => {
+                                        if(permissions?.faq?.includes("update") === false){
+                                            toast.error("You don't have permission to update this faq");
+                                            return
+                                        }
+                                        setEdit({ value: true, data: faq })}}
                                 >
                                     <FiEdit2 className="mr-1" /> Edit
                                 </Button>

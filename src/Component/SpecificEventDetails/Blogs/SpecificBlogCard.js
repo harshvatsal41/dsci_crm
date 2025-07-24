@@ -5,10 +5,11 @@ import Modal from '@/Component/UI/Modal';
 import { Button } from '@/Component/UI/TableFormat';
 import { FaTrash, FaEdit, FaCalendarAlt, FaUser, FaWeight } from 'react-icons/fa';
 import { BlogApi } from '@/utilities/ApiManager';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
+import { userPermissions } from '@/Component/UserPermission';
 
 export default function SpecificBlogCard({ setEdit, data, onDelete }) {
   const dispatch = useDispatch();
@@ -16,6 +17,8 @@ export default function SpecificBlogCard({ setEdit, data, onDelete }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [blogToDelete, setBlogToDelete] = useState(null);
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
 
   const openModal = (blog) => {
     setSelectedBlog(blog);
@@ -23,6 +26,10 @@ export default function SpecificBlogCard({ setEdit, data, onDelete }) {
   };
 
   const handleDeleteClick = (blog) => {
+    if(permissions?.blog.includes('delete') === false){
+      toast.error('You are not authorized to delete blogs');
+      return;
+    }
     setBlogToDelete(blog);
     setConfirmOpen(true);
   };
@@ -128,6 +135,10 @@ export default function SpecificBlogCard({ setEdit, data, onDelete }) {
                   icon={<FaEdit />} 
                   onClick={(e) => {
                     e.stopPropagation();
+                    if(permissions?.blog.includes('update') === false){
+                      toast.error('You are not authorized to update blogs');
+                      return;
+                    }
                     setEdit({value: true, data: blog});
                   }}
                 />

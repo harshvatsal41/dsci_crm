@@ -7,8 +7,9 @@ import { setLoading } from '@/Redux/Reducer/menuSlice';
 import DashboardLoading from '@/app/administration/dashboard/loading';
 import SpecificTicketCard from '@/Component/SpecificEventDetails/Ticketing/SpecificTicketCard';
 import TicketForm from '@/Component/SpecificEventDetails/Ticketing/TicketingForm';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
+import { userPermissions } from '@/Component/UserPermission';
 
 export default function Ticketing() {
     const { Id } = useParams();
@@ -18,6 +19,8 @@ export default function Ticketing() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
+    userPermissions();
+    const permissions = useSelector((state) => state.menu.permissions);
 
     const onSuccess = () => {
         setFormOpen(false);
@@ -69,6 +72,11 @@ export default function Ticketing() {
         return <DashboardLoading />;
     }
 
+    if(permissions?.ticket.includes('read') === false){
+        toast.error('You are not authorized to view tickets');
+        return 
+    }
+
     return (
         <>
             {!isLoading && (
@@ -88,7 +96,13 @@ export default function Ticketing() {
                             />
                         </div>
                         <button 
-                            onClick={() => setFormOpen(true)}
+                            onClick={() => 
+                                {
+                                    if(permissions?.ticket.includes('create') === false){
+                                        toast.error('You are not authorized to create tickets');
+                                        return 
+                                    }
+                                    setFormOpen(true)}}
                             className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             Create New Ticket
@@ -96,7 +110,12 @@ export default function Ticketing() {
                     </div>
                     {/* Floating Add Button */}
                     <button 
-                        onClick={() => setFormOpen(true)}
+                        onClick={() => {
+                            if(permissions?.ticket.includes('create') === false){
+                                toast.error('You are not authorized to create tickets');
+                                return 
+                            }
+                            setFormOpen(true)}}
                         className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center justify-center text-2xl z-50"
                         aria-label="Create New Ticket"
                     >
