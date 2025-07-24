@@ -10,6 +10,15 @@ function cleanISOString(value) {
     return value.replace(/(\.\d{3})\d*Z$/, '$1Z');
   }
 
+  function generateGlobalFetch(title, edition, year) {
+    const combined = `${title} ${edition} ${year}`;
+    return combined
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')  // remove special characters
+      .trim()
+      .replace(/\s+/g, '-');        // convert spaces to hyphens
+  }
+
 export async function GET(request) {
     try {
         await util.connectDB();
@@ -98,14 +107,7 @@ export async function POST(request) {
             }), { status: STATUS_CODES.BAD_REQUEST });
         }
 
-        body.globalFetch = (title= body.title, edition= body.edition, year= body.year) => {
-            const combined = `${title} ${edition} ${year}`;
-            return combined
-              .toLowerCase()
-              .replace(/[^a-z0-9\s]/g, '')  // remove special characters
-              .trim()
-              .replace(/\s+/g, '-');        // convert spaces to hyphens
-          };
+        body.globalFetch = generateGlobalFetch(body.title, body.edition, body.year);
 
           const requiredFields = {
             'title': body.title,

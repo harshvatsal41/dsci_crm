@@ -110,7 +110,7 @@ export async function POST(req) {
         const photo = formData.get("image");
         const body = sanitizeInput(formData.get("body")?.toString().trim());
         const description = sanitizeInput(formData.get("description")?.toString().trim());
-        const email = sanitizeInput(formData.get("email")?.toString().trim());
+        const email = formData.get("email")?.toString().trim();
         const contentWeight = sanitizeInput(formData.get("contentWeight")?.toString().trim());
 
         if (!name || !organization || !body || !description || !email || !contentWeight) {
@@ -221,7 +221,7 @@ export async function POST(req) {
         await testimonial.save();
 
         await EventOutreach.findByIdAndUpdate(eventId, {
-            $push: { testimonials: testimonial._id },
+            $push: { testimonialIds: testimonial._id },
         }, { new: true });
 
         return NextResponse.json(apiResponse({

@@ -70,7 +70,7 @@ export async function POST(req) {
       maxAge: 60 * 60, // 1 hour
       path: "/",
     });
-    console.log(transformedPermissions);
+    console.log(transformedPermissions)
 
     return new Response(
       JSON.stringify({

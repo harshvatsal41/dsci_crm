@@ -8,6 +8,7 @@ export const STATUS_CODES = {
   FORBIDDEN: 403,
   NOT_FOUND: 404,
   INTERNAL_ERROR: 500,
+  CONFLICT: 409,
 };
 
 export function apiResponse({ message, data = null, error = null, statusCode, status = 'success' }) {
