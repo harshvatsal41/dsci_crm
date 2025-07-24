@@ -3,12 +3,18 @@ import React, { useState } from 'react';
 import { FiEdit2, FiTrash2, FiChevronLeft, FiChevronRight, FiEye, FiEyeOff } from 'react-icons/fi';
 import { formatDate } from '@/Component/UI/TableFormat';
 import Modal from '@/Component/UI/Modal'; 
+import { toast } from 'sonner';
+import { userPermissions } from '@/Component/UserPermission';
+import { useSelector } from 'react-redux';
 
 const SubCollaborationCard = ({ data = [], onDelete, setEdit }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
 
   const handlePrev = () => {
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : data.data.length - 1));
@@ -26,13 +32,21 @@ const SubCollaborationCard = ({ data = [], onDelete, setEdit }) => {
 
   const handleEdit = (e, category) => {
     e.stopPropagation();
-    setEdit({ value: true, data: category });
+    if (permissions?.colab?.includes("update")===true) {
+      setEdit({ value: true, data: category });
+    } else {
+      toast.error("You don't have permission to edit this category");
+    }
   };
 
   const handleDelete = (e, id) => {
     e.stopPropagation();
-    if (window.confirm('Are you sure you want to delete this category?')) {
-      onDelete(id);
+    if (permissions?.colab?.includes("delete")===true) {
+      if (window.confirm('Are you sure you want to delete this category?')) {
+        onDelete(id);
+      }
+    } else {
+      toast.error("You don't have permission to delete this category");
     }
   };
 

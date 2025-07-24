@@ -5,10 +5,11 @@ import Modal from '../../UI/Modal';
 import { Button } from '@/Component/UI/TableFormat';
 import { FaTrash } from 'react-icons/fa';
 import { BroadFocusAreaApi, SpeakerApi } from '@/utilities/ApiManager';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
+import { userPermissions } from '@/Component/UserPermission';
 
 export default function SpecificEventCard({ setEdit, data, type = 'focusArea', onDelete }) {
   const dispatch = useDispatch();
@@ -16,6 +17,9 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
+
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
 
   // Configuration for different card types
   const cardConfig = {
@@ -95,6 +99,10 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
   };
 
   const deleteItem = async () => {
+    if (permissions?.focusArea?.includes('delete')===false){ 
+      toast.error("You don't have permission to delete this focus area");
+      return;
+    }
     if (!itemToDelete) return;
     
     dispatch(setLoading(true));
@@ -194,11 +202,11 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
         {selectedItem && (
           <div className="space-y-6">
             <div className="flex items-center space-x-4">
-              {selectedItem.imageUrlPath ? (
+              {selectedItem?.imageUrlPath ? (
                 <div className="flex-shrink-0 relative w-20 h-20 rounded-lg overflow-hidden">
                   <Image
-                    src={selectedItem.imageUrlPath}
-                    alt={selectedItem.name}
+                    src={selectedItem?.imageUrlPath}
+                    alt={selectedItem?.name}
                     fill
                     className="object-cover"
                   />
@@ -252,6 +260,10 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
                 type="button"
                 onClick={() => {
                   closeModal();
+                  if (permissions?.focusArea?.includes("update")===false){ 
+                    toast.error("You don't have permission to update this focus area");
+                    return;
+                }
                   setEdit({value:true, data:selectedItem});
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"

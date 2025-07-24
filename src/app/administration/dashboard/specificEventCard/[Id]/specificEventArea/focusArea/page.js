@@ -8,8 +8,8 @@ import { setLoading } from '@/Redux/Reducer/menuSlice';
 import DashboardLoading from '@/app/administration/dashboard/loading';
 import SpecificEventCard from '@/Component/SpecificEventDetails/FocusArea/SpecificEventCard';
 import FocusAreaForm from '@/Component/SpecificEventDetails/FocusArea/FocusAreaForm';
-import { toast } from 'react-toastify';
-import { InputField } from '@/Component/UI/ReusableCom';
+import {toast} from 'sonner';
+import {userPermissions} from '@/Component/UserPermission';
 
 
 export default function FocusArea() {
@@ -20,7 +20,8 @@ export default function FocusArea() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-
+    userPermissions();
+    const permissions = useSelector((state) => state.menu.permissions);
     const onSuccess = () => {
         setFormOpen(false);
         fetchFocusArea();
@@ -38,6 +39,11 @@ export default function FocusArea() {
     }
  
     const fetchFocusArea = async () => {
+        if (permissions?.focusArea?.includes("read")===false){ 
+            toast.error("You don't have permission to read this focus area");
+            return;
+        }
+        
         dispatch(setLoading(true));
         const res = await BroadFocusAreaApi(null, "GET", {Id});
         if(res.statusCode === 200){
@@ -49,6 +55,7 @@ export default function FocusArea() {
 
 
     useEffect(() => {
+      
         fetchFocusArea();
     }, [Id]);
     
@@ -80,7 +87,13 @@ export default function FocusArea() {
                         />
                     </div>
                     <button 
-                        onClick={() => setFormOpen(true)}
+                        onClick={() => {
+                            if (permissions?.focusArea?.includes("create")===false){ 
+                                toast.error("You don't have permission to create this focus area");
+                                return;
+                            }
+                            setFormOpen(true)
+                        }}
                         className="w-full sm:w-auto px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow"
                     >
                         Add New
@@ -88,7 +101,12 @@ export default function FocusArea() {
                 </div>
                 {/* Floating Add Button */}
                 <button 
-                    onClick={() => setFormOpen(true)}
+                    onClick={() => {
+                        if (permissions?.focusArea?.includes("create")===false){ 
+                            toast.error("You don't have permission to create this focus area");
+                            return;
+                        }
+                        setFormOpen(true)}}
                     className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center justify-center text-2xl z-50"
                     aria-label="Add New Focus Area"
                 >
@@ -96,7 +114,7 @@ export default function FocusArea() {
                 </button>
             </div>
             )}
-            {(formOpen || edit.value) && <FocusAreaForm edit={edit} onSuccess={onSuccess} onClose={onClose}/>}
+            {(formOpen ||  edit.value) && <FocusAreaForm edit={edit} onSuccess={onSuccess} onClose={onClose}/>}
            {(!formOpen && !edit.value) && <SpecificEventCard
                 onDelete={onDelete} 
                 setEdit={setEdit} 

@@ -1,13 +1,23 @@
 'use client';
 import { motion } from 'framer-motion';
 import { Button } from '@/Component/UI/TableFormat';
-import { FiCalendar, FiEye, FiEdit2, FiTrash2 } from 'react-icons/fi';
+import { FiCalendar, FiEye, FiEdit2 } from 'react-icons/fi';
+import { userPermissions } from '@/Component/UserPermission';
+import { useSelector } from 'react-redux';
+import { permissions } from '@/Redux/Reducer/menuSlice';
+import { toast } from 'sonner';
+const EventCard = ({ event, onView, onEdit }) => {
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
 
-const EventCard = ({ event, onView, onEdit, onDelete }) => {
   const handleAction = (e, action) => {
     e.stopPropagation();
     action(event);
   };
+  if (!permissions?.event?.includes("read")) {
+    toast.error("You don't have permission to view this event");
+    return;
+  }
 
   return (
     <motion.article
@@ -83,7 +93,7 @@ const EventCard = ({ event, onView, onEdit, onDelete }) => {
           >
             Edit
           </Button>
-          <Button 
+          {/* <Button 
             size="sm"
             variant="danger"
             icon={FiTrash2}
@@ -91,7 +101,7 @@ const EventCard = ({ event, onView, onEdit, onDelete }) => {
             className="group-hover:bg-red-700 transition-colors"
           >
             Delete
-          </Button>
+          </Button> */}
         </div>
       </div>
     </motion.article>

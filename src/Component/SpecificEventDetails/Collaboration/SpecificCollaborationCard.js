@@ -3,9 +3,14 @@ import React, { useState } from 'react';
 import { FiEdit2, FiTrash2, FiEye, FiExternalLink } from 'react-icons/fi';
 import { formatDate } from '@/Component/UI/TableFormat';
 import Modal from '@/Component/UI/Modal';
+import { toast } from 'sonner';
+import { useSelector } from 'react-redux';
+import { userPermissions } from '@/Component/UserPermission';
 
 const SpecificCollaborationCard = ({ data, onDelete, setEdit }) => {
   const [selectedItem, setSelectedItem] = useState(null);
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
   
   // Safely extract the data array
   const safeData = Array.isArray(data) ? data : 
@@ -104,7 +109,11 @@ const SpecificCollaborationCard = ({ data, onDelete, setEdit }) => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        setEdit({ value: true, data: item });
+                        if (permissions?.colab?.includes("update")===true) {
+                            setEdit({ value: true, data: item });
+                        } else {
+                            toast.error("You don't have permission to edit this collaboration");
+                        }
                       }}
                       className="text-blue-600 hover:text-blue-900 p-2 rounded-md hover:bg-blue-50 transition-colors"
                       title="Edit"
@@ -115,7 +124,13 @@ const SpecificCollaborationCard = ({ data, onDelete, setEdit }) => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDelete(e, item._id);
+                        if (permissions?.colab?.includes("delete")===true) {
+                            if (window.confirm('Are you sure you want to delete this collaboration?')) {
+                                handleDelete(e, item._id);
+                            }
+                        } else {
+                            toast.error("You don't have permission to delete this collaboration");
+                        }
                       }}
                       className="text-red-600 hover:text-red-900 p-2 rounded-md hover:bg-red-50 transition-colors"
                       title="Delete"
@@ -224,6 +239,7 @@ const SpecificCollaborationCard = ({ data, onDelete, setEdit }) => {
 
   function handleDelete(e, id) {
     e.stopPropagation();
+
     if (window.confirm('Are you sure you want to delete this collaboration?')) {
       onDelete(id);
     }

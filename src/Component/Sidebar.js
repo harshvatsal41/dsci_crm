@@ -29,10 +29,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   const [hasMounted, setHasMounted] = useState(false);
   const router = useRouter();
   const { Id } = useParams();
-  
   // Get filtered menu items based on user role from Redux
   const menuItems = useSelector(selectFilteredMenu);
-
+  
   // Check for mobile screen size
   useEffect(() => {
     setHasMounted(true);

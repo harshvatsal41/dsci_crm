@@ -7,8 +7,10 @@ import { setLoading } from '@/Redux/Reducer/menuSlice';
 import DashboardLoading from '@/app/administration/dashboard/loading';
 import SpecificSpeakerCard from '@/Component/SpecificEventDetails/Speaker/SpecificSpeakerCard';
 import SpeakerForm from '@/Component/SpecificEventDetails/Speaker/SpeakerForm';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
+import { userPermissions } from '@/Component/UserPermission';
+
 
 export default function Speaker() {
     const { Id } = useParams();
@@ -19,7 +21,9 @@ export default function Speaker() {
     const [searchField, setSearchField] = useState('name');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-
+    userPermissions();
+    const permissions = useSelector((state) => state.menu.permissions);
+    console.log(permissions);
     const onSuccess = () => {
         setFormOpen(false);
         fetchSpeakers();
@@ -36,6 +40,10 @@ export default function Speaker() {
     };
 
     const fetchSpeakers = async () => {
+        if (permissions?.speaker?.includes("read")===false){
+            toast.error("You don't have permission to read this speaker");
+            return;
+        }
         dispatch(setLoading(true));
         try {
             const res = await SpeakerApi(null, "GET", { Id });
@@ -96,7 +104,12 @@ export default function Speaker() {
                             />
                         </div>
                         <button 
-                            onClick={() => setFormOpen(true)}
+                            onClick={() => {
+                                if (permissions?.speaker?.includes("create")===false){
+                                    toast.error("You don't have permission to create this speaker");
+                                    return;
+                                }
+                                setFormOpen(true)}}
                             className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             Add New Speaker
@@ -104,7 +117,12 @@ export default function Speaker() {
                     </div>
                     {/* Floating Add Button */}
                     <button 
-                        onClick={() => setFormOpen(true)}
+                        onClick={() => {
+                            if (permissions?.speaker?.includes("create")===false){
+                                toast.error("You don't have permission to create this speaker");
+                                return;
+                            }
+                            setFormOpen(true)}}
                         className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center justify-center text-2xl z-50"
                         aria-label="Add New Speaker"
                     >

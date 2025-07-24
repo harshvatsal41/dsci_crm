@@ -12,6 +12,7 @@ const initialState = {
     data:{},
     status:''
   },
+  permissions: null,
   error: null,
   menuItems: [
     {
@@ -56,12 +57,12 @@ const initialState = {
       icon: 'message-square', // Using FiMessageSquare icon
       accessRoles: ['Admin', 'REPORT_MANAGER'],
     },
-    {
-      id: 'Navbar',
-      title: 'Navbar',
-      icon: 'menu', // Using FiMenu icon
-      accessRoles: ['Admin', 'REPORT_MANAGER'],
-    },
+    // {
+    //   id: 'Navbar',
+    //   title: 'Navbar',
+    //   icon: 'menu', // Using FiMenu icon
+    //   accessRoles: ['Admin', 'REPORT_MANAGER'],
+    // },
     {
       id: 'Ticketing',
       title: 'Ticketing',
@@ -92,12 +93,19 @@ const menuSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    setPermissions: (state) => {
+      if (typeof window !== 'undefined') {
+        const authData = sessionStorage.getItem("dsciAuthData");
+        if (authData) {
+          state.permissions = JSON.parse(authData).permissions;
+        }
+      }
+    },
     setFormData: (state, action) => {
       state.formData = {
         ...state.formData,
         ...action.payload
       };
-      console.log(state.formData);
     }
   }
 });
@@ -141,5 +149,5 @@ export const selectHasAccessToPath = (path) => (state) => {
   return checkAccess(state.menu.menuItems);
 };
 
-export const { setLoading, setIsUpdate, setError, setFormData } = menuSlice.actions;
+export const { setLoading, setIsUpdate, setError, setFormData, setPermissions } = menuSlice.actions;
 export default menuSlice.reducer;

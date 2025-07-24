@@ -5,10 +5,11 @@ import Modal from '@/Component/UI/Modal';
 import { Button } from '@/Component/UI/TableFormat';
 import { FaTrash, FaLinkedin, FaTwitter, FaFacebook, FaGlobe, FaEnvelope, FaPhone, FaCalendarAlt, FaBuilding, FaUser, FaAward, FaBriefcase } from 'react-icons/fa';
 import { SpeakerApi } from '@/utilities/ApiManager';
-import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { toast } from 'sonner';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
+import { userPermissions } from '@/Component/UserPermission';
 
 export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
   const dispatch = useDispatch();
@@ -17,17 +18,28 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [speakerToDelete, setSpeakerToDelete] = useState(null);
 
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
+
   const openModal = (speaker) => {
     setSelectedSpeaker(speaker);
     setIsModalOpen(true);
   };
 
   const handleDeleteClick = (speaker) => {
+    if (permissions?.speaker?.includes("delete")===false){
+        toast.error("You don't have permission to delete this speaker");
+        return;
+    }
     setSpeakerToDelete(speaker);
     setConfirmOpen(true);
   };
 
   const deleteSpeaker = async () => {
+    if (permissions?.speaker?.includes("delete")===false){
+        toast.error("You don't have permission to delete this speaker");
+        return;
+    }
     if (!speakerToDelete) return;
     
     dispatch(setLoading(true));
@@ -383,6 +395,10 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
                 type="button"
                 onClick={() => {
                   closeModal();
+                  if (permissions?.speaker?.includes("update")===false){
+                      toast.error("You don't have permission to update this speaker");
+                      return;
+                  }
                   setEdit({value: true, data: selectedSpeaker});
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"

@@ -11,12 +11,15 @@ import SubCollaborationForm from '@/Component/SpecificEventDetails/Collaboration
 import SubCollaborationCard from '@/Component/SpecificEventDetails/Collaboration/SubCollabCard';
 import { toast } from 'sonner';
 import { FiSearch, FiPlus } from 'react-icons/fi';
+import { userPermissions } from '@/Component/UserPermission';
 
 export default function Collaboration() {
     const { Id } = useParams();
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-
+    userPermissions();
+    const permissions = useSelector((state) => state.menu.permissions);
+    console.log(permissions);
     // State management
     const [state, setState] = useState({
         collaborations: { data: [] },
@@ -64,6 +67,7 @@ export default function Collaboration() {
                 ColabCategoryApi(null, "GET", { Id })
             ]);
 
+
             const parseData = (res) => ({
                 data: Array.isArray(res.data) ? res.data : 
                       Array.isArray(res.data?.data) ? res.data.data : 
@@ -86,6 +90,7 @@ export default function Collaboration() {
 
     // CRUD Operations
     const handleDelete = async (type, id) => {
+        
         dispatch(setLoading(true));
         try {
             const api = type === 'main' ? CollaborationApi : ColabCategoryApi;
@@ -170,7 +175,7 @@ export default function Collaboration() {
                     
                     {/* Action Buttons */}
                     <button 
-                        onClick={() => handleFormToggle('main')}
+                        onClick={() => {permissions?.colab?.includes("create")===true ? handleFormToggle('main') : toast.error("You don't have permission to add collaboration")}}
                         className="flex items-center justify-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm whitespace-nowrap"
                     >
                         <FiPlus className="w-4 h-4" />
@@ -178,7 +183,7 @@ export default function Collaboration() {
                     </button>
 
                     <button 
-                        onClick={() => handleFormToggle('sub')}
+                        onClick={() => {permissions?.colab?.includes("create")===true ? handleFormToggle('sub') : toast.error("You don't have permission to add sub category")}}
                         className="flex items-center justify-center gap-2 px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm whitespace-nowrap"
                     >
                         <FiPlus className="w-4 h-4" />

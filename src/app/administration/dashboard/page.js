@@ -2,15 +2,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
-import toast from 'react-hot-toast';
+import {toast} from 'sonner';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { EventApi } from '@/utilities/ApiManager';
 import EventCard from '@/Component/Dashboard/EventCard';
 import EventForm from '@/Component/Dashboard/EventForm';
-import Modal from '@/Component/UI/Modal';
 import { Button } from '@/Component/UI/TableFormat';
 import DashboardLoading from './loading';
 import { useRouter } from 'next/navigation';
+import { userPermissions } from '@/Component/UserPermission';
+
 
 export default function DashboardPage() {
   const [events, setEvents] = useState([]);
@@ -18,14 +19,17 @@ export default function DashboardPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.menu.loading);
-
+  userPermissions();
+  const permissions = useSelector((state) => state.menu.permissions);
+  console.log(permissions);
   const fetchEvents = useCallback(async () => {
     dispatch(setLoading(true));
     try {
       const response = await EventApi(null, "GET");
-      if (!response.ok) toast.error('Failed to fetch events');
-      const data = await response.data
-      setEvents(data);
+      if(response.statusCode === 200){
+        const data = await response.data
+        setEvents(data);
+      }
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -40,6 +44,10 @@ export default function DashboardPage() {
 
 
   const handleDelete = (event) => {
+    if(!permissions?.event?.includes("delete")){
+      toast.error("You don't have permission to delete this event");
+      return;
+    }
     console.log(event);
   };
 
@@ -48,9 +56,12 @@ export default function DashboardPage() {
   }, [fetchEvents]);
 
   const handleEditEvent = (event) => {
+    if (!permissions?.event?.includes("update")) {
+      toast.error("You don't have permission to edit this event");
+      return;
+    }
     const editData = { ...event, editMode: true };
-    console.log(editData);
-    setModalState({ open: Boolean(true), data: editData });
+    setModalState({ open: true, data: editData });
   };
 
   const handleCloseModal = () => {
@@ -71,7 +82,13 @@ export default function DashboardPage() {
       <div className="flex p-4 justify-between items-center mb-1">
         <h1 className="text-2xl font-bold">Event Dashboard</h1>
         <Button
-          onClick={() => setModalState({ open: Boolean(true), data: null })}
+          onClick={() => {
+            if (!permissions?.event?.includes("create")) {
+              toast.error("You don't have permission to create this event");
+              return;
+            }
+            setModalState({ open: Boolean(true), data: null })
+          }}
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
         >
           Create New Event

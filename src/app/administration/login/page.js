@@ -3,11 +3,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/Redux/Reducer/authSlice";
-import { setLoading } from "@/Redux/Reducer/menuSlice";
+import { setLoading, setPermissions } from "@/Redux/Reducer/menuSlice";
 import { InputField } from "@/Component/UI/ReusableCom";
 import { Eye, EyeOff } from "lucide-react";
 import { LoginApi } from "@/utilities/ApiManager";
-import Cookies from 'js-cookie';
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -30,6 +29,7 @@ export default function Login() {
       document.cookie = `dsciAuthRole=${res.role}; path=/;`;
 
       sessionStorage.setItem("dsciAuthData", JSON.stringify({userName: res?.user?.username, role: res?.role, permissions: res?.user?.permissions, email: res?.user?.email, isSuperAdmin: res?.user?.isSuperAdmin}));
+      dispatch(setPermissions());
       dispatch(login({ token: res?.token, role: res?.role, user: res?.user }));
       setMessage("Logged in successfully");
       router.push("/administration/dashboard");
