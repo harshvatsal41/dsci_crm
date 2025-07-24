@@ -28,7 +28,9 @@ export default function Login() {
     if (res.statusCode===200) {
       document.cookie = `dsciAuthToken=${res.token}; path=/;`;
       document.cookie = `dsciAuthRole=${res.role}; path=/;`;
-      dispatch(login({ token: res.token, role: res.role, user: res.user }));
+
+      sessionStorage.setItem("dsciAuthData", JSON.stringify({userName: res?.user?.username, role: res?.role, permissions: res?.user?.permissions, email: res?.user?.email, isSuperAdmin: res?.user?.isSuperAdmin}));
+      dispatch(login({ token: res?.token, role: res?.role, user: res?.user }));
       setMessage("Logged in successfully");
       router.push("/administration/dashboard");
     } else {

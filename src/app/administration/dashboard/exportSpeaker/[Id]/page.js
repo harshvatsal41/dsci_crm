@@ -609,13 +609,13 @@ export default function SpeakerCardDesigner() {
             {isLoading ? 'Exporting...' : 'Export to PDF'}
           </button>
           
-          <button
+          {/* <button
             onClick={downloadHTML}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded flex items-center justify-center hover:bg-blue-700 transition-colors"
           >
             <FiCode className="mr-2" />
             Download HTML
-          </button>
+          </button> */}
         </div>
       </div>
 
