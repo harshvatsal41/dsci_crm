@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
 import { userPermissions } from '@/Component/UserPermission';
+import { normalizeImagePath } from '@/Component/HelperFunction';
 
 export default function SpecificEventCard({ setEdit, data, type = 'focusArea', onDelete }) {
   const dispatch = useDispatch();
@@ -36,11 +37,11 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
       accentColor: 'bg-blue-100 text-blue-800'
     },
     agenda: {
-      title: 'Agenda',
-      emptyMessage: 'No agenda found',
-      icon: '📅',
-      accentColor: 'bg-gray-100 text-gray-800'
-    },  
+        title: 'Agenda',
+        emptyMessage: 'No agenda found',
+        icon: '📅',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },  
     sponsor: {
       title: 'Sponsors',
       emptyMessage: 'No sponsors found',
@@ -48,17 +49,17 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
       accentColor: 'bg-purple-100 text-purple-800'
     },
     faq: {
-      title: 'FAQ',
-      emptyMessage: 'No FAQ found',
-      icon: '❓',
-      accentColor: 'bg-gray-100 text-gray-800'
-    },
+        title: 'FAQ',
+        emptyMessage: 'No FAQ found',
+        icon: '❓',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },
     testimonial: {
-      title: 'Testimonials',
-      emptyMessage: 'No testimonials found',
-      icon: '💬',
-      accentColor: 'bg-gray-100 text-gray-800'
-    },
+        title: 'Testimonials',
+        emptyMessage: 'No testimonials found',
+        icon: '💬',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },
     navbar: {
       title: 'Navigation',
       emptyMessage: 'No navigation items found',
@@ -66,17 +67,18 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
       accentColor: 'bg-amber-100 text-amber-800'
     },
     ticketing: {
-      title: 'Ticketing',
-      emptyMessage: 'No ticketing found',
-      icon: '🎟️',
-      accentColor: 'bg-gray-100 text-gray-800'
-    },
+        title: 'Ticketing',
+        emptyMessage: 'No ticketing found',
+        icon: '🎟️',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },
     blogs: {
-      title: 'Blogs',
-      emptyMessage: 'No blogs found',
-      icon: '📝',
-      accentColor: 'bg-gray-100 text-gray-800'
-    },
+        title: 'Blogs',
+        emptyMessage: 'No blogs found',
+        icon: '📝',
+        accentColor: 'bg-gray-100 text-gray-800'
+      },
+  
     default: {
       title: 'Event Items',
       emptyMessage: 'No items found',
@@ -85,41 +87,27 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
     }
   };
 
-  const config = cardConfig[type] || cardConfig.default;
+ 
 
-  // Helper function to safely get image URL
-  const getImageUrl = (url) => {
-    try {
-      if (!url) return null;
-      // If it's a relative path, prepend with base URL
-      if (url.startsWith('/')) {
-        return `${process.env.NEXT_PUBLIC_BASE_URL || ''}${url}`;
-      }
-      // If it's already a full URL, return it
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        return url;
-      }
-      // Otherwise, assume it's a relative path
-      return `${process.env.NEXT_PUBLIC_BASE_URL || ''}/${url}`;
-    } catch (error) {
-      console.error('Invalid image URL:', url);
-      return null;
-    }
-  };
+ 
+
+  const config = cardConfig[type] || cardConfig.default;
 
   const openModal = (item) => {
     setSelectedItem(item);
     setIsModalOpen(true);
   };
+  
 
-  const handleDeleteClick = (item, e) => {
-    e.stopPropagation();
+  const handleDeleteClick = (item) => {
     setItemToDelete(item);
     setConfirmOpen(true);
   };
 
+
+
   const deleteItem = async () => {
-    if (permissions?.focusArea?.includes('delete') === false) { 
+    if (permissions?.focusArea?.includes('delete')===false){ 
       toast.error("You don't have permission to delete this focus area");
       return;
     }
@@ -152,8 +140,8 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
         open={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         onConfirm={deleteItem}
-        title={`Delete ${config.title}?`}
-        description={`Are you sure you want to delete this ${config.title.toLowerCase()}? This action cannot be undone.`}
+        title={`Delete ${config?.title}?`}
+        description={`Are you sure you want to delete this ${config?.title.toLowerCase()}? This action cannot be undone.`}
         confirmLabel="Delete"
         cancelLabel="Cancel"
         confirmColor="danger"
@@ -161,55 +149,60 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
           
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {data?.data?.map((item) => {
-          const imageUrl = getImageUrl(item.imageUrlPath);
-          return (
-            <div 
-              key={item._id}
-              onClick={() => openModal(item)}
-              className="group relative cursor-pointer"
-            >
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
-              <div className="relative h-full bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
-                <div className={`h-2 ${config.accentColor}`}></div>
-                <div className="p-5">
-                  <div className="flex items-start space-x-4">
-                    {imageUrl ? (
-                      <div className="flex-shrink-0 relative w-14 h-14 rounded-lg overflow-hidden">
-                        <Image
-                          src={imageUrl}
-                          alt={item.name}
-                          fill
-                          className="object-cover"
-                          unoptimized={imageUrl.startsWith('http')} // For external URLs
-                        />
-                      </div>
-                    ) : (
-                      <div className={`flex-shrink-0 w-14 h-14 rounded-lg ${config.accentColor} flex items-center justify-center text-2xl`}>
-                        {config.icon}
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
-                      <p className="text-gray-500 text-sm mt-1 line-clamp-2">
-                        {item.description}
-                      </p>
+                    const imageUrl = normalizeImagePath(item?.imageUrlPath);
+          return(
+          <div 
+            key={item?._id}
+            onClick={() => openModal(item)}
+            className="group relative cursor-pointer"
+          >
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg blur opacity-0 group-hover:opacity-50 transition duration-300"></div>
+            <div className="relative h-full bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-all">
+              <div className={`h-2 ${config.accentColor}`}></div>
+              <div className="p-5">
+                <div className="flex items-start space-x-4">
+                {imageUrl ? (
+                <div className="flex-shrink-0 relative w-14 h-14 rounded-lg overflow-hidden">
+                  <Image
+                    src={imageUrl}
+                    alt={item?.name || 'Focus Area'}
+                    fill
+                    className="object-cover"
+                    unoptimized={true} // Disable optimization for external URLs
+                    onError={(e) => {
+                      e.target.style.display = 'none'; // Hide if image fails to load
+                    }}
+                  />
+                </div>
+              ) : (
+                    <div className={`flex-shrink-0 w-14 h-14 rounded-lg ${config?.accentColor} flex items-center justify-center text-2xl`}>
+                      {config?.icon}
                     </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 truncate">{item?.name}</h3>
+                    <p className="text-gray-500 text-sm mt-1 line-clamp-2">
+                      {item?.description}
+                    </p>
                   </div>
-                  <div className="mt-4 flex justify-between items-center text-xs text-gray-400">
-                    <span>{new Date(item.createdAt).toLocaleDateString()}</span>
-                    {item.isDeleted && (
-                      <span className="text-red-500">Deleted</span>
-                    )}
-                    <Button 
-                      className='bg-red-600 text-white cursor-pointer hover:bg-red-700' 
-                      icon={<FaTrash />} 
-                      onClick={(e) => handleDeleteClick(item, e)}
-                    />
-                  </div>
+                </div>
+                <div className="mt-4 flex justify-between items-center text-xs text-gray-400">
+                  <span>{new Date(item?.createdAt).toLocaleDateString()}</span>
+                  {item?.isDeleted && (
+                    <span className="text-red-500">Deleted</span>
+                  )}
+                  <Button 
+                    className='bg-red-600 text-white cursor-pointer hover:bg-red-700' 
+                    icon={<FaTrash />} 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteClick(item);
+                    }}
+                  />
                 </div>
               </div>
             </div>
-          );
+          </div>)
         })}
       </div>
 
@@ -226,35 +219,34 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
               {selectedItem?.imageUrlPath ? (
                 <div className="flex-shrink-0 relative w-20 h-20 rounded-lg overflow-hidden">
                   <Image
-                    src={getImageUrl(selectedItem.imageUrlPath)}
+                    src={normalizeImagePath(selectedItem?.imageUrlPath)}
                     alt={selectedItem?.name}
                     fill
                     className="object-cover"
-                    unoptimized={getImageUrl(selectedItem.imageUrlPath)?.startsWith('http')}
                   />
                 </div>
               ) : (
-                <div className={`flex-shrink-0 w-20 h-20 rounded-lg ${config.accentColor} flex items-center justify-center text-4xl`}>
-                  {config.icon}
+                <div className={`flex-shrink-0 w-20 h-20 rounded-lg ${config?.accentColor} flex items-center justify-center text-4xl`}>
+                  {config?.icon}
                 </div>
               )}
               <div>
-                <h3 className="text-xl font-bold text-gray-900">{selectedItem.name}</h3>
-                <p className="text-gray-500">{new Date(selectedItem.createdAt).toLocaleDateString()}</p>
+                <h3 className="text-xl font-bold text-gray-900">{selectedItem?.name}</h3>
+                <p className="text-gray-500">{new Date(selectedItem?.createdAt).toLocaleDateString()}</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
                 <h4 className="text-sm font-medium text-gray-500">Description</h4>
-                <p className="mt-1 text-gray-800">{selectedItem.description}</p>
+                <p className="mt-1 text-gray-800">{selectedItem?.description}</p>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <h4 className="text-sm font-medium text-gray-500">Status</h4>
                   <p className="mt-1">
-                    {selectedItem.isDeleted ? (
+                    {selectedItem?.isDeleted ? (
                       <span className="text-red-500">Deleted</span>
                     ) : (
                       <span className="text-green-500">Active</span>
@@ -282,11 +274,11 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
                 type="button"
                 onClick={() => {
                   closeModal();
-                  if (permissions?.focusArea?.includes("update") === false) { 
+                  if (permissions?.focusArea?.includes("update")===false){ 
                     toast.error("You don't have permission to update this focus area");
                     return;
-                  }
-                  setEdit({value: true, data: selectedItem});
+                }
+                  setEdit({value:true, data:selectedItem});
                 }}
                 className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
               >

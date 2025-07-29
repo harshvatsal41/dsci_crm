@@ -25,13 +25,13 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
     const [newExpertise, setNewExpertise] = useState('');
     const [newAward, setNewAward] = useState('');
     const [imageFile, setImageFile] = useState(null);
+    const [shouldRemoveImage, setShouldRemoveImage] = useState(false);
     const [validationErrors, setValidationErrors] = useState({});
     const { Id } = useParams();
 
     useEffect(() => {
         if (edit?.value) {
             const { dob, ...data } = edit.data;
-            console.log("Edit Data", edit.data)
             setFormData({
                 ...initialState,
                 ...data,
@@ -42,6 +42,8 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
                 dob: dob ? new Date(dob).toISOString().split('T')[0] : '',
                 yeaslyEventId: Id
             });
+            setImageFile(null);
+            setShouldRemoveImage(false);
         }
     }, [edit]);
 
@@ -71,9 +73,14 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
         }
 
         setImageFile(file);
+        setShouldRemoveImage(false); // Reset removal flag when new image is selected
         if (validationErrors.photoUrl) setValidationErrors(prev => ({ ...prev, photoUrl: undefined }));
     };
 
+    const handleRemoveImage = () => {
+        setImageFile(null);
+        setShouldRemoveImage(true);
+    };
     const handleArrayChange = (type, value, action) => {
         if (action === 'add' && value.trim()) {
             setFormData(prev => ({
@@ -88,6 +95,8 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
             }));
         }
     };
+
+
 
     const validateForm = () => {
         const errors = {};
@@ -112,12 +121,20 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
                 }
             });
             submitData.append('yeaslyEventId', Id);
-            if (imageFile) submitData.append('photo', imageFile);
+            
+            // Handle image updates
+            if (imageFile) {
+                submitData.append('photo', imageFile);
+            } else if (shouldRemoveImage) {
+                // Explicitly tell backend to remove the image
+                submitData.append('removePhoto', 'true');
+            }
 
             const response = edit?.value 
                 ? await SpeakerApi(submitData, 'POST', { Id: edit.data._id })
                 : await SpeakerApi(submitData, 'POST');
-             if(response.statusCode === 201 || response.statusCode === 200 || response.status === "success"){
+            
+            if(response.statusCode === 201 || response.statusCode === 200 || response.status === "success"){
                 toast.success(`Speaker ${edit?.value ? 'updated' : 'created'} successfully`);
                 onSuccess(response.data);
             }
@@ -197,7 +214,7 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
                 <div>
                     <label className="block text-sm font-medium mb-1">Profile Photo</label>
                     <div className="flex items-center gap-4">
-                        {formData?.photoUrl || imageFile ? (
+                        {(formData?.photoUrl || imageFile) && !shouldRemoveImage ? (
                             <div className="relative">
                                 <Image 
                                     src={imageFile ? URL.createObjectURL(imageFile) : formData?.photoUrl} 
@@ -205,10 +222,13 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
                                     width={80} 
                                     height={80} 
                                     className="rounded object-cover"
+                                    onError={(e) => {
+                                        e.target.src = '/default-profile.jpg'; // Add fallback image
+                                    }}
                                 />
                                 <button 
                                     type="button" 
-                                    onClick={() => { setImageFile(null); if (!edit?.value) setFormData(p => ({ ...p, photoUrl: '' })) }}
+                                    onClick={handleRemoveImage}
                                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
                                 >
                                     <FiTrash2 size={12} />
@@ -219,13 +239,20 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
                                 <div className="border-2 border-dashed border-gray-300 rounded p-2 text-center">
                                     <p className="text-sm">Click to upload</p>
                                     <p className="text-xs text-gray-500">PNG/JPG/WEBP (max 5MB)</p>
-                                    <input type="file" className="hidden" accept="image/*" onChange={handleImageChange} />
+                                    <input 
+                                        type="file" 
+                                        className="hidden" 
+                                        accept="image/*" 
+                                        onChange={handleImageChange} 
+                                    />
                                 </div>
                             </label>
                         )}
                     </div>
+                    {shouldRemoveImage && (
+                        <p className="text-sm text-gray-500 mt-1">Image will be removed on save</p>
+                    )}
                 </div>
-
                 {/* Form Actions */}
                 <div className="flex justify-end pt-4 border-t">
                     {/* <div>

@@ -119,11 +119,11 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
               <div className="h-2 bg-blue-100"></div>
               <div className="p-5">
                 <div className="flex items-start space-x-4">
-                  {speaker.photoUrl ? (
+                  {speaker?.photoUrl ? (
                     <div className="flex-shrink-0 relative w-14 h-14 rounded-full overflow-hidden border-2 border-blue-200">
                       <Image
-                        src={speaker.photoUrl}
-                        alt={speaker.name}
+                        src={speaker?.photoUrl}
+                        alt={speaker?.name}
                         fill
                         className="object-cover"
                       />
@@ -135,19 +135,19 @@ export default function SpecificSpeakerCard({ setEdit, data, onDelete }) {
                   )}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-gray-900 truncate">
-                      {speaker.title} {speaker.name}
+                      {speaker?.title} {speaker?.name}
                     </h3>
                     <p className="text-sm text-blue-600 font-medium truncate">
-                      {speaker.position}
+                      {speaker?.position}
                     </p>
                     <p className="text-gray-500 text-sm truncate">
-                      {speaker.organization}
+                      {speaker?.organization}
                     </p>
                     <div className="flex items-center mt-2 space-x-2">
                       <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                        {speaker.experience}+ years
+                        {speaker?.experience}+ years
                       </span>
-                      {speaker.isActive && (
+                      {speaker?.isActive && (
                         <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
                           Active
                         </span>

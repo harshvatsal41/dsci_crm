@@ -23,7 +23,6 @@ export default function Speaker() {
     const isLoading = useSelector((state) => state.menu.loading);
     userPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
-    console.log(permissions);
     const onSuccess = () => {
         setFormOpen(false);
         fetchSpeakers();

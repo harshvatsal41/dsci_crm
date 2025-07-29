@@ -10,6 +10,7 @@ import { Button } from '@/Component/UI/TableFormat';
 import {FiEdit2, FiUpload, FiTrash2} from 'react-icons/fi';
 import { BroadFocusAreaApi } from '@/utilities/ApiManager';
 import {toast} from 'sonner';
+import { normalizeImagePath } from '@/Component/HelperFunction';
 
 const initialState = {
     name: '',
@@ -38,16 +39,17 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
   }, [edit, Id]);
 
   const loadFocusAreaData = async (data) => {
+    const imageUrl = normalizeImagePath(data?.imageUrlPath);
       try {
         dispatch(setLoading(true));
         setFormData({
             name: data?.name || '',
             description: data?.description || '',
-            imageUrlPath: data?.imageUrlPath || '',
+            imageUrlPath: imageUrl || '',
             eventId: Id
         });
         if (data?.imageUrlPath) {
-          setPreviewImage(`${data.imageUrlPath}?${new Date().getTime()}`);
+          setPreviewImage(`${imageUrl}?${new Date().getTime()}`);
         }
         setIsNewImageUploaded(false);
     } catch (error) {
