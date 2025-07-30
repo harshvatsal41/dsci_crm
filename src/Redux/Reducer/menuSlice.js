@@ -41,7 +41,7 @@ const initialState = {
     },
     {
       id: 'Collaboration',
-      title: 'Collaboration',
+      title: 'Sponsor,Partner,Exhibitor',
       icon: 'FcCollaboration',
       accessRoles: ['Admin', 'REPORT_MANAGER'],
     },

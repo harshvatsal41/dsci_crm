@@ -9,7 +9,7 @@ const SubCategorySchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Sponsor", "Partner"],
+      enum: ["Sponsor", "Partner", "Exhibitor"],
       required: true,
       default: "Sponsor",
     },
