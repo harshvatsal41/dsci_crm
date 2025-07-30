@@ -212,30 +212,24 @@ const TicketApi = async (data = null, method = "GET", params = {}) => {
 
 //Agenda Api
 const AgendaApi= async(data, method, params={}) => {
+    let url='/api/admin/data/agenda?eventId=';
+
     if(params.Id && method === "GET"){
-        const url='/api/admin/data/agenda?eventId='+params.Id;
-        const res = await FetchWithAuth(url);
-        return res;
+        url=`${url}${params.Id}`;
     }
     else if(method==="GET"){
-        const url='/api/admin/data/agenda?eventId='+params.id;
-        const res = await FetchWithAuth(url);
-        return res;
+        url=`${url}${params.id}`;
     }
     else if(method==="POST" && params.Id){
-        const url=`/api/admin/data/agenda?eventId=${params.Id}`;
-        const res = await FetchWithAuth(url, "POST", data);
-        return res;
+        url=`${url}${params.Id}`;
     }
     else if(method==="PUT" && params.Id){
-        const url=`/api/admin/data/agenda/update?agendaId=${params.Id}`;
-        const res = await FetchWithAuth(url, "POST", data);
-        return res;
+        url=`${url}${params.Id}`;
     }else if(method==="DEL"){
-        const url=`/api/admin/data/agenda/delete?agendaId=${params.Id}`;
-        const res = await FetchWithAuth(url, "POST");
-        return res;
+        url=`${url}${params.Id}`;
     }   
+    const res = await FetchWithAuth(url, method, data);
+    return res;
 }
 
 //Collaboration Api 

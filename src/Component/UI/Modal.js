@@ -28,7 +28,7 @@ const Modal = ({ isOpen, onClose, title, children, width }) => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 20, opacity: 0 }}
             transition={{ type: 'spring', damping: 20, stiffness: 300 }}
-            className={"relative w-full " + width + " max-w-2xl bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100 font-sans"}
+            className={`relative w-full ${width ? width : 'max-w-2xl'} bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-100 font-sans`}
           >
             {/* Header with gradient */}
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-5 border-b border-gray-100">

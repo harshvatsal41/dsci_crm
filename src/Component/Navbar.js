@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useSelector } from "react-redux";
 import Logout from "./Logout";
 import dynamic from 'next/dynamic';
+import { toast } from 'sonner';
+import { userPermissions } from "./UserPermission";
 
 // Dynamically import icons to avoid hydration mismatch
 const FiUser = dynamic(() => import('react-icons/fi').then(mod => mod.FiUser), { ssr: false });
@@ -20,6 +22,8 @@ const Navbar = () => {
   const [isMounted, setIsMounted] = useState(false);
   const token = useSelector((state) => state.auth.token);
   const role = useSelector((state) => state.auth.role)?.toUpperCase();
+  const permissions = useSelector((state) => state.menu.permissions);
+  
 
   useEffect(() => {
     setIsMounted(true);
