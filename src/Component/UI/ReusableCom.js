@@ -264,5 +264,65 @@ export const OtpPasswordInput = ({ value = "", onChange, length = 6 }) => {
   );
 };
 
+export const Chip = ({ 
+  label, 
+  onRemove, 
+  color = 'blue', 
+  size = 'md',
+  className = '',
+  removable = true
+}) => {
+  // Color variants
+  const colorVariants = {
+    blue: 'bg-blue-100 text-blue-800 hover:bg-blue-200',
+    gray: 'bg-gray-100 text-gray-800 hover:bg-gray-200',
+    red: 'bg-red-100 text-red-800 hover:bg-red-200',
+    green: 'bg-green-100 text-green-800 hover:bg-green-200',
+    yellow: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200',
+    purple: 'bg-purple-100 text-purple-800 hover:bg-purple-200',
+    pink: 'bg-pink-100 text-pink-800 hover:bg-pink-200',
+    indigo: 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200'
+  }
+
+  // Size variants
+  const sizeVariants = {
+    sm: 'text-xs px-2 py-0.5',
+    md: 'text-sm px-3 py-1',
+    lg: 'text-base px-4 py-1.5'
+  }
+
+  return (
+    <div 
+      className={`
+        inline-flex items-center rounded-full 
+        ${colorVariants[color]} 
+        ${sizeVariants[size]}
+        ${className}
+      `}
+    >
+      {label}
+      {removable && (
+        <button
+          type="button"
+          onClick={onRemove}
+          className={`ml-1.5 rounded-full p-0.5 hover:bg-opacity-30 ${
+            color === 'blue' ? 'hover:bg-blue-300' :
+            color === 'gray' ? 'hover:bg-gray-300' :
+            color === 'red' ? 'hover:bg-red-300' :
+            color === 'green' ? 'hover:bg-green-300' :
+            color === 'yellow' ? 'hover:bg-yellow-300' :
+            color === 'purple' ? 'hover:bg-purple-300' :
+            color === 'pink' ? 'hover:bg-pink-300' :
+            'hover:bg-indigo-300'
+          }`}
+          aria-label={`Remove ${label}`}
+        >
+          <X size={14} />
+        </button>
+      )}
+    </div>
+  )
+}
+
 
 

@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import Modal from '@/Component/UI/Modal'
 import {
@@ -9,15 +9,16 @@ import {
   TextAreaField,
   InfoCard,
   DetailItem,
+  Chip
 } from '@/Component/UI/ReusableCom'
 import {Button} from '@/Component/UI/TableFormat'
 import { Plus, Trash2, X, Edit2, MapPin, Users, Building } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setLoading } from '@/Redux/Reducer/menuSlice'
-import { SpeakerApi } from '@/utilities/ApiManager'
+import SessionForm from './SessionForm'
+import {SpeakerApi, CollaborationApi} from '@/utilities/ApiManager'
 
 const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
-  
   const dispatch = useDispatch()
   const [showSessionForm, setShowSessionForm] = useState(false)
   const [currentSession, setCurrentSession] = useState(null)
@@ -26,25 +27,8 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   const [timeConflict, setTimeConflict] = useState(null)
   const [isCheckingConflict, setIsCheckingConflict] = useState(false)
   const [newCategory, setNewCategory] = useState('')
+  const [categoryInputType, setCategoryInputType] = useState('select') // 'select' or 'manual'
 
-  const fetchSpeaker = async () => {
-    dispatch(setLoading(true))
-    try {
-      const res = await SpeakerApi(null, "GET", {Id: eventId });
-      if (res.statusCode === 200 || res.status=== "success") {
-        setSpeakers(res.data);
-      }
-    } catch (error) {
-      toast.error('Failed to load speakers');
-    } finally {
-      dispatch(setLoading(false))
-    }
-  }
-
-  console.log(agendaData.categories)
-
-
- 
   const {
     register,
     handleSubmit,
@@ -67,6 +51,34 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
       session: []
     }
   })
+
+  const fetchData=async ()=>{
+    try {
+      const [speakersResponse, companiesResponse] = await Promise.all([SpeakerApi(null,'GET',{Id: eventId}), CollaborationApi(null,'GET',{Id: eventId})])
+      if((speakersResponse.statusCode === 200 || speakersResponse.statusCode === 203 || speakersResponse.status === "success") && (companiesResponse.statusCode === 200 || companiesResponse.statusCode === 203 || companiesResponse.status === "success")){
+        setSpeakers(speakersResponse.data)
+        setCompanies(companiesResponse.data)
+      }
+    } catch (error) {
+      console.error('Error fetching speakers and companies:', error)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
+
+  // Set initial values if editing
+  useEffect(() => {
+    if (agendaData?._id) {
+      reset({
+        ...agendaData,
+        date: agendaData.date ? new Date(agendaData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        startTime: agendaData.startTime ? new Date(agendaData.startTime).toTimeString().substring(0, 5) : '09:00',
+        endTime: agendaData.endTime ? new Date(agendaData.endTime).toTimeString().substring(0, 5) : '10:00',
+      })
+    }
+  }, [agendaData, reset])
 
   const onSubmit = async (data) => {
     if (timeConflict) {
@@ -104,7 +116,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
         toast.success('Agenda created successfully')
       }
 
-      onSuccess?.(response.data)
+      onSuccess?.()
       onClose?.()
     } catch (error) {
       console.error('Error saving agenda:', error)
@@ -155,12 +167,14 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
     setValue('session', updated)
   }
 
+  // Existing categories from agendaData or default ones
+  const existingCategories = agendaData?.categories || ['Opening', 'Technology']
 
   return (
     <Modal
       isOpen={true}
       onClose={onClose}
-      title={agendaData.type==="edit" ? 'Edit Agenda Item' : 'Create New Agenda Item'}
+      title={agendaData?._id ? 'Edit Agenda Item' : 'Create New Agenda Item'}
       width="max-w-4xl"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -240,37 +254,92 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
             )}
           </div>
 
-          <div>
+          <div className="col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Categories
             </label>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {(watch('category') || []).map((cat) => (
-                <Chip
-                  key={cat}
-                  label={cat}
-                  onRemove={() => handleRemoveCategory(cat)}
-                  color="blue"
+            
+            <div className="flex items-center space-x-4 mb-3">
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio"
+                  checked={categoryInputType === 'select'}
+                  onChange={() => setCategoryInputType('select')}
                 />
-              ))}
+                <span className="ml-2">Select from existing</span>
+              </label>
+              <label className="inline-flex items-center">
+                <input
+                  type="radio"
+                  className="form-radio"
+                  checked={categoryInputType === 'manual'}
+                  onChange={() => setCategoryInputType('manual')}
+                />
+                <span className="ml-2">Add manually</span>
+              </label>
             </div>
-            <div className="flex">
-              <InputField
-                id="newCategory"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                placeholder="Add new category"
-                className="flex-1"
-                inputClass="rounded-r-none"
-              />
-              <Button
-                type="button"
-                onClick={handleAddCategory}
-                variant="primary"
-                className="rounded-l-none"
-              >
-                Add
-              </Button>
+
+            {categoryInputType === 'select' ? (
+              <div className="space-y-2">
+                <NativeSelectField
+                  id="categorySelect"
+                  label="Select Category"
+                  options={existingCategories.map(cat => ({
+                    value: cat,
+                    label: cat
+                  }))}
+                  onChange={(e) => {
+                    const selectedCat = e.target.value
+                    if (selectedCat) {
+                      const currentCategories = watch('category') || []
+                      if (!currentCategories.includes(selectedCat)) {
+                        setValue('category', [...currentCategories, selectedCat])
+                      }
+                    }
+                  }}
+                  value=""
+                />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <div className="flex">
+                  <InputField
+                    id="newCategory"
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    placeholder="Enter new category"
+                    className="flex-1"
+                    inputClass="rounded-r-none mt-1"
+                  />
+                  <Button
+                    type="button"
+                    onClick={handleAddCategory}
+                    variant="primary"
+                    className="rounded-l-none  "
+                  >
+                    Add
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-2 mt-3">
+              {(watch('category') || []).map((cat) => (
+                <div
+                  key={cat}
+                  className="inline-flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"
+                >
+                  {cat}
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveCategory(cat)}
+                    className="ml-2 text-blue-600 hover:text-blue-900"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -381,7 +450,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
             type="submit"
             variant="primary"
           >
-            {agendaData.type === "edit" ? 'Update' : 'Create'}
+            {agendaData?._id ? 'Update' : 'Create'}
           </Button>
         </div>
       </form>
@@ -399,258 +468,6 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
           }}
         />
       )}
-    </Modal>
-  )
-}
-
-const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
-  const { register, handleSubmit, control, setValue, watch } = useForm({
-    defaultValues: sessionData || {
-      sessionTitle: '',
-      sessionDescription: '',
-      sessionLocation: '',
-      sessionSpeakers: [],
-      sessionCollaborations: [],
-      sessionInstructions: [],
-      tags: []
-    }
-  })
-
-  const [newInstruction, setNewInstruction] = useState('')
-  const [newTag, setNewTag] = useState('')
-  const [newCollaboration, setNewCollaboration] = useState({
-    head: '',
-    company: ''
-  })
-
-  const onSubmit = (data) => {
-    onSave(data)
-  }
-
-  const handleAddInstruction = () => {
-    if (newInstruction.trim()) {
-      const current = watch('sessionInstructions') || []
-      setValue('sessionInstructions', [...current, newInstruction.trim()])
-      setNewInstruction('')
-    }
-  }
-
-  const handleRemoveInstruction = (index) => {
-    const updated = [...(watch('sessionInstructions') || [])]
-    updated.splice(index, 1)
-    setValue('sessionInstructions', updated)
-  }
-
-  const handleAddTag = () => {
-    if (newTag.trim()) {
-      const current = watch('tags') || []
-      setValue('tags', [...current, newTag.trim()])
-      setNewTag('')
-    }
-  }
-
-  const handleRemoveTag = (index) => {
-    const updated = [...(watch('tags') || [])]
-    updated.splice(index, 1)
-    setValue('tags', updated)
-  }
-
-  const handleAddCollaboration = () => {
-    if (newCollaboration.company) {
-      const current = watch('sessionCollaborations') || []
-      setValue('sessionCollaborations', [...current, newCollaboration])
-      setNewCollaboration({ head: '', company: '' })
-    }
-  }
-
-  const handleRemoveCollaboration = (index) => {
-    const updated = [...(watch('sessionCollaborations') || [])]
-    updated.splice(index, 1)
-    setValue('sessionCollaborations', updated)
-  }
-
-  return (
-    <Modal isOpen={true} onClose={onClose} title={sessionData ? 'Edit Session' : 'Add New Session'} width="max-w-2xl">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <InputField
-          id="sessionTitle"
-          label="Session Title"
-          {...register('sessionTitle')}
-        />
-
-        <TextAreaField
-          id="sessionDescription"
-          label="Description"
-          {...register('sessionDescription')}
-          rows={3}
-        />
-
-        <InputField
-          id="sessionLocation"
-          label="Location"
-          {...register('sessionLocation')}
-        />
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Speakers</label>
-          <Controller
-            name="sessionSpeakers"
-            control={control}
-            render={({ field }) => (
-              <select
-                multiple
-                className="w-full border border-gray-300 rounded-md p-2"
-                {...field}
-              >
-                {speakers.map((speaker) => (
-                  <option key={speaker._id} value={speaker._id}>
-                    {speaker.name} ({speaker.designation})
-                  </option>
-                ))}
-              </select>
-            )}
-          />
-          <p className="text-xs text-gray-500 mt-1">Hold Ctrl/Cmd to select multiple</p>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Instructions</label>
-          <div className="space-y-2 mb-2">
-            {(watch('sessionInstructions') || []).map((inst, index) => (
-              <div key={index} className="flex items-center">
-                <span className="flex-1 bg-gray-50 p-2 rounded">{inst}</span>
-                <Button
-                  type="button"
-                  onClick={() => handleRemoveInstruction(index)}
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-500 hover:text-red-700"
-                >
-                  <X size={14} />
-                </Button>
-              </div>
-            ))}
-          </div>
-          <div className="flex">
-            <InputField
-              value={newInstruction}
-              onChange={(e) => setNewInstruction(e.target.value)}
-              placeholder="Add new instruction"
-              className="flex-1"
-              inputClass="rounded-r-none"
-            />
-            <Button
-              type="button"
-              onClick={handleAddInstruction}
-              variant="primary"
-              className="rounded-l-none"
-            >
-              Add
-            </Button>
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Collaborations</label>
-          <div className="space-y-3 mb-3">
-            {(watch('sessionCollaborations') || []).map((collab, index) => {
-              const company = companies.find(c => c._id === collab.company)
-              return (
-                <div key={index} className="border p-2 rounded">
-                  <div className="flex justify-between">
-                    <div>
-                      {collab.head && <p className="font-medium">{collab.head}</p>}
-                      <p>{company?.companyName || 'Unknown company'}</p>
-                    </div>
-                    <Button
-                      type="button"
-                      onClick={() => handleRemoveCollaboration(index)}
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      <Trash2 size={14} />
-                    </Button>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2">
-            <InputField
-              value={newCollaboration.head}
-              onChange={(e) => setNewCollaboration({ ...newCollaboration, head: e.target.value })}
-              placeholder="Collaboration head name"
-            />
-            <NativeSelectField
-              value={newCollaboration.company}
-              onChange={(e) => setNewCollaboration({ ...newCollaboration, company: e.target.value })}
-              options={[
-                { value: '', label: 'Select company...' },
-                ...companies.map(company => ({
-                  value: company._id,
-                  label: company.companyName
-                }))
-              ]}
-            />
-          </div>
-          <Button
-            type="button"
-            onClick={handleAddCollaboration}
-            variant="success"
-            disabled={!newCollaboration.company}
-          >
-            Add Collaboration
-          </Button>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
-          <div className="flex flex-wrap gap-2 mb-2">
-            {(watch('tags') || []).map((tag, index) => (
-              <Chip
-                key={index}
-                label={tag}
-                onRemove={() => handleRemoveTag(index)}
-                color="purple"
-              />
-            ))}
-          </div>
-          <div className="flex">
-            <InputField
-              value={newTag}
-              onChange={(e) => setNewTag(e.target.value)}
-              placeholder="Add new tag"
-              className="flex-1"
-              inputClass="rounded-r-none"
-            />
-            <Button
-              type="button"
-              onClick={handleAddTag}
-              variant="primary"
-              className="rounded-l-none"
-            >
-              Add
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex justify-end space-x-3 pt-4">
-          <Button
-            type="button"
-            onClick={onClose}
-            variant="secondary"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="primary"
-          >
-            Save Session
-          </Button>
-        </div>
-      </form>
     </Modal>
   )
 }
