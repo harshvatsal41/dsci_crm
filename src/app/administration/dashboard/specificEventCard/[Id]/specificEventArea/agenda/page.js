@@ -10,25 +10,26 @@ import AgendaForm from '@/Component/SpecificEventDetails/Agenda/AgendaForm';
 import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
 
+
 export default function Agenda() {
     const { Id } = useParams();
-    const [agendas, setAgendas] = useState({ data: [] });
-    const [edit, setEdit] = useState({ value: false, data: {} });
-    const [formOpen, setFormOpen] = useState(false);
-    const [search, setSearch] = useState('');
+    const [agendas, setAgendas] = useState({ type: "agenda", data: null });
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
 
     const onSuccess = () => {
-        setFormOpen(false);
         fetchAgendas();
-        setEdit({ value: false, data: {} });
+        setAgendas({type:"agenda",data:null});
     };
 
     const onClose = () => {
-        setFormOpen(false);
-        setEdit({ value: false, data: {} });
+        setAgendas({type:"agenda",data:null});
+        fetchAgendas();
     };
+
+    const onEdit=(data)=>{
+        setAgendas({type:"edit",data:data});
+    }
 
     const onDelete = () => {
         toast.success('Agenda deleted successfully');
@@ -40,31 +41,32 @@ export default function Agenda() {
         try {
             const res = await AgendaApi(null, "GET", { Id });
             if (res.statusCode === 200 || res.status=== "success") {
-                setAgendas(res);
+                setAgendas({type:"agenda",data:res.data});
                 toast.success(res.message || 'Agendas loaded successfully');
             }
         } catch (error) {
-            toast.error('Failed to fetch agendas');
+            toast.error('Failed to load agendas');
         } finally {
             dispatch(setLoading(false));
         }
     };
 
+     const getCategories = () => {
+        const categories = new Set()
+        if (agendas?.data) {
+          agendas.data.forEach(item => {
+            if (item.category && Array.isArray(item.category)) {
+              item.category.forEach(cat => categories.add(cat))
+            }
+          })
+        }
+        return Array.from(categories).sort()
+      }
+     
+     let categories = getCategories();
     useEffect(() => {
         fetchAgendas();
     }, [Id]);
-
-    // Filter agendas by title, time or description
-    const filteredAgendas = {
-        ...agendas,
-        data: agendas?.data?.filter(agenda => {
-            const title = agenda.title?.toLowerCase() || '';
-            const time = agenda.time?.toLowerCase() || '';
-            const desc = agenda.description?.toLowerCase() || '';
-            const s = search.toLowerCase();
-            return title.includes(s) || time.includes(s) || desc.includes(s);
-        })
-    };
 
     if (isLoading) {
         return <DashboardLoading />;
@@ -74,30 +76,16 @@ export default function Agenda() {
         <>
             {!isLoading && (
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-3 w-full">
-                    {/* <h1 className="text-2xl font-bold text-gray-800 flex-shrink-0">Event Agenda</h1> */}
                     <div className="flex flex-col sm:flex-row gap-2 flex-1 items-stretch sm:items-center sm:justify-end w-full">
-                        <div className="relative w-full sm:w-64">
-                            <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-                                <FiSearch className="w-5 h-5" />
-                            </span>
-                            <input
-                                type="text"
-                                className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none bg-white w-full shadow-sm"
-                                placeholder="Search by title, time or description..."
-                                value={search}
-                                onChange={e => setSearch(e.target.value)}
-                            />
-                        </div>
                         <button 
-                            onClick={() => setFormOpen(true)}
+                            onClick={() => setAgendas({type:"open",categories:categories})}
                             className="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             Add New Agenda
                         </button>
                     </div>
-                    {/* Floating Add Button */}
                     <button 
-                        onClick={() => setFormOpen(true)}
+                        onClick={() => setAgendas({type:"open"})}
                         className="fixed bottom-4 right-4 sm:bottom-8 sm:right-8 w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center justify-center text-2xl z-50"
                         aria-label="Add New Agenda"
                     >
@@ -105,20 +93,19 @@ export default function Agenda() {
                     </button>
                 </div>
             )}
-            {(formOpen || edit.value) && (
+            {(agendas.type === "open" || agendas.type === "edit") && (
                 <AgendaForm 
-                    edit={edit} 
                     onSuccess={onSuccess} 
                     onClose={onClose}
                     eventId={Id}
+                    agendaData={agendas}
                 />
             )}
-            {(!formOpen && !edit.value) && <SpecificAgendaBlogCard
+            <SpecificAgendaBlogCard
                 onDelete={onDelete}
-                setEdit={setEdit}
-                data={agendas}
-                type="agenda"
-            />}
+                onEdit={onEdit}
+                agenda={agendas}
+            />
         </>
     );
 }

@@ -1,37 +1,57 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
 import { toast } from 'react-hot-toast'
-import axios from 'axios'
-import Modal from '@/Component/UI/Modal' // Assuming you have this component
+import Modal from '@/Component/UI/Modal'
 import {
   InputField,
   NativeSelectField,
   TextAreaField,
   InfoCard,
   DetailItem,
-  Skeleton
-} from '@/Component/UI/ReusableCom' // Your shared components
+} from '@/Component/UI/ReusableCom'
+import {Button} from '@/Component/UI/TableFormat'
+import { Plus, Trash2, X, Edit2, MapPin, Users, Building } from 'lucide-react'
+import { useDispatch } from 'react-redux'
+import { setLoading } from '@/Redux/Reducer/menuSlice'
+import { SpeakerApi } from '@/utilities/ApiManager'
 
 const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  
+  const dispatch = useDispatch()
   const [showSessionForm, setShowSessionForm] = useState(false)
   const [currentSession, setCurrentSession] = useState(null)
-  const [categories, setCategories] = useState([])
-  const [newCategory, setNewCategory] = useState('')
   const [speakers, setSpeakers] = useState([])
   const [companies, setCompanies] = useState([])
   const [timeConflict, setTimeConflict] = useState(null)
+  const [isCheckingConflict, setIsCheckingConflict] = useState(false)
+  const [newCategory, setNewCategory] = useState('')
 
+  const fetchSpeaker = async () => {
+    dispatch(setLoading(true))
+    try {
+      const res = await SpeakerApi(null, "GET", {Id: eventId });
+      if (res.statusCode === 200 || res.status=== "success") {
+        setSpeakers(res.data);
+      }
+    } catch (error) {
+      toast.error('Failed to load speakers');
+    } finally {
+      dispatch(setLoading(false))
+    }
+  }
+
+  console.log(agendaData.categories)
+
+
+ 
   const {
     register,
     handleSubmit,
-    control,
     watch,
     setValue,
     reset,
+    control,
     formState: { errors }
   } = useForm({
     defaultValues: {
@@ -48,69 +68,13 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
     }
   })
 
-  // Load initial data if editing
-  useEffect(() => {
-    if (agendaData) {
-      reset({
-        ...agendaData,
-        date: agendaData.date.split('T')[0],
-        startTime: new Date(agendaData.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        endTime: new Date(agendaData.endTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      })
-    }
-
-    // Fetch speakers and companies
-    const fetchData = async () => {
-      try {
-        const [speakersRes, companiesRes] = await Promise.all([
-          axios.get('/api/speakers'),
-          axios.get('/api/companies')
-        ])
-        setSpeakers(speakersRes.data)
-        setCompanies(companiesRes.data)
-      } catch (error) {
-        console.error('Failed to fetch data:', error)
-      }
-    }
-    fetchData()
-  }, [agendaData, reset])
-
-  // Watch for time changes to check conflicts
-  useEffect(() => {
-    const subscription = watch((value, { name }) => {
-      if (name === 'startTime' || name === 'endTime' || name === 'date') {
-        checkTimeConflict(value)
-      }
-    })
-    return () => subscription.unsubscribe()
-  }, [watch])
-
-  const checkTimeConflict = async (formData) => {
-    if (!formData.startTime || !formData.endTime || !formData.date) return
-    
-    try {
-      const startDateTime = new Date(`${formData.date}T${formData.startTime}`)
-      const endDateTime = new Date(`${formData.date}T${formData.endTime}`)
-      
-      if (endDateTime <= startDateTime) {
-        setTimeConflict('End time must be after start time')
-        return
-      }
-
-      const res = await axios.get(`/api/agenda/check-conflict?eventId=${eventId}&start=${startDateTime.toISOString()}&end=${endDateTime.toISOString()}`)
-      setTimeConflict(res.data.conflict ? `Conflicts with: ${res.data.conflictingTitle}` : null)
-    } catch (error) {
-      console.error('Error checking time conflict:', error)
-    }
-  }
-
   const onSubmit = async (data) => {
     if (timeConflict) {
       toast.error('Please resolve the time conflict before saving')
       return
     }
 
-    setIsLoading(true)
+    dispatch(setLoading(true))
     try {
       const payload = {
         ...data,
@@ -120,11 +84,23 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
       }
 
       let response
-      if (agendaData) {
-        response = await axios.put(`/api/agenda/${agendaData._id}`, payload)
+      if (agendaData?._id) {
+        response = await fetch(`/api/agenda/${agendaData._id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        })
         toast.success('Agenda updated successfully')
       } else {
-        response = await axios.post('/api/agenda', payload)
+        response = await fetch('/api/agenda', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        })
         toast.success('Agenda created successfully')
       }
 
@@ -134,26 +110,28 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
       console.error('Error saving agenda:', error)
       toast.error(error.response?.data?.message || 'Failed to save agenda')
     } finally {
-      setIsLoading(false)
+      dispatch(setLoading(false))
     }
   }
 
   const handleAddCategory = () => {
-    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
-      setCategories([...categories, newCategory.trim()])
-      setValue('category', [...watch('category'), newCategory.trim()])
-      setNewCategory('')
+    if (newCategory.trim()) {
+      const currentCategories = watch('category') || []
+      if (!currentCategories.includes(newCategory.trim())) {
+        const updatedCategories = [...currentCategories, newCategory.trim()]
+        setValue('category', updatedCategories)
+        setNewCategory('')
+      }
     }
   }
 
   const handleRemoveCategory = (catToRemove) => {
-    const updated = categories.filter(cat => cat !== catToRemove)
-    setCategories(updated)
+    const updated = (watch('category') || []).filter(cat => cat !== catToRemove)
     setValue('category', updated)
   }
 
   const handleAddSession = (sessionData) => {
-    const updatedSessions = [...watch('session')]
+    const updatedSessions = [...(watch('session') || [])]
     if (currentSession !== null) {
       // Update existing session
       updatedSessions[currentSession] = sessionData
@@ -172,16 +150,17 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   }
 
   const handleRemoveSession = (index) => {
-    const updated = [...watch('session')]
+    const updated = [...(watch('session') || [])]
     updated.splice(index, 1)
     setValue('session', updated)
   }
+
 
   return (
     <Modal
       isOpen={true}
       onClose={onClose}
-      title={agendaData ? 'Edit Agenda Item' : 'Create New Agenda Item'}
+      title={agendaData.type==="edit" ? 'Edit Agenda Item' : 'Create New Agenda Item'}
       width="max-w-4xl"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -253,6 +232,9 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
                 error={errors.endTime}
               />
             </div>
+            {isCheckingConflict && (
+              <p className="text-sm text-gray-500">Checking for conflicts...</p>
+            )}
             {timeConflict && (
               <p className="text-sm text-red-500">{timeConflict}</p>
             )}
@@ -263,20 +245,13 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
               Categories
             </label>
             <div className="flex flex-wrap gap-2 mb-2">
-              {watch('category')?.map((cat) => (
-                <span
+              {(watch('category') || []).map((cat) => (
+                <Chip
                   key={cat}
-                  className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                >
-                  {cat}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveCategory(cat)}
-                    className="ml-1.5 inline-flex text-blue-400 hover:text-blue-600"
-                  >
-                    &times;
-                  </button>
-                </span>
+                  label={cat}
+                  onRemove={() => handleRemoveCategory(cat)}
+                  color="blue"
+                />
               ))}
             </div>
             <div className="flex">
@@ -288,13 +263,14 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
                 className="flex-1"
                 inputClass="rounded-r-none"
               />
-              <button
+              <Button
                 type="button"
                 onClick={handleAddCategory}
-                className="px-4 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 focus:outline-none"
+                variant="primary"
+                className="rounded-l-none"
               >
                 Add
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -309,55 +285,81 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h4 className="text-lg font-medium">Sessions</h4>
-            <button
+            <Button
               type="button"
               onClick={() => setShowSessionForm(true)}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+              variant="success"
+              icon={<Plus size={16} />}
             >
               Add Session
-            </button>
+            </Button>
           </div>
 
-          {watch('session')?.length > 0 ? (
+          {(watch('session') || []).length > 0 ? (
             <div className="space-y-3">
-              {watch('session').map((session, index) => (
-                <InfoCard key={index} title={session.sessionTitle || `Session ${index + 1}`}>
-                  <div className="flex justify-between">
-                    <div className="space-y-2">
-                      {session.sessionDescription && (
-                        <DetailItem label="Description" value={session.sessionDescription} />
-                      )}
-                      {session.sessionLocation && (
-                        <DetailItem label="Location" value={session.sessionLocation} />
-                      )}
-                      {session.sessionSpeakers?.length > 0 && (
-                        <DetailItem
-                          label="Speakers"
-                          value={session.sessionSpeakers
-                            .map(speakerId => {
-                              const speaker = speakers.find(s => s._id === speakerId)
-                              return speaker ? speaker.name : 'Unknown'
-                            })
-                            .join(', ')}
-                        />
-                      )}
-                    </div>
+              {(watch('session') || []).map((session, index) => (
+                <InfoCard 
+                  key={index} 
+                  title={session.sessionTitle || `Session ${index + 1}`}
+                  actions={
                     <div className="flex space-x-2">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleEditSession(index)}
-                        className="text-blue-600 hover:text-blue-800"
+                        variant="ghost"
+                        size="sm"
+                        icon={<Edit2 size={14} />}
                       >
                         Edit
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
                         onClick={() => handleRemoveSession(index)}
+                        variant="ghost"
+                        size="sm"
+                        icon={<Trash2 size={14} />}
                         className="text-red-600 hover:text-red-800"
                       >
                         Remove
-                      </button>
+                      </Button>
                     </div>
+                  }
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {session.sessionDescription && (
+                      <DetailItem label="Description" value={session.sessionDescription} />
+                    )}
+                    {session.sessionLocation && (
+                      <DetailItem 
+                        label="Location" 
+                        value={session.sessionLocation}
+                        icon={<MapPin size={14} />}
+                      />
+                    )}
+                    {session.sessionSpeakers?.length > 0 && (
+                      <DetailItem
+                        label="Speakers"
+                        value={session.sessionSpeakers
+                          .map(speakerId => {
+                            const speaker = speakers.find(s => s._id === speakerId)
+                            return speaker ? `${speaker.name} (${speaker.designation})` : 'Unknown'
+                          })
+                          .join(', ')}
+                        icon={<Users size={14} />}
+                      />
+                    )}
+                    {session.sessionCollaborations?.length > 0 && (
+                      <DetailItem
+                        label="Collaborations"
+                        value={session.sessionCollaborations
+                          .map(collab => {
+                            const company = companies.find(c => c._id === collab.company)
+                            return `${collab.head}: ${company?.companyName || 'Unknown'}`
+                          })
+                          .join(', ')}
+                        icon={<Building size={14} />}
+                      />
+                    )}
                   </div>
                 </InfoCard>
               ))}
@@ -368,21 +370,19 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
-            disabled={isLoading}
+            variant="secondary"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-            disabled={isLoading}
+            variant="primary"
           >
-            {isLoading ? 'Saving...' : agendaData ? 'Update' : 'Create'}
-          </button>
+            {agendaData.type === "edit" ? 'Update' : 'Create'}
+          </Button>
         </div>
       </form>
 
@@ -404,7 +404,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
 }
 
 const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
-  const { register, handleSubmit, control, setValue } = useForm({
+  const { register, handleSubmit, control, setValue, watch } = useForm({
     defaultValues: sessionData || {
       sessionTitle: '',
       sessionDescription: '',
@@ -436,7 +436,7 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
   }
 
   const handleRemoveInstruction = (index) => {
-    const updated = [...watch('sessionInstructions')]
+    const updated = [...(watch('sessionInstructions') || [])]
     updated.splice(index, 1)
     setValue('sessionInstructions', updated)
   }
@@ -450,7 +450,7 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
   }
 
   const handleRemoveTag = (index) => {
-    const updated = [...watch('tags')]
+    const updated = [...(watch('tags') || [])]
     updated.splice(index, 1)
     setValue('tags', updated)
   }
@@ -464,7 +464,7 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
   }
 
   const handleRemoveCollaboration = (index) => {
-    const updated = [...watch('sessionCollaborations')]
+    const updated = [...(watch('sessionCollaborations') || [])]
     updated.splice(index, 1)
     setValue('sessionCollaborations', updated)
   }
@@ -492,11 +492,10 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
         />
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Speakers (required)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Speakers</label>
           <Controller
             name="sessionSpeakers"
             control={control}
-            rules={{ required: 'At least one speaker is required' }}
             render={({ field }) => (
               <select
                 multiple
@@ -517,16 +516,18 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Instructions</label>
           <div className="space-y-2 mb-2">
-            {watch('sessionInstructions')?.map((inst, index) => (
+            {(watch('sessionInstructions') || []).map((inst, index) => (
               <div key={index} className="flex items-center">
                 <span className="flex-1 bg-gray-50 p-2 rounded">{inst}</span>
-                <button
+                <Button
                   type="button"
                   onClick={() => handleRemoveInstruction(index)}
-                  className="ml-2 text-red-500 hover:text-red-700"
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-500 hover:text-red-700"
                 >
-                  &times;
-                </button>
+                  <X size={14} />
+                </Button>
               </div>
             ))}
           </div>
@@ -538,20 +539,21 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
               className="flex-1"
               inputClass="rounded-r-none"
             />
-            <button
+            <Button
               type="button"
               onClick={handleAddInstruction}
-              className="px-3 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700"
+              variant="primary"
+              className="rounded-l-none"
             >
               Add
-            </button>
+            </Button>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Collaborations</label>
           <div className="space-y-3 mb-3">
-            {watch('sessionCollaborations')?.map((collab, index) => {
+            {(watch('sessionCollaborations') || []).map((collab, index) => {
               const company = companies.find(c => c._id === collab.company)
               return (
                 <div key={index} className="border p-2 rounded">
@@ -560,13 +562,15 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
                       {collab.head && <p className="font-medium">{collab.head}</p>}
                       <p>{company?.companyName || 'Unknown company'}</p>
                     </div>
-                    <button
+                    <Button
                       type="button"
                       onClick={() => handleRemoveCollaboration(index)}
+                      variant="ghost"
+                      size="sm"
                       className="text-red-500 hover:text-red-700"
                     >
-                      &times;
-                    </button>
+                      <Trash2 size={14} />
+                    </Button>
                   </div>
                 </div>
               )
@@ -590,32 +594,26 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
               ]}
             />
           </div>
-          <button
+          <Button
             type="button"
             onClick={handleAddCollaboration}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+            variant="success"
+            disabled={!newCollaboration.company}
           >
             Add Collaboration
-          </button>
+          </Button>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Tags</label>
           <div className="flex flex-wrap gap-2 mb-2">
-            {watch('tags')?.map((tag, index) => (
-              <span
+            {(watch('tags') || []).map((tag, index) => (
+              <Chip
                 key={index}
-                className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-800"
-              >
-                {tag}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveTag(index)}
-                  className="ml-1.5 inline-flex text-purple-400 hover:text-purple-600"
-                >
-                  &times;
-                </button>
-              </span>
+                label={tag}
+                onRemove={() => handleRemoveTag(index)}
+                color="purple"
+              />
             ))}
           </div>
           <div className="flex">
@@ -626,30 +624,31 @@ const SessionForm = ({ sessionData, speakers, companies, onSave, onClose }) => {
               className="flex-1"
               inputClass="rounded-r-none"
             />
-            <button
+            <Button
               type="button"
               onClick={handleAddTag}
-              className="px-3 py-2 bg-purple-600 text-white rounded-r-md hover:bg-purple-700"
+              variant="primary"
+              className="rounded-l-none"
             >
               Add
-            </button>
+            </Button>
           </div>
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+            variant="secondary"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            variant="primary"
           >
             Save Session
-          </button>
+          </Button>
         </div>
       </form>
     </Modal>
