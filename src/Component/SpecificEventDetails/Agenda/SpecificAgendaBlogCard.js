@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Calendar, Clock, MapPin, Users, Building, Tag, ChevronRight, X } from 'lucide-react';
+import { Calendar, Clock, MapPin, Users, Building, Tag, ChevronRight, X, Edit, Trash } from 'lucide-react';
 import Modal from '@/Component/UI/Modal';
-
+import AgendaForm from './AgendaForm'; // Import your AgendaForm component
 
 const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
   const [selectedAgenda, setSelectedAgenda] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('All Days');
   const agendaData = agenda?.data || [];
 
@@ -58,6 +59,27 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
     setSelectedAgenda(null);
   };
 
+  const openEditModal = () => {
+    setIsDialogOpen(false);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleEditSuccess = () => {
+    closeEditModal();
+    onEdit(); // Notify parent that edit was successful
+  };
+
+  const handleDelete = () => {
+    if (selectedAgenda && selectedAgenda._id) {
+      onDelete(selectedAgenda._id);
+      closeDialog();
+    }
+  };
+
   // Get unique days and categories for filtering
   const getDays = () => {
     const days = [...new Set(agendaData.map(item => item.day) || [])];
@@ -99,7 +121,7 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
   const filteredData = getFilteredData();
 
   return (
-    <div className="mx-auto p-6 max-h-screen overflow-y-auto">
+    <div className="mx-auto p-6 ">
       <div className="mb-4">
         <div className="flex flex-wrap gap-3 mb-4">
           <button
@@ -160,6 +182,11 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
                 agenda={item}
                 onClick={() => openAgendaDetails(item)}
                 formatTimeRange={formatTimeRange}
+                onEdit={() => {
+                  setSelectedAgenda(item);
+                  setIsEditModalOpen(true);
+                }}
+                onDelete={() => onDelete(item._id)}
               />
             ))}
           </div>
@@ -170,6 +197,23 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
       {/* Detailed View Dialog */}
       {isDialogOpen && selectedAgenda && (
         <Modal isOpen={isDialogOpen} onClose={closeDialog} title={selectedAgenda.title} width="max-w-6xl" >
+          <div className="absolute top-4 right-14 flex gap-2">
+            <button 
+              onClick={openEditModal}
+              className="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-blue-600 transition-colors"
+              title="Edit Agenda"
+            >
+              <Edit className="h-5 w-5" />
+            </button>
+            <button 
+              onClick={handleDelete}
+              className="p-2 rounded-full hover:bg-gray-100 text-gray-600 hover:text-red-600 transition-colors"
+              title="Delete Agenda"
+            >
+              <Trash className="h-5 w-5" />
+            </button>
+          </div>
+          
           <div className="flex items-center gap-4 mt-2 text-sm text-gray-600 px-6">
             <span className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
@@ -231,21 +275,42 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
           </div>
         </Modal>
       )}
+      
+      {/* Edit Agenda Modal */}
+      {isEditModalOpen && selectedAgenda && (
+        <Modal isOpen={isEditModalOpen} onClose={closeEditModal} title={`Edit ${selectedAgenda.title}`} width="max-w-4xl">
+          <AgendaForm
+            eventId={selectedAgenda.yeaslyEventId}
+            agendaData={selectedAgenda}
+            onSuccess={handleEditSuccess}
+            onClose={closeEditModal}
+          />
+        </Modal>
+      )}
     </div>
   );
 };
 
-const AgendaListItem = ({ agenda, onClick, formatTimeRange }) => {
+const AgendaListItem = ({ agenda, onClick, formatTimeRange, onEdit, onDelete }) => {
+  const handleEditClick = (e) => {
+    e.stopPropagation();
+    onEdit();
+  };
+
+  const handleDeleteClick = (e) => {
+    e.stopPropagation();
+    onDelete();
+  };
+
   return (
     <div
-      className="p-6 hover:bg-gray-50 transition-all duration-200 cursor-pointer group border-l-4 border-transparent hover:border-blue-500"
+      className="p-6 hover:bg-gray-50 transition-all duration-200 cursor-pointer group border-l-4 border-transparent hover:border-blue-500 relative"
       onClick={onClick}
     >
       <div className="flex items-center justify-between">
         {/* Time Column */}
-        <div className="flex-shrink-0  text-center">
+        <div className="flex-shrink-0 text-center">
           <div className="bg-blue-100 text-blue-800 px-3 py-2 rounded-lg font-medium text-sm">
-
             {formatTimeRange(agenda.startTime, agenda.endTime)}
           </div>
         </div>
@@ -309,14 +374,25 @@ const AgendaListItem = ({ agenda, onClick, formatTimeRange }) => {
                 )}
               </div>
             )}
-
-            {/* Tags */}
-
           </div>
         </div>
 
         {/* Action Column */}
-        <div className="flex-shrink-0">
+        <div className="flex items-center gap-2">
+          <button 
+            onClick={handleEditClick}
+            className="p-1.5 rounded-full text-gray-500 hover:bg-blue-100 hover:text-blue-600 transition-colors"
+            title="Edit Agenda"
+          >
+            <Edit className="h-4 w-4" />
+          </button>
+          <button 
+            onClick={handleDeleteClick}
+            className="p-1.5 rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors"
+            title="Delete Agenda"
+          >
+            <Trash className="h-4 w-4" />
+          </button>
           <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
         </div>
       </div>
@@ -429,6 +505,5 @@ const SessionItem = ({ session }) => {
     </div>
   );
 };
-
 
 export default SpecificAgendaBlogCard;

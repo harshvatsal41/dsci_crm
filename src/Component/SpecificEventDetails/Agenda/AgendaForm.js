@@ -1,6 +1,5 @@
 'use client'
 import React, { useState, useEffect } from 'react'
-import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import Modal from '@/Component/UI/Modal'
 import {
@@ -11,12 +10,13 @@ import {
   DetailItem,
   Chip
 } from '@/Component/UI/ReusableCom'
-import {Button} from '@/Component/UI/TableFormat'
+import { Button } from '@/Component/UI/TableFormat'
 import { Plus, Trash2, X, Edit2, MapPin, Users, Building } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setLoading } from '@/Redux/Reducer/menuSlice'
 import SessionForm from './SessionForm'
-import {SpeakerApi, CollaborationApi, AgendaApi} from '@/utilities/ApiManager'
+import { SpeakerApi, CollaborationApi, AgendaApi } from '@/utilities/ApiManager'
+import { useParams } from 'next/navigation'
 
 const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   const dispatch = useDispatch()
@@ -24,40 +24,50 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   const [currentSession, setCurrentSession] = useState(null)
   const [speakers, setSpeakers] = useState([])
   const [companies, setCompanies] = useState([])
-  const [timeConflict, setTimeConflict] = useState(null)
-  const [isCheckingConflict, setIsCheckingConflict] = useState(false)
   const [newCategory, setNewCategory] = useState('')
   const [categoryInputType, setCategoryInputType] = useState('select')
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    reset,
-    control,
-    formState: { errors }
-  } = useForm({
-    defaultValues: {
-      title: '',
-      description: '',
-      yeaslyEventId: eventId,
-      day: 'Day 1',
-      date: new Date().toISOString().split('T')[0],
-      type: 'Keynote',
-      startTime: '09:00',
-      endTime: '10:00',
-      category: [],
-      session: []
-    }
+  
+  // Form state
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    yeaslyEventId: eventId,
+    day: 'Day 1',
+    date: new Date().toISOString().split('T')[0],
+    type: 'Keynote',
+    startTime: '',
+    endTime: '',
+    category: [],
+    session: []
   })
 
-  const fetchData=async ()=>{
+  // Helper function to convert UTC time to local time string (HH:MM)
+  const utcToLocalTimeString = (utcDateString) => {
+    if (!utcDateString) return '';
+    const date = new Date(utcDateString);
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  };
+
+  // Helper function to get local date string from UTC
+  const utcToLocalDateString = (utcDateString) => {
+    if (!utcDateString) return new Date().toISOString().split('T')[0];
+    const date = new Date(utcDateString);
+    return date.toISOString().split('T')[0];
+  };
+
+  const fetchData = async () => {
     try {
-      const [speakersResponse, companiesResponse] = await Promise.all([SpeakerApi(null,'GET',{Id: eventId}), CollaborationApi(null,'GET',{Id: eventId})])
-      if((speakersResponse.statusCode === 200 || speakersResponse.statusCode === 203 || speakersResponse.status === "success") && (companiesResponse.statusCode === 200 || companiesResponse.statusCode === 203 || companiesResponse.status === "success")){
-        setSpeakers(speakersResponse.data)
-        setCompanies(companiesResponse.data)
+      const [speakersResponse, companiesResponse] = await Promise.all([
+        SpeakerApi(null, 'GET', { Id: eventId }),
+        CollaborationApi(null, 'GET', { Id: eventId })
+      ])
+      
+      if (speakersResponse?.statusCode === 200 || speakersResponse?.status === "success") {
+        setSpeakers(speakersResponse.data || [])
+      }
+      
+      if (companiesResponse?.statusCode === 200 || companiesResponse?.status === "success") {
+        setCompanies(companiesResponse.data || [])
       }
     } catch (error) {
       console.error('Error fetching speakers and companies:', error)
@@ -66,97 +76,127 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
 
   useEffect(() => {
     fetchData()
-  }, [eventId])
-
-  useEffect(() => {
-    if (agendaData?._id) {
-      reset({
-        ...agendaData,
-        date: agendaData.date ? new Date(agendaData.date).toISOString().split('T')[0] : '',
-        startTime: agendaData.startTime ? new Date(agendaData.startTime).toTimeString().substring(0, 5) : '09:00',
-        endTime: agendaData.endTime ? new Date(agendaData.endTime).toTimeString().substring(0, 5) : '10:00',
+    
+    // Initialize form with agenda data if available
+    if (agendaData) {
+      setFormData({
+        title: agendaData.title || '',
+        description: agendaData.description || '',
+        yeaslyEventId: eventId,
+        day: agendaData.day || 'Day 1',
+        date: utcToLocalDateString(agendaData.date),
+        type: agendaData.type || 'Keynote',
+        startTime: utcToLocalTimeString(agendaData.startTime),
+        endTime: utcToLocalTimeString(agendaData.endTime),
         category: agendaData.category || [],
         session: agendaData.session || []
       })
     }
-  }, [agendaData, reset])
+  }, [eventId, agendaData])
 
   const formatDateTime = (dateStr, timeStr) => {
-    return new Date(`${dateStr}T${timeStr}`).toISOString()
+    const timeWithSeconds = timeStr.includes(':') && timeStr.split(':').length === 2 
+      ? `${timeStr}:00` 
+      : timeStr;
+    return new Date(`${dateStr}T${timeWithSeconds}`).toISOString()
   }
 
-  const onSubmit = async (data) => {
-    if (timeConflict) {
-      toast.error('Please resolve the time conflict before saving')
-      return
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  }
+
+  const handleSessionChange = (sessions) => {
+    setFormData(prev => ({ ...prev, session: sessions }));
+  }
+
+  const handleCategoryChange = (categories) => {
+    setFormData(prev => ({ ...prev, category: categories }));
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Basic validation
+    if (!formData.title.trim()) {
+      toast.error('Title is required');
+      return;
+    }
+    
+    if (!formData.date) {
+      toast.error('Date is required');
+      return;
+    }
+    
+    if (formData.endTime <= formData.startTime) {
+      toast.error('End time must be after start time');
+      return;
     }
 
-    dispatch(setLoading(true))
+    dispatch(setLoading(true));
     try {
       const payload = {
-        title: data.title,
-        description: data.description,
-        yeaslyEventId: data.yeaslyEventId,
-        day: data.day,
-        date: formatDateTime(data.date, '00:00:00'), // Just date part
-        type: data.type,
-        startTime: formatDateTime(data.date, data.startTime),
-        endTime: formatDateTime(data.date, data.endTime),
-        category: data.category,
-        session: data.session.map(session => ({
-          ...session,
+        title: formData.title,
+        description: formData.description || '',
+        yeaslyEventId: formData.yeaslyEventId,
+        day: formData.day,
+        date: formatDateTime(formData.date, '00:00:00'),
+        type: formData.type,
+        startTime: formatDateTime(formData.date, formData.startTime),
+        endTime: formatDateTime(formData.date, formData.endTime),
+        category: formData.category,
+        session: formData.session.map(session => ({
+          sessionTitle: session.sessionTitle || '',
+          sessionDescription: session.sessionDescription || '',
+          sessionLocation: session.sessionLocation || '',
           sessionSpeakers: session.sessionSpeakers || [],
-          sessionCollaborations: session.sessionCollaborations || []
+          sessionCollaborations: session.sessionCollaborations || [],
+          sessionInstructions: session.sessionInstructions || [],
+          tags: session.tags || []
         }))
       }
 
       const method = agendaData?._id ? 'PUT' : 'POST'
+      const response = await AgendaApi(payload, method, { Id:agendaData?._id ? agendaData?._id : eventId })
 
-      const response = await AgendaApi(payload, method, {Id:agendaData?._id})
-
-     if(response.statusCode === 200 || response.statusCode === 203 || response.status === "success"){
-      toast.success(agendaData?._id ? response.message || 'Agenda updated successfully' : 'Agenda created successfully')
-      onSuccess?.()
-      onClose?.()
-    }else{
-      toast.error(response.message || 'Failed to save agenda')
-    }
+      if (response?.statusCode === 200 || response?.status === "success") {
+        toast.success(agendaData?._id ? 'Agenda updated successfully' : 'Agenda created successfully')
+        onSuccess?.()
+        onClose?.()
+      } else {
+        toast.error(response?.message || 'Failed to save agenda')
+      }
     } catch (error) {
       toast.error(error.message || 'Failed to save agenda')
     } finally {
-      dispatch(setLoading(false))
+      dispatch(setLoading(false));
     }
   }
 
-
-
-  const handleAddCategory = () => {
+  const handleAddCategory = (e) => {
+    e.preventDefault()
     if (newCategory.trim()) {
-      const currentCategories = watch('category') || []
-      if (!currentCategories.includes(newCategory.trim())) {
-        const updatedCategories = [...currentCategories, newCategory.trim()]
-        setValue('category', updatedCategories)
+      if (!formData.category.includes(newCategory.trim())) {
+        const updatedCategories = [...formData.category, newCategory.trim()]
+        handleCategoryChange(updatedCategories)
         setNewCategory('')
       }
     }
   }
 
   const handleRemoveCategory = (catToRemove) => {
-    const updated = (watch('category') || []).filter(cat => cat !== catToRemove)
-    setValue('category', updated)
+    const updated = formData.category.filter(cat => cat !== catToRemove)
+    handleCategoryChange(updated)
   }
 
   const handleAddSession = (sessionData) => {
-    console.log(sessionData)
-    const updatedSessions = [...(watch('session') || [])]
+    const updatedSessions = [...formData.session]
     if (currentSession !== null) {
-      // Update existing session
       updatedSessions[currentSession] = sessionData
     } else {
-      // Add new session
       updatedSessions.push(sessionData)
     }
-    setValue('session', updatedSessions)
+    handleSessionChange(updatedSessions)
     setShowSessionForm(false)
     setCurrentSession(null)
   }
@@ -167,313 +207,327 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   }
 
   const handleRemoveSession = (index) => {
-    const updated = [...(watch('session') || [])]
+    const updated = [...formData.session]
     updated.splice(index, 1)
-    setValue('session', updated)
+    handleSessionChange(updated)
   }
 
-  // Existing categories from agendaData or default ones
-  const existingCategories = agendaData?.categories || ['Opening', 'Technology']
+  const existingCategories = [
+    'Opening', 'Technology', 'Healthcare', 'Finance', 
+    'Education', 'Entertainment', 'Networking'
+  ]
 
   return (
-    <Modal
-      isOpen={true}
-      onClose={onClose}
-      title={agendaData?._id ? 'Edit Agenda Item' : 'Create New Agenda Item'}
-      width="max-w-4xl"
-    >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <InputField
-            id="title"
-            label="Title"
-            required
-            {...register('title', { required: 'Title is required' })}
-            error={errors.title}
-          />
+    <>
+      <Modal
+        isOpen={true}
+        onClose={onClose}
+        title={agendaData?._id ? 'Edit Agenda Item' : 'Create New Agenda Item'}
+        width="max-w-4xl"
+      >
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <InputField
+              id="title"
+              label="Title"
+              required
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+            />
 
-          <NativeSelectField
-            id="type"
-            label="Session Type"
-            required
-            options={[
-              { value: 'Keynote', label: 'Keynote' },
-              { value: 'Panel', label: 'Panel Discussion' },
-              { value: 'Workshop', label: 'Workshop' },
-              { value: 'Breakout', label: 'Breakout Session' },
-              { value: 'Networking', label: 'Networking' },
-              { value: 'Special', label: 'Special Event' }
-            ]}
-            {...register('type', { required: 'Type is required' })}
-            error={errors.type}
-          />
+            <NativeSelectField
+              id="type"
+              label="Session Type"
+              required
+              name="type"
+              value={formData.type}
+              onChange={handleInputChange}
+              options={[
+                { value: 'Keynote', label: 'Keynote' },
+                { value: 'Panel', label: 'Panel Discussion' },
+                { value: 'Workshop', label: 'Workshop' },
+                { value: 'Breakout', label: 'Breakout Session' },
+                { value: 'Networking', label: 'Networking' },
+                { value: 'Special', label: 'Special Event' }
+              ]}
+            />
 
-          <NativeSelectField
-            id="day"
-            label="Day"
-            required
-            options={[
-              { value: 'Day 1', label: 'Day 1' },
-              { value: 'Day 2', label: 'Day 2' },
-              { value: 'Day 3', label: 'Day 3' },
-              { value: 'Day 4', label: 'Day 4' },
-              { value: 'Day 5', label: 'Day 5' }
-            ]}
-            {...register('day', { required: 'Day is required' })}
-            error={errors.day}
-          />
+            <NativeSelectField
+              id="day"
+              label="Day"
+              required
+              name="day"
+              value={formData.day}
+              onChange={handleInputChange}
+              options={[
+                { value: 'Day 1', label: 'Day 1' },
+                { value: 'Day 2', label: 'Day 2' },
+                { value: 'Day 3', label: 'Day 3' },
+                { value: 'Day 4', label: 'Day 4' },
+                { value: 'Day 5', label: 'Day 5' }
+              ]}
+            />
 
-          <InputField
-            id="date"
-            label="Date"
-            type="date"
-            required
-            {...register('date', { required: 'Date is required' })}
-            error={errors.date}
-          />
+            <InputField
+              id="date"
+              label="Date"
+              type="date"
+              required
+              name="date"
+              value={formData.date}
+              onChange={handleInputChange}
+            />
 
-          <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-4">
-              <InputField
-                id="startTime"
-                label="Start Time"
-                type="time"
-                required
-                {...register('startTime', { required: 'Start time is required' })}
-                error={errors.startTime}
-              />
-              <InputField
-                id="endTime"
-                label="End Time"
-                type="time"
-                required
-                {...register('endTime', { required: 'End time is required' })}
-                error={errors.endTime}
-              />
+            <div className="space-y-2">
+              <div className="grid grid-cols-2 gap-4">
+                <InputField
+                  id="startTime"
+                  label="Start Time"
+                  type="time"
+                  required
+                  name="startTime"
+                  value={formData.startTime}
+                  onChange={handleInputChange}
+                />
+                <InputField
+                  id="endTime"
+                  label="End Time"
+                  type="time"
+                  required
+                  name="endTime"
+                  value={formData.endTime}
+                  onChange={handleInputChange}
+                />
+              </div>
             </div>
-            {isCheckingConflict && (
-              <p className="text-sm text-gray-500">Checking for conflicts...</p>
-            )}
-            {timeConflict && (
-              <p className="text-sm text-red-500">{timeConflict}</p>
-            )}
+
+            <div className="col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Categories
+              </label>
+              
+              <div className="flex items-center space-x-4 mb-3">
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    className="form-radio"
+                    checked={categoryInputType === 'select'}
+                    onChange={() => setCategoryInputType('select')}
+                  />
+                  <span className="ml-2">Select from existing</span>
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    className="form-radio"
+                    checked={categoryInputType === 'manual'}
+                    onChange={() => setCategoryInputType('manual')}
+                  />
+                  <span className="ml-2">Add manually</span>
+                </label>
+              </div>
+
+              {categoryInputType === 'select' ? (
+                <div className="space-y-2">
+                  <NativeSelectField
+                    id="categorySelect"
+                    label="Select Category"
+                    options={[
+                      { value: '', label: 'Select Category', disabled: true },
+                      ...existingCategories.map(cat => ({
+                        value: cat,
+                        label: cat
+                      }))
+                    ]}
+                    onChange={(e) => {
+                      const selectedCat = e.target.value;
+                      if (selectedCat) {
+                        if (!formData.category.includes(selectedCat)) {
+                          handleCategoryChange([...formData.category, selectedCat]);
+                        }
+                        // Reset the select to show the default option
+                        e.target.value = '';
+                      }
+                    }}
+                    value=""
+                  />
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex">
+                    <InputField
+                      id="newCategory"
+                      value={newCategory}
+                      onChange={(e) => setNewCategory(e.target.value)}
+                      placeholder="Enter new category"
+                      className="flex-1"
+                      inputClass="rounded-r-none mt-1"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleAddCategory}
+                      variant="primary"
+                      className="rounded-l-none"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-wrap gap-2 mt-3">
+                {formData.category.map((cat) => (
+                  <div
+                    key={cat}
+                    className="inline-flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"
+                  >
+                    {cat}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCategory(cat)}
+                      className="ml-2 text-blue-600 hover:text-blue-900"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Categories
-            </label>
-            
-            <div className="flex items-center space-x-4 mb-3">
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  className="form-radio"
-                  checked={categoryInputType === 'select'}
-                  onChange={() => setCategoryInputType('select')}
-                />
-                <span className="ml-2">Select from existing</span>
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  className="form-radio"
-                  checked={categoryInputType === 'manual'}
-                  onChange={() => setCategoryInputType('manual')}
-                />
-                <span className="ml-2">Add manually</span>
-              </label>
+          <TextAreaField
+            id="description"
+            label="Description"
+            name="description"
+            value={formData.description}
+            onChange={handleInputChange}
+            rows={4}
+          />
+
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h4 className="text-lg font-medium">Sessions</h4>
+              <Button
+                type="button"
+                onClick={() => {
+                  setCurrentSession(null);
+                  setShowSessionForm(true);
+                }}
+                variant="success"
+                icon={<Plus size={16} />}
+              >
+                Add Session
+              </Button>
             </div>
 
-            {categoryInputType === 'select' ? (
-              <div className="space-y-2">
-                <NativeSelectField
-                  id="categorySelect"
-                  label="Select Category"
-                  options={existingCategories.map(cat => ({
-                    value: cat,
-                    label: cat
-                  }))}
-                  onChange={(e) => {
-                    const selectedCat = e.target.value
-                    if (selectedCat) {
-                      const currentCategories = watch('category') || []
-                      if (!currentCategories.includes(selectedCat)) {
-                        setValue('category', [...currentCategories, selectedCat])
-                      }
+            {formData.session.length > 0 ? (
+              <div className="space-y-3">
+                {formData.session.map((session, index) => (
+                  <InfoCard 
+                    key={index} 
+                    title={session.sessionTitle || `Session ${index + 1}`}
+                    actions={
+                      <div className="flex space-x-2">
+                        <Button
+                          type="button"
+                          onClick={() => handleEditSession(index)}
+                          variant="ghost"
+                          size="sm"
+                          icon={<Edit2 size={14} />}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={() => handleRemoveSession(index)}
+                          variant="ghost"
+                          size="sm"
+                          icon={<Trash2 size={14} />}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          Remove
+                        </Button>
+                      </div>
                     }
-                  }}
-                  value=""
-                />
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {session.sessionDescription && (
+                        <DetailItem label="Description" value={session.sessionDescription} />
+                      )}
+                      {session.sessionLocation && (
+                        <DetailItem 
+                          label="Location" 
+                          value={session.sessionLocation}
+                          icon={<MapPin size={14} />}
+                        />
+                      )}
+                      {session.sessionSpeakers?.length > 0 && (
+                        <DetailItem
+                          label="Speakers"
+                          value={session.sessionSpeakers
+                            .map(speakerId => {
+                              const speaker = speakers.find(s => s._id === speakerId)
+                              return speaker ? `${speaker.name} (${speaker.position})` : 'Unknown'
+                            })
+                            .join(', ')}
+                          icon={<Users size={14} />}
+                        />
+                      )}
+                      {session.sessionCollaborations?.length > 0 && (
+                        <DetailItem
+                          label="Collaborations"
+                          value={session.sessionCollaborations
+                            .map(collab => {
+                              const company = companies.find(c => c._id === collab.company)
+                              return `${collab.head || 'Head'}: ${company?.title || 'Unknown'}`
+                            })
+                            .join(', ')}
+                          icon={<Building size={14} />}
+                        />
+                      )}
+                    </div>
+                  </InfoCard>
+                ))}
               </div>
             ) : (
-              <div className="space-y-2">
-                <div className="flex">
-                  <InputField
-                    id="newCategory"
-                    value={newCategory}
-                    onChange={(e) => setNewCategory(e.target.value)}
-                    placeholder="Enter new category"
-                    className="flex-1"
-                    inputClass="rounded-r-none mt-1"
-                  />
-                  <Button
-                    type="button"
-                    onClick={handleAddCategory}
-                    variant="primary"
-                    className="rounded-l-none  "
-                  >
-                    Add
-                  </Button>
-                </div>
-              </div>
+              <p className="text-gray-500 text-sm">No sessions added yet.</p>
             )}
-
-            <div className="flex flex-wrap gap-2 mt-3">
-              {(watch('category') || []).map((cat) => (
-                <div
-                  key={cat}
-                  className="inline-flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full"
-                >
-                  {cat}
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveCategory(cat)}
-                    className="ml-2 text-blue-600 hover:text-blue-900"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
-            </div>
           </div>
-        </div>
 
-        <TextAreaField
-          id="description"
-          label="Description"
-          {...register('description')}
-          rows={4}
-        />
-
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h4 className="text-lg font-medium">Sessions</h4>
+          <div className="flex justify-end space-x-3 pt-4">
             <Button
               type="button"
-              onClick={() => setShowSessionForm(true)}
-              variant="success"
-              icon={<Plus size={16} />}
+              onClick={onClose}
+              variant="secondary"
             >
-              Add Session
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+            >
+              {agendaData?._id ? 'Update' : 'Create'}
             </Button>
           </div>
-
-          {(watch('session') || []).length > 0 ? (
-            <div className="space-y-3">
-              {(watch('session') || []).map((session, index) => (
-                <InfoCard 
-                  key={index} 
-                  title={session.sessionTitle || `Session ${index + 1}`}
-                  actions={
-                    <div className="flex space-x-2">
-                      <Button
-                        type="button"
-                        onClick={() => handleEditSession(index)}
-                        variant="ghost"
-                        size="sm"
-                        icon={<Edit2 size={14} />}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() => handleRemoveSession(index)}
-                        variant="ghost"
-                        size="sm"
-                        icon={<Trash2 size={14} />}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        Remove
-                      </Button>
-                    </div>
-                  }
-                >
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {session.sessionDescription && (
-                      <DetailItem label="Description" value={session.sessionDescription} />
-                    )}
-                    {session.sessionLocation && (
-                      <DetailItem 
-                        label="Location" 
-                        value={session.sessionLocation}
-                        icon={<MapPin size={14} />}
-                      />
-                    )}
-                    {session.sessionSpeakers?.length > 0 && (
-                      <DetailItem
-                        label="Speakers"
-                        value={session.sessionSpeakers
-                          .map(speakerId => {
-                            const speaker = speakers.find(s => s._id === speakerId)
-                            return speaker ? `${speaker.name} (${speaker.designation})` : 'Unknown'
-                          })
-                          .join(', ')}
-                        icon={<Users size={14} />}
-                      />
-                    )}
-                    {session.sessionCollaborations?.length > 0 && (
-                      <DetailItem
-                        label="Collaborations"
-                        value={session.sessionCollaborations
-                          .map(collab => {
-                            const company = companies.find(c => c._id === collab.company)
-                            return `${collab.head}: ${company?.companyName || 'Unknown'}`
-                          })
-                          .join(', ')}
-                        icon={<Building size={14} />}
-                      />
-                    )}
-                  </div>
-                </InfoCard>
-              ))}
-            </div>
-          ) : (
-            <p className="text-gray-500 text-sm">No sessions added yet.</p>
-          )}
-        </div>
-
-        <div className="flex justify-end space-x-3 pt-4">
-          <Button
-            type="button"
-            onClick={onClose}
-            variant="secondary"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            variant="primary"
-          >
-            {agendaData?._id ? 'Update' : 'Create'}
-          </Button>
-        </div>
-      </form>
+        </form>
+      </Modal>
 
       {/* Session Form Modal */}
       {showSessionForm && (
-          <SessionForm
-            sessionData={currentSession !== null ? watch('session')[currentSession] : null}
-            speakers={speakers}
-            companies={companies}
-            onSave={handleAddSession}
-            onClose={() => {
-              setShowSessionForm(false)
-              setCurrentSession(null)
-            }}
-          />
-        )}
-    </Modal>
+        <SessionForm
+          sessionData={currentSession !== null ? formData.session[currentSession] : null}
+          speakers={speakers}
+          companies={companies}
+          onSave={handleAddSession}
+          onClose={() => {
+            setShowSessionForm(false)
+            setCurrentSession(null)
+          }}
+          isEditMode={currentSession !== null}
+        />
+      )}
+    </>
   )
 }
 
