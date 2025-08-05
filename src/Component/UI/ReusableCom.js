@@ -97,10 +97,13 @@ export const NativeSelectField = ({
 };
 
 
-export const InfoCard = ({ title, children }) => {
+export const InfoCard = ({ title, children, actions }) => {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm">
-      <h3 className="text-xl font-semibold text-gray-900 mb-2 border-b pb-2">{title}</h3>
+      <div className="flex justify-between items-center mb-2 border-b pb-2">
+        <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+        {actions && <div className="flex items-center">{actions}</div>}
+      </div>
       <div className="space-y-3">{children}</div>
     </div>
   );
