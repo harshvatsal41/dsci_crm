@@ -123,7 +123,7 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
   return (
     <div className="mx-auto p-6 ">
       <div className="mb-4">
-        <div className="flex flex-wrap gap-3 mb-4">
+        <div className="flex flex-wrap gap-3 mb-4 max-h-32 overflow-y-auto py-2 px-1">
           <button
             onClick={() => setActiveFilter('All Days')}
             className={`px-3 py-1 rounded-full font-medium transition-all ${activeFilter === 'All Days'
@@ -175,7 +175,14 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
             <p className="text-lg">No events found for the selected filter</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div 
+            className={`divide-y divide-gray-100 ${filteredData.length > 5 ? 'max-h-[750px] overflow-y-auto' : ''}`}
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#9ca3af #f3f4f6',
+              msOverflowStyle: 'none'
+            }}
+          >
             {filteredData.map(item => (
               <AgendaListItem
                 key={item._id}
