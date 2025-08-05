@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { FiSave, FiImage, FiType, FiLayout, FiDownload, FiUpload, FiCode } from 'react-icons/fi';
+import { FiSave, FiImage, FiType, FiLayout, FiDownload, FiUpload, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import {SpeakerApi} from '@/utilities/ApiManager';
 import { useParams } from 'next/navigation';
 
@@ -17,7 +17,7 @@ const defaultStyles = {
     width: '280px',
     height: 'auto',
     padding: '20px',
-    margin: '10px',
+    margin: '10px auto',
     borderRadius: '0px',
     backgroundColor: 'transparent',
     backgroundImage: 'none',
@@ -68,7 +68,8 @@ export default function SpeakerCardDesigner() {
   const [styles, setStyles] = useState(defaultStyles);
   const [activeTab, setActiveTab] = useState('layout');
   const [isLoading, setIsLoading] = useState(false);
-  const [cardsPerRow, setCardsPerRow] = useState(4);
+  const [cardsPerPage, setCardsPerPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const previewRef = useRef(null);
   const params = useParams();
 
@@ -115,33 +116,22 @@ export default function SpeakerCardDesigner() {
     fetchSpeakers();
   }, []);   
 
-  const calculateGridColumns = () => {
-    const cardWidth = parseInt(styles.card.width) || 280;
-    const cardMargin = parseInt(styles.card.margin) || 10;
-    
-    return {
-      gridTemplateColumns: `repeat(${cardsPerRow}, ${cardWidth}px)`,
-      gap: `${cardMargin * 2}px`,
-      justifyContent: 'center'
-    };
-  };
+  // Calculate pagination
+  const totalPages = Math.ceil(speakers.length / cardsPerPage);
+  const startIndex = (currentPage - 1) * cardsPerPage;
+  const currentSpeakers = speakers.slice(startIndex, startIndex + cardsPerPage);
 
   const exportToPDF = async () => {
     setIsLoading(true);
     try {
-      // Create a new window for PDF generation
       const printWindow = window.open('', '_blank');
       const previewElement = previewRef.current;
       
       if (previewElement && printWindow) {
-        // Get all computed styles
         const cardWidth = styles.card.width || '280px';
         const cardMargin = styles.card.margin || '10px';
         const containerPadding = styles.container.padding || '20px';
-        const containerBgColor = styles.container.backgroundColor || '#f5f5f5';
-        const containerBgImage = styles.container.backgroundImage || '';
         
-        // Create PDF-optimized HTML with proper layout
         const pdfHTML = `
           <!DOCTYPE html>
           <html>
@@ -150,25 +140,27 @@ export default function SpeakerCardDesigner() {
             <style>
               body { 
                 margin: 0; 
-                padding: 20px; 
+                padding: 0; 
                 font-family: Arial, sans-serif;
                 background: ${styles.container.backgroundColor};
                 ${styles.container.backgroundImage ? `background-image: ${styles.container.backgroundImage};` : ''}
                 background-size: cover;
                 background-position: center;
               }
-              .speakers-grid {
-                display: grid;
-                grid-template-columns: repeat(${cardsPerRow}, ${styles.card.width});
-                gap: ${parseInt(styles.card.margin) * 2}px;
+              .page {
+                width: 100%;
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
                 justify-content: center;
-                gap: ${cardMargin};
                 padding: ${containerPadding};
+                page-break-after: always;
               }
               .speaker-card {
                 width: ${cardWidth};
                 padding: ${styles.card.padding || '20px'};
-                margin: 0;
+                margin: ${cardMargin};
                 border-radius: ${styles.card.borderRadius || '12px'};
                 background-color: ${styles.card.backgroundColor || '#ffffff'};
                 ${styles.card.backgroundImage ? `background-image: ${styles.card.backgroundImage};` : ''}
@@ -179,7 +171,6 @@ export default function SpeakerCardDesigner() {
                 display: flex;
                 flex-direction: column;
                 gap: ${styles.card.gap};
-                break-inside: avoid;
               }
               .speaker-image {
                 width: ${styles.image.width};
@@ -218,25 +209,37 @@ export default function SpeakerCardDesigner() {
                   padding: 0 !important;
                   margin: 0 !important;
                 }
-                .speakers-container {
+                .page {
                   padding: 10mm !important;
                 }
               }
             </style>
           </head>
           <body>
-            <div class="speakers-grid">
-              ${speakers.map(speaker => `
-                <div class="speaker-card">
-                  <img src="${speaker.photoUrl || '/placeholder-speaker.jpg'}" alt="${speaker.name}" class="speaker-image" />
-                  <h2 class="speaker-name">${speaker.name}</h2>
-                  <p class="speaker-title">${speaker.position}</p>
-                  <p class="speaker-organization">${speaker.organization}</p>
-                </div>
-              `).join('')}
-            </div>
+            ${speakers.map((speaker, index) => {
+              // Start a new page for each card when cardsPerPage=1
+              // For multiple cards per page, group them
+              if (index % cardsPerPage === 0) {
+                let pageContent = '';
+                const pageSpeakers = speakers.slice(index, index + cardsPerPage);
+                
+                pageContent += `<div class="page">`;
+                pageSpeakers.forEach(sp => {
+                  pageContent += `
+                    <div class="speaker-card">
+                      <img src="${sp.photoUrl || '/placeholder-speaker.jpg'}" alt="${sp.name}" class="speaker-image" />
+                      <h2 class="speaker-name">${sp.name}</h2>
+                      <p class="speaker-title">${sp.position}</p>
+                      <p class="speaker-organization">${sp.organization}</p>
+                    </div>
+                  `;
+                });
+                pageContent += `</div>`;
+                return pageContent;
+              }
+              return '';
+            }).join('')}
             <script>
-              // Ensure images are loaded before printing
               window.onload = function() {
                 setTimeout(function() {
                   window.print();
@@ -251,7 +254,6 @@ export default function SpeakerCardDesigner() {
         printWindow.document.write(pdfHTML);
         printWindow.document.close();
         
-        // Wait for images to load then print
         setTimeout(() => {
           printWindow.print();
           printWindow.close();
@@ -301,15 +303,22 @@ export default function SpeakerCardDesigner() {
           <div className="space-y-4">
             <h3 className="font-medium">Card Layout</h3>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Cards per Row</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Cards per Page</label>
               <select
-                value={cardsPerRow}
-                onChange={(e) => setCardsPerRow(parseInt(e.target.value))}
+                value={cardsPerPage}
+                onChange={(e) => {
+                  const newValue = parseInt(e.target.value);
+                  setCardsPerPage(newValue);
+                  setCurrentPage(1);
+                }}
                 className="w-full p-2 border border-gray-300 rounded"
               >
+                <option value={1}>1 Card</option>
                 <option value={2}>2 Cards</option>
-                <option value={3}>3 Cards</option>
                 <option value={4}>4 Cards</option>
+                <option value={6}>6 Cards</option>
+                <option value={8}>8 Cards</option>
+                <option value={10}>10 Cards</option>
               </select>
             </div>
             <div>
@@ -486,29 +495,29 @@ export default function SpeakerCardDesigner() {
           <div className="space-y-4">
             <h3 className="font-medium">Text Settings</h3>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Name Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.name.fontSize}
-      onChange={(e) => handleStyleChange('name', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="20px"
-    />
-    <select
-      value={styles.name.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('name', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Name Font Size</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={styles.name.fontSize}
+                  onChange={(e) => handleStyleChange('name', 'fontSize', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                  placeholder="20px"
+                />
+                <select
+                  value={styles.name.fontFamily || 'Arial, sans-serif'}
+                  onChange={(e) => handleStyleChange('name', 'fontFamily', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                >
+                  <option value="Arial, sans-serif">Sans (Arial)</option>
+                  <option value="Georgia, serif">Serif (Georgia)</option>
+                  <option value="'Courier New', monospace">Mono (Courier New)</option>
+                  <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
+                  <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
+                  <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
+                </select>
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Name Color</label>
               <input
@@ -520,29 +529,29 @@ export default function SpeakerCardDesigner() {
               />
             </div>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Title Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.title.fontSize}
-      onChange={(e) => handleStyleChange('title', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="16px"
-    />
-    <select
-      value={styles.title.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('title', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Title Font Size</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={styles.title.fontSize}
+                  onChange={(e) => handleStyleChange('title', 'fontSize', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                  placeholder="16px"
+                />
+                <select
+                  value={styles.title.fontFamily || 'Arial, sans-serif'}
+                  onChange={(e) => handleStyleChange('title', 'fontFamily', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                >
+                  <option value="Arial, sans-serif">Sans (Arial)</option>
+                  <option value="Georgia, serif">Serif (Georgia)</option>
+                  <option value="'Courier New', monospace">Mono (Courier New)</option>
+                  <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
+                  <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
+                  <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
+                </select>
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Title Color</label>
               <input
@@ -554,29 +563,29 @@ export default function SpeakerCardDesigner() {
               />
             </div>
             <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Organization Font Size</label>
-  <div className="flex gap-2">
-    <input
-      type="text"
-      value={styles.organization.fontSize}
-      onChange={(e) => handleStyleChange('organization', 'fontSize', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-      placeholder="14px"
-    />
-    <select
-      value={styles.organization.fontFamily || 'Arial, sans-serif'}
-      onChange={(e) => handleStyleChange('organization', 'fontFamily', e.target.value)}
-      className="w-1/2 p-2 border border-gray-300 rounded"
-    >
-      <option value="Arial, sans-serif">Sans (Arial)</option>
-      <option value="Georgia, serif">Serif (Georgia)</option>
-      <option value="'Courier New', monospace">Mono (Courier New)</option>
-      <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
-      <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
-      <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
-    </select>
-  </div>
-</div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Organization Font Size</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={styles.organization.fontSize}
+                  onChange={(e) => handleStyleChange('organization', 'fontSize', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                  placeholder="14px"
+                />
+                <select
+                  value={styles.organization.fontFamily || 'Arial, sans-serif'}
+                  onChange={(e) => handleStyleChange('organization', 'fontFamily', e.target.value)}
+                  className="w-1/2 p-2 border border-gray-300 rounded"
+                >
+                  <option value="Arial, sans-serif">Sans (Arial)</option>
+                  <option value="Georgia, serif">Serif (Georgia)</option>
+                  <option value="'Courier New', monospace">Mono (Courier New)</option>
+                  <option value="Tahoma, Geneva, sans-serif">Sans (Tahoma)</option>
+                  <option value="'Times New Roman', Times, serif">Serif (Times New Roman)</option>
+                  <option value="'Roboto', Arial, sans-serif">Sans (Roboto)</option>
+                </select>
+              </div>
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Organization Color</label>
               <input
@@ -592,7 +601,6 @@ export default function SpeakerCardDesigner() {
 
         <div className="flex flex-col space-y-3 mt-6">
           <button
-            // onClick={saveDesign}
             className="w-full bg-blue-600 text-white py-2 px-4 rounded flex items-center justify-center hover:bg-blue-700 transition-colors"
             disabled={isLoading}
           >
@@ -608,22 +616,35 @@ export default function SpeakerCardDesigner() {
             <FiDownload className="mr-2" />
             {isLoading ? 'Exporting...' : 'Export to PDF'}
           </button>
-          
-          {/* <button
-            onClick={downloadHTML}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded flex items-center justify-center hover:bg-blue-700 transition-colors"
-          >
-            <FiCode className="mr-2" />
-            Download HTML
-          </button> */}
         </div>
       </div>
 
       {/* Live Preview */}
       <div className="w-full lg:w-2/3 p-2 overflow-auto">
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold mb-2">Live Preview ({speakers.length} speakers)</h2>
-          <p className="text-gray-600">Preview shows {cardsPerRow} cards per row</p>
+        <div className="mb-4 flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Live Preview ({speakers.length} speakers)</h2>
+          
+          {totalPages > 1 && (
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 flex items-center"
+              >
+                <FiChevronLeft className="mr-1" /> Prev
+              </button>
+              <span className="text-sm">
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1 border border-gray-300 rounded disabled:opacity-50 flex items-center"
+              >
+                Next <FiChevronRight className="ml-1" />
+              </button>
+            </div>
+          )}
         </div>
         
         <div
@@ -635,10 +656,16 @@ export default function SpeakerCardDesigner() {
           className="rounded-lg border border-gray-200 overflow-hidden"
         >
           <div
-            style={calculateGridColumns()}
-            className="grid p-6"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              minHeight: '100vh',
+              padding: '20px'
+            }}
           >
-            {speakers.map((speaker) => (
+            {currentSpeakers.map((speaker) => (
               <div key={speaker._id} style={styles.card}>
                 <img
                   src={speaker.photoUrl || '/placeholder-speaker.jpg'}
