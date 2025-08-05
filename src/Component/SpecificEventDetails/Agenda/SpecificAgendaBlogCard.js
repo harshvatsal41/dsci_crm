@@ -122,8 +122,8 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
 
   return (
     <div className="mx-auto p-6 ">
-      <div className="mb-4">
-        <div className="flex flex-wrap gap-3 mb-4 max-h-32 overflow-y-auto py-2 px-1">
+      <div className="mb-2">
+        <div className="flex flex-wrap gap-3 mb-2 max-h-32 overflow-y-auto py-1 px-1">
           <button
             onClick={() => setActiveFilter('All Days')}
             className={`px-3 py-1 rounded-full font-medium transition-all ${activeFilter === 'All Days'
@@ -148,9 +148,7 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
               </button>
             );
           })}
-        </div>
-
-        {/* Category Filters */}
+            {/* Category Filters */}
         <div className="flex flex-wrap gap-2">
           {categories.map(category => (
             <button
@@ -165,6 +163,9 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
             </button>
           ))}
         </div>
+        </div>
+
+      
       </div>
 
       {/* Agenda List */}
@@ -176,7 +177,7 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
           </div>
         ) : (
           <div 
-            className={`divide-y divide-gray-100 ${filteredData.length > 5 ? 'max-h-[750px] overflow-y-auto' : ''}`}
+            className={`divide-y divide-gray-100 ${filteredData.length > 5 ? 'max-h-[580px] overflow-y-auto' : ''}`}
             style={{
               scrollbarWidth: 'thin',
               scrollbarColor: '#9ca3af #f3f4f6',
