@@ -16,7 +16,7 @@ import { Plus, Trash2, X, Edit2, MapPin, Users, Building } from 'lucide-react'
 import { useDispatch } from 'react-redux'
 import { setLoading } from '@/Redux/Reducer/menuSlice'
 import SessionForm from './SessionForm'
-import {SpeakerApi, CollaborationApi} from '@/utilities/ApiManager'
+import {SpeakerApi, CollaborationApi, AgendaApi} from '@/utilities/ApiManager'
 
 const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   const dispatch = useDispatch()
@@ -27,7 +27,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   const [timeConflict, setTimeConflict] = useState(null)
   const [isCheckingConflict, setIsCheckingConflict] = useState(false)
   const [newCategory, setNewCategory] = useState('')
-  const [categoryInputType, setCategoryInputType] = useState('select') // 'select' or 'manual'
+  const [categoryInputType, setCategoryInputType] = useState('select')
 
   const {
     register,
@@ -66,19 +66,24 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [eventId])
 
-  // Set initial values if editing
   useEffect(() => {
     if (agendaData?._id) {
       reset({
         ...agendaData,
-        date: agendaData.date ? new Date(agendaData.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+        date: agendaData.date ? new Date(agendaData.date).toISOString().split('T')[0] : '',
         startTime: agendaData.startTime ? new Date(agendaData.startTime).toTimeString().substring(0, 5) : '09:00',
         endTime: agendaData.endTime ? new Date(agendaData.endTime).toTimeString().substring(0, 5) : '10:00',
+        category: agendaData.category || [],
+        session: agendaData.session || []
       })
     }
   }, [agendaData, reset])
+
+  const formatDateTime = (dateStr, timeStr) => {
+    return new Date(`${dateStr}T${timeStr}`).toISOString()
+  }
 
   const onSubmit = async (data) => {
     if (timeConflict) {
@@ -89,42 +94,41 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
     dispatch(setLoading(true))
     try {
       const payload = {
-        ...data,
-        startTime: new Date(`${data.date}T${data.startTime}`).toISOString(),
-        endTime: new Date(`${data.date}T${data.endTime}`).toISOString(),
-        date: new Date(data.date).toISOString()
+        title: data.title,
+        description: data.description,
+        yeaslyEventId: data.yeaslyEventId,
+        day: data.day,
+        date: formatDateTime(data.date, '00:00:00'), // Just date part
+        type: data.type,
+        startTime: formatDateTime(data.date, data.startTime),
+        endTime: formatDateTime(data.date, data.endTime),
+        category: data.category,
+        session: data.session.map(session => ({
+          ...session,
+          sessionSpeakers: session.sessionSpeakers || [],
+          sessionCollaborations: session.sessionCollaborations || []
+        }))
       }
 
-      let response
-      if (agendaData?._id) {
-        response = await fetch(`/api/agenda/${agendaData._id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        })
-        toast.success('Agenda updated successfully')
-      } else {
-        response = await fetch('/api/agenda', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(payload)
-        })
-        toast.success('Agenda created successfully')
-      }
+      const method = agendaData?._id ? 'PUT' : 'POST'
 
+      const response = await AgendaApi(payload, method, {Id:agendaData?._id})
+
+     if(response.statusCode === 200 || response.statusCode === 203 || response.status === "success"){
+      toast.success(agendaData?._id ? response.message || 'Agenda updated successfully' : 'Agenda created successfully')
       onSuccess?.()
       onClose?.()
+    }else{
+      toast.error(response.message || 'Failed to save agenda')
+    }
     } catch (error) {
-      console.error('Error saving agenda:', error)
-      toast.error(error.response?.data?.message || 'Failed to save agenda')
+      toast.error(error.message || 'Failed to save agenda')
     } finally {
       dispatch(setLoading(false))
     }
   }
+
+
 
   const handleAddCategory = () => {
     if (newCategory.trim()) {
@@ -143,6 +147,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   }
 
   const handleAddSession = (sessionData) => {
+    console.log(sessionData)
     const updatedSessions = [...(watch('session') || [])]
     if (currentSession !== null) {
       // Update existing session
@@ -457,17 +462,17 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
 
       {/* Session Form Modal */}
       {showSessionForm && (
-        <SessionForm
-          sessionData={currentSession !== null ? watch('session')[currentSession] : null}
-          speakers={speakers}
-          companies={companies}
-          onSave={handleAddSession}
-          onClose={() => {
-            setShowSessionForm(false)
-            setCurrentSession(null)
-          }}
-        />
-      )}
+          <SessionForm
+            sessionData={currentSession !== null ? watch('session')[currentSession] : null}
+            speakers={speakers}
+            companies={companies}
+            onSave={handleAddSession}
+            onClose={() => {
+              setShowSessionForm(false)
+              setCurrentSession(null)
+            }}
+          />
+        )}
     </Modal>
   )
 }
