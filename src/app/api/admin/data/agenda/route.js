@@ -213,26 +213,27 @@ export async function POST(req) {
             ]
         });
 
-        if (timeConflict) {
-            return NextResponse.json(
-                apiResponse({
-                    message: "Time slot conflicts with existing agenda item",
-                    conflictingItem: timeConflict.title,
-                    statusCode: STATUS_CODES.CONFLICT,
-                }),
-                { status: STATUS_CODES.CONFLICT }
-            );
-        }
+        // if (timeConflict) {
+        //     return NextResponse.json(
+        //         apiResponse({
+        //             message: `Time slot conflicts with "${timeConflict.title}" (${timeConflict.startTime.toLocaleTimeString()} - ${timeConflict.endTime.toLocaleTimeString()})`,
+        //             conflictingItem: {
+        //                 id: timeConflict._id,
+        //                 title: timeConflict.title,
+        //                 startTime: timeConflict.startTime,
+        //                 endTime: timeConflict.endTime
+        //             },
+        //             statusCode: STATUS_CODES.CONFLICT,
+        //         }),
+        //         { status: STATUS_CODES.CONFLICT }
+        //     );
+        // }
 
         // Create agenda
         const newAgenda = await Agenda.create(agendaData);
 
         // Populate references for response
-        const populatedAgenda = await Agenda.findById(newAgenda._id)
-            .populate("yeaslyEventId", "title date")
-            .populate("createdBy", "name email")
-            .populate("session.sessionSpeakers", "name designation company")
-            .populate("session.sessionCollaborations.company", "companyName logo website");
+        const populatedAgenda = newAgenda;
 
         return NextResponse.json(
             apiResponse({
