@@ -3,7 +3,7 @@ import Agenda from "@/Mongo/Model/DataModels/Agenda";
 import { apiResponse, STATUS_CODES } from "@/Helper/response";
 import { decodeTokenPayload } from "@/Helper/jwtValidator";
 import util from "@/Helper/apiUtils";
-import handleError from "@/Helper/errorHandler";
+import { handleError } from "@/Helper/errorHandler";
 import sanitizeInput from "@/Helper/sanitizeInput";
 import Employee from "@/Mongo/Model/AcessModels/Employee";
 
