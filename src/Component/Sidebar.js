@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   FiMenu, 
   FiX, 
@@ -16,39 +16,59 @@ import {
   FiBarChart2,
   FiMessageSquare,
   FiRotateCcw,
+  FiLoader,
 } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
-import { useSelector } from 'react-redux';
-import { selectFilteredMenu } from '@/Redux/Reducer/menuSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectFilteredMenu, setPermissions } from '@/Redux/Reducer/menuSlice';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const [expandedItems, setExpandedItems] = useState({});
   const [hasMounted, setHasMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const dispatch = useDispatch();
   const { Id } = useParams();
   // Get filtered menu items based on user role from Redux
   const menuItems = useSelector(selectFilteredMenu);
   
-  // Check for mobile screen size
+  // Check for mobile screen size and initialize permissions
+  const checkScreenSize = useCallback(() => {
+    setIsMobile(window.innerWidth < 768);
+    if (window.innerWidth >= 768) {
+      setIsOpen(true);
+    }
+  }, [setIsOpen]);
+
   useEffect(() => {
     setHasMounted(true);
-    const checkScreenSize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
-        setIsOpen(true);
+    
+    // Set permissions from session storage
+    const initializePermissions = () => {
+      try {
+        dispatch(setPermissions());
+      } catch (error) {
+        console.error('Error initializing permissions:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
+    initializePermissions();
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
+  }, [checkScreenSize, dispatch]);
 
-  if (!hasMounted) {
-    return null;
+  if (!hasMounted || isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-100">
+        <FiLoader className="animate-spin h-8 w-8 text-blue-500" />
+      </div>
+    );
   }
 
   const toggleExpand = (itemId) => {
