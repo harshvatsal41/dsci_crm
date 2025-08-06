@@ -5,7 +5,7 @@ import { Calendar, Clock, MapPin, Users, Building, Tag, ChevronRight, X, Edit, T
 import Modal from '@/Component/UI/Modal';
 import AgendaForm from './AgendaForm'; // Import your AgendaForm component
 
-const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
+const SpecificAgendaBlogCard = ({ agenda, onDelete, onSuccess }) => {
   const [selectedAgenda, setSelectedAgenda] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -69,8 +69,9 @@ const SpecificAgendaBlogCard = ({ agenda, onDelete, onEdit }) => {
   };
 
   const handleEditSuccess = () => {
+
     closeEditModal();
-    onEdit(); // Notify parent that edit was successful
+    onSuccess(); // Notify parent that edit was successful
   };
 
   const handleDelete = () => {
@@ -307,7 +308,7 @@ const AgendaListItem = ({ agenda, onClick, formatTimeRange, onEdit, onDelete }) 
 
   const handleDeleteClick = (e) => {
     e.stopPropagation();
-    onDelete();
+    onDelete(agenda._id);
   };
 
   return (

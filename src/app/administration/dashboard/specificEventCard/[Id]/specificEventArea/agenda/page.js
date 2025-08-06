@@ -34,11 +34,8 @@ export default function Agenda() {
     
 
     const onSuccess = () => {
-        alert("hi")
-
         fetchAgendas();
         setAgendas({type:"agenda",data:null , });
-        alert("hi")
     };
 
     const onClose = () => {
@@ -46,12 +43,12 @@ export default function Agenda() {
         fetchAgendas();
     };
 
-    const onEdit=(data)=>{
-        setAgendas({type:"edit",data:data});
-    }
 
-    const onDelete = () => {
-        toast.success('Agenda deleted successfully');
+    const onDelete = async (agendaId) => {
+        const res = await AgendaApi(null, "DEL", {Id: agendaId });
+        if (res.statusCode === 200 || res.status=== "success") {
+            toast.success(res.message || 'Agenda deleted successfully');
+        }
         fetchAgendas();
     };
 
@@ -109,7 +106,7 @@ export default function Agenda() {
             )}
             <SpecificAgendaBlogCard
                 onDelete={onDelete}
-                onEdit={onEdit}
+                onSuccess={onSuccess}
                 agenda={agendas}
             />
         </>

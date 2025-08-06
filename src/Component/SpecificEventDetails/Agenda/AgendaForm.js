@@ -174,7 +174,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
 
       if (response?.statusCode === 200 || response?.status === "success"  || response?.statusCode === 202) {
         toast.success(agendaData?._id ? 'Agenda updated successfully' : 'Agenda created successfully');
-        onClose()
+        onSuccess()
       } else {
         toast.error(response?.message || 'Failed to save agenda')
       }
