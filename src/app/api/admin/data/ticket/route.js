@@ -7,7 +7,6 @@ import Ticket from "@/Mongo/Model/DataModels/Ticket";
 import sanitizeInput from "@/Helper/sanitizeInput";
 import Employee from "@/Mongo/Model/AcessModels/Employee";
 import EventOutreach from "@/Mongo/Model/DataModels/yeaslyEvent";
-import { fillOffset } from "framer-motion";
 
 export async function GET(req) {
     try {
