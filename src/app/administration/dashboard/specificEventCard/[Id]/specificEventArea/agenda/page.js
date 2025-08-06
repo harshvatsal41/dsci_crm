@@ -17,9 +17,28 @@ export default function Agenda() {
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
 
+    const fetchAgendas = async () => {
+        dispatch(setLoading(true));
+        try {
+            const res = await AgendaApi(null, "GET", { Id });
+            if (res.statusCode === 200 || res.status=== "success") {
+                setAgendas({type:"agenda",data:res.data});
+                toast.success(res.message || 'Agendas loaded successfully');
+            }
+        } catch (error) {
+            toast.error('Failed to load agendas');
+        } finally {
+            dispatch(setLoading(false));
+        }
+    };
+    
+
     const onSuccess = () => {
+        alert("hi")
+
         fetchAgendas();
-        setAgendas({type:"agenda",data:null});
+        setAgendas({type:"agenda",data:null , });
+        alert("hi")
     };
 
     const onClose = () => {
@@ -36,20 +55,7 @@ export default function Agenda() {
         fetchAgendas();
     };
 
-    const fetchAgendas = async () => {
-        dispatch(setLoading(true));
-        try {
-            const res = await AgendaApi(null, "GET", { Id });
-            if (res.statusCode === 200 || res.status=== "success") {
-                setAgendas({type:"agenda",data:res.data});
-                toast.success(res.message || 'Agendas loaded successfully');
-            }
-        } catch (error) {
-            toast.error('Failed to load agendas');
-        } finally {
-            dispatch(setLoading(false));
-        }
-    };
+  
 
      const getCategories = () => {
         const categories = new Set()

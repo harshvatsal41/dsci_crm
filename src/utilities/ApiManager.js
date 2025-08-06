@@ -224,11 +224,12 @@ const AgendaApi= async(data, method, params={}) => {
         url=`${url}${params.Id}`;
     }
     else if(method==="PUT" && params.Id){
-        url=`${url}${params.Id}`;
+        url=`/api/admin/data/agenda/update?agendaId=${params.Id}`;
+
     }else if(method==="DEL"){
         url=`${url}${params.Id}`;
     }   
-    const res = await FetchWithAuth(url, method, data);
+    const res = await FetchWithAuth(url, method==="PUT" ? "POST" : method, data);
     return res;
 }
 

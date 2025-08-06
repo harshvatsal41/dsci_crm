@@ -116,24 +116,25 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     // Basic validation
     if (!formData.title.trim()) {
       toast.error('Title is required');
       return;
     }
-    
+  
     if (!formData.date) {
       toast.error('Date is required');
       return;
     }
-    
+  
     if (formData.endTime <= formData.startTime) {
       toast.error('End time must be after start time');
       return;
     }
-
+  
     dispatch(setLoading(true));
+  
     try {
       const payload = {
         title: formData.title,
@@ -141,11 +142,11 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
         yeaslyEventId: formData.yeaslyEventId,
         day: formData.day,
         date: formatDateTime(formData.date, '00:00:00'),
-        type: formData.type,
+        type: formData?.type || 'Keynote',
         startTime: formatDateTime(formData.date, formData.startTime),
         endTime: formatDateTime(formData.date, formData.endTime),
-        category: formData.category,
-        session: formData.session.map(session => ({
+        category: formData?.category || [],
+        session: (formData?.session || []).map(session => ({
           sessionTitle: session.sessionTitle || '',
           sessionDescription: session.sessionDescription || '',
           sessionLocation: session.sessionLocation || '',
@@ -154,15 +155,26 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
           sessionInstructions: session.sessionInstructions || [],
           tags: session.tags || []
         }))
-      }
-
+      };
+  
+      const form = new FormData();
+  
+      form.append('title', payload.title);
+      form.append('description', payload.description);
+      form.append('yeaslyEventId', payload.yeaslyEventId);
+      form.append('day', payload.day);
+      form.append('date', payload.date);
+      form.append('type', payload?.type);
+      form.append('startTime', payload.startTime);
+      form.append('endTime', payload.endTime);
+      form.append('category', JSON.stringify(payload.category));
+      form.append('session', JSON.stringify(payload.session));
       const method = agendaData?._id ? 'PUT' : 'POST'
-      const response = await AgendaApi(payload, method, { Id:agendaData?._id ? agendaData?._id : eventId })
+      const response = await AgendaApi(form, method, { Id:agendaData?._id ? agendaData?._id : eventId })
 
-      if (response?.statusCode === 200 || response?.status === "success") {
-        toast.success(agendaData?._id ? 'Agenda updated successfully' : 'Agenda created successfully')
-        onSuccess?.()
-        onClose?.()
+      if (response?.statusCode === 200 || response?.status === "success"  || response?.statusCode === 202) {
+        toast.success(agendaData?._id ? 'Agenda updated successfully' : 'Agenda created successfully');
+        onClose()
       } else {
         toast.error(response?.message || 'Failed to save agenda')
       }
@@ -244,6 +256,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
               value={formData.type}
               onChange={handleInputChange}
               options={[
+                { value: '', label: 'Select Session Type' },
                 { value: 'Keynote', label: 'Keynote' },
                 { value: 'Panel', label: 'Panel Discussion' },
                 { value: 'Workshop', label: 'Workshop' },
