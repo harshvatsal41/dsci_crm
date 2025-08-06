@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import Logout from "./Logout";
 import dynamic from 'next/dynamic';
 import { toast } from 'sonner';
-import { userPermissions } from "./UserPermission";
+import { UserPermissions } from "./UserPermission";
 
 // Dynamically import icons to avoid hydration mismatch
 const FiUser = dynamic(() => import('react-icons/fi').then(mod => mod.FiUser), { ssr: false });

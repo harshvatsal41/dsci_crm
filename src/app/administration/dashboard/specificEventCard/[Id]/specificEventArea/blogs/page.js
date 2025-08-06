@@ -1,6 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BlogApi } from '@/utilities/ApiManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
@@ -9,7 +9,7 @@ import SpecificBlogCard from '@/Component/SpecificEventDetails/Blogs/SpecificBlo
 import BlogsForm from '@/Component/SpecificEventDetails/Blogs/BlogsForm';
 import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 
 export default function Blogs() {
@@ -20,7 +20,7 @@ export default function Blogs() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-    userPermissions();
+    UserPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
 
     const onSuccess = () => {
@@ -39,7 +39,7 @@ export default function Blogs() {
         fetchBlogs();
     };
 
-    const fetchBlogs = async () => {
+    const fetchBlogs = useCallback(async () => {
         dispatch(setLoading(true));
         try {
             const res = await BlogApi(null, "GET", { Id });
@@ -52,11 +52,11 @@ export default function Blogs() {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    },[dispatch, Id]);
 
     useEffect(() => {
         fetchBlogs();
-    }, [Id]);
+    }, [fetchBlogs]);
 
     // Filter blogs by name, organization or description
     const filteredBlogs = {
@@ -126,12 +126,14 @@ export default function Blogs() {
                     onClose={onClose}
                 />
             )}
-            {(!formOpen && !edit.value) && <SpecificBlogCard
-                onDelete={onDelete}
-                setEdit={setEdit}
-                data={filteredBlogs}
-                type="blog"
-            />}"
+            {(!formOpen && !edit.value) && (
+    <SpecificBlogCard
+        onDelete={onDelete}
+        setEdit={setEdit}
+        data={filteredBlogs}
+        type="blog"
+    />
+)}
         </>
     );
 }

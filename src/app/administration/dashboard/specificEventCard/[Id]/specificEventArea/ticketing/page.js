@@ -1,6 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect , useCallback} from 'react';
 import { TicketApi } from '@/utilities/ApiManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
@@ -9,7 +9,7 @@ import SpecificTicketCard from '@/Component/SpecificEventDetails/Ticketing/Speci
 import TicketForm from '@/Component/SpecificEventDetails/Ticketing/TicketingForm';
 import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 export default function Ticketing() {
     const { Id } = useParams();
@@ -19,7 +19,7 @@ export default function Ticketing() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-    userPermissions();
+    UserPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
 
     const onSuccess = () => {
@@ -37,7 +37,7 @@ export default function Ticketing() {
         fetchTickets();
     };
 
-    const fetchTickets = async () => {
+    const fetchTickets = useCallback(async () => {
         dispatch(setLoading(true));
         try {
             const res = await TicketApi(null, "GET", { Id });
@@ -50,11 +50,11 @@ export default function Ticketing() {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    },[dispatch, Id]);
 
     useEffect(() => {
         fetchTickets();
-    }, [Id]);
+    }, [fetchTickets]);
 
     // Filter tickets by name, type or price
     const filteredTickets = {

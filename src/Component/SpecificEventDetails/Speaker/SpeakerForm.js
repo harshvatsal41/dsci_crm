@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { SpeakerApi } from '@/utilities/ApiManager';
@@ -45,7 +45,7 @@ const SpeakerForm = ({ edit, onSuccess, onClose }) => {
             setImageFile(null);
             setShouldRemoveImage(false);
         }
-    }, [edit]);
+    }, [edit, Id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

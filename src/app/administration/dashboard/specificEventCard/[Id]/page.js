@@ -1,6 +1,6 @@
 'use client';
 import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { EventApi, BroadFocusAreaApi } from '@/utilities/ApiManager';
 import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
@@ -42,7 +42,7 @@ export default function SpecificEventCard() {
     const isLoading = useSelector((state) => state.menu.loading);
 
 
-    const fetchEvent = async () => {
+    const fetchEvent = useCallback(async () => {
         try {
             dispatch(setLoading(true));
             const [eventRes] = await Promise.all([
@@ -57,11 +57,11 @@ export default function SpecificEventCard() {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    },[dispatch, Id]);
 
     useEffect(() => {
         if (Id) fetchEvent();
-    }, [Id]);
+    }, [Id, fetchEvent]);
 
     const exportToPDF = () => {
         router.push(`/administration/dashboard/exportSpeaker/${Id}`);

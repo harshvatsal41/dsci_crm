@@ -1,6 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {BroadFocusAreaApi} from '@/utilities/ApiManager';
 import { FiSearch } from 'react-icons/fi';
 import { useDispatch, useSelector } from 'react-redux';
@@ -9,7 +9,7 @@ import DashboardLoading from '@/app/administration/dashboard/loading';
 import SpecificEventCard from '@/Component/SpecificEventDetails/FocusArea/SpecificEventCard';
 import FocusAreaForm from '@/Component/SpecificEventDetails/FocusArea/FocusAreaForm';
 import {toast} from 'sonner';
-import {userPermissions} from '@/Component/UserPermission';
+import {UserPermissions} from '@/Component/UserPermission';
 
 
 export default function FocusArea() {
@@ -20,7 +20,7 @@ export default function FocusArea() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-    userPermissions();
+    UserPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
     const onSuccess = () => {
         setFormOpen(false);
@@ -38,7 +38,7 @@ export default function FocusArea() {
        fetchFocusArea();
     }
  
-    const fetchFocusArea = async () => {
+    const fetchFocusArea = useCallback(async () => {
         if (permissions?.focusArea?.includes("read")===false){ 
             toast.error("You don't have permission to read this focus area");
             return;
@@ -51,13 +51,13 @@ export default function FocusArea() {
             toast.success(res.message || 'Operation Success');
         }
         dispatch(setLoading(false));
-    };
+    },[dispatch,Id,permissions?.focusArea]);
 
 
     useEffect(() => {
       
         fetchFocusArea();
-    }, [Id]);
+    }, [fetchFocusArea]);
     
     if(isLoading){
         return <DashboardLoading />;

@@ -1,5 +1,5 @@
 'use client';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect , useCallback} from 'react';
 import { FiUser, FiImage, FiSettings, FiGrid, FiDownload, FiChevronLeft, FiChevronRight, FiItalic, FiBold, FiUnderline, FiType, FiLayout, FiUpload, FiPlus, FiTrash2, FiMove } from 'react-icons/fi';
 import { SpeakerApi } from '@/utilities/ApiManager';
 import { useParams } from 'next/navigation';
@@ -445,7 +445,7 @@ const SpeakerCardGenerator = () => {
     };
 
     // Generate canvas with multiple cards
-    const generateCanvas = () => {
+    const generateCanvas = useCallback(() => {
         const canvas = canvasRef.current;
         if (!canvas || speakers.length === 0) return;
 
@@ -470,7 +470,7 @@ const SpeakerCardGenerator = () => {
         } else {
             drawCards(ctx, width, height);
         }
-    };
+    },[canvasRef, speakers, calculateDimensions, backgroundColor, backgroundImage]);
 
     // Draw multiple cards
     const drawCards = (ctx, canvasWidth, canvasHeight) => {

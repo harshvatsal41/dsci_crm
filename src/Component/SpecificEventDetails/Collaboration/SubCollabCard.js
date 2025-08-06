@@ -4,7 +4,7 @@ import { FiEdit2, FiTrash2, FiChevronLeft, FiChevronRight, FiEye, FiEyeOff } fro
 import { formatDate } from '@/Component/UI/TableFormat';
 import Modal from '@/Component/UI/Modal'; 
 import { toast } from 'sonner';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 import { useSelector } from 'react-redux';
 
 const SubCollaborationCard = ({ data = [], onDelete, setEdit }) => {
@@ -13,7 +13,7 @@ const SubCollaborationCard = ({ data = [], onDelete, setEdit }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  userPermissions();
+  UserPermissions();
   const permissions = useSelector((state) => state.menu.permissions);
 
   const handlePrev = () => {

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { toast } from 'react-hot-toast'
 import Modal from '@/Component/UI/Modal'
 import {
@@ -55,7 +55,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
     return date.toISOString().split('T')[0];
   };
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [speakersResponse, companiesResponse] = await Promise.all([
         SpeakerApi(null, 'GET', { Id: eventId }),
@@ -72,7 +72,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
     } catch (error) {
       console.error('Error fetching speakers and companies:', error)
     }
-  }
+  }, [eventId])
 
   useEffect(() => {
     fetchData()
@@ -92,7 +92,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
         session: agendaData.session || []
       })
     }
-  }, [eventId, agendaData])
+  }, [eventId, agendaData, fetchData])
 
   const formatDateTime = (dateStr, timeStr) => {
     const timeWithSeconds = timeStr.includes(':') && timeStr.split(':').length === 2 

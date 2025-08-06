@@ -1,7 +1,7 @@
 // Component/usermanagement/usermanagementTable.js
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect , useCallback} from 'react';
 import UserTable from './UserTable';
 import RoleTable from './RoleTable';
 import { Button } from '@/Component/UI/TableFormat';
@@ -17,13 +17,14 @@ export default function UserManagementTable() {
   const dispatch = useDispatch();
   const isUpdate = useSelector((state) => state.menu.isUpdate);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     dispatch(setLoading(true));
     try {
       const [usersData, rolesData] = await Promise.all([
         Employee(),
         Roles()
       ]);
+    
       setUsers(usersData.data);
       setRoles(rolesData.data);
     } catch (error) {
@@ -32,16 +33,16 @@ export default function UserManagementTable() {
       dispatch(setIsUpdate(false));
       dispatch(setLoading(false));
     }
-  };
+  },[dispatch]);
   
   useEffect(() => {
     fetchData();
-  }, [isUpdate]);
+  }, [isUpdate, fetchData]);
   
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
 
 

@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 export default function SpecificTestimonialCard({ setEdit, data, onDelete }) {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ export default function SpecificTestimonialCard({ setEdit, data, onDelete }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [testimonialToDelete, setTestimonialToDelete] = useState(null);
-  userPermissions();
+  UserPermissions();
   const permissions = useSelector((state) => state.menu.permissions);
 
   const openModal = (testimonial) => {

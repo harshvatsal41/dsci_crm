@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { ConfirmDialog } from '@/Component/UI/TableFormat';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 import { normalizeImagePath } from '@/Component/HelperFunction';
 
 export default function SpecificEventCard({ setEdit, data, type = 'focusArea', onDelete }) {
@@ -19,7 +19,7 @@ export default function SpecificEventCard({ setEdit, data, type = 'focusArea', o
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
 
-  userPermissions();
+  UserPermissions();
   const permissions = useSelector((state) => state.menu.permissions);
 
   // Configuration for different card types

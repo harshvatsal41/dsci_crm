@@ -11,13 +11,13 @@ import SubCollaborationForm from '@/Component/SpecificEventDetails/Collaboration
 import SubCollaborationCard from '@/Component/SpecificEventDetails/Collaboration/SubCollabCard';
 import { toast } from 'sonner';
 import { FiSearch, FiPlus } from 'react-icons/fi';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 export default function Collaboration() {
     const { Id } = useParams();
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-    userPermissions();
+    UserPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
     // State management
     const [state, setState] = useState({

@@ -1,6 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useCallback } from 'react';
 import { TestimonialApi } from '@/utilities/ApiManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
@@ -10,7 +10,7 @@ import SpecificTestimonialCard from '@/Component/SpecificEventDetails/Testimonia
 import { toast } from 'sonner';
 import { Button } from '@/Component/UI/TableFormat';
 import { FiSearch } from 'react-icons/fi';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 
 export default function TestimonialPage() {
@@ -21,7 +21,7 @@ export default function TestimonialPage() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-    userPermissions();
+    UserPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
     const onSuccess = () => {
         setFormOpen(false);
@@ -38,7 +38,7 @@ export default function TestimonialPage() {
         fetchTestimonials();
     };
 
-    const fetchTestimonials = async () => {
+    const fetchTestimonials = useCallback(async () => {
         dispatch(setLoading(true));
         try {
             const res = await TestimonialApi(null, "GET", { Id });
@@ -51,11 +51,11 @@ export default function TestimonialPage() {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    },[dispatch, Id]);
 
     useEffect(() => {
         fetchTestimonials();
-    }, [Id]);
+    }, [fetchTestimonials]);
 
     if (isLoading) {
         return <DashboardLoading />;

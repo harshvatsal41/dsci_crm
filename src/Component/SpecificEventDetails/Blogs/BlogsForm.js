@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { useParams } from 'next/navigation';
@@ -30,18 +30,7 @@ const BlogsForm = ({ edit, onSuccess, onClose }) => {
     const [validationErrors, setValidationErrors] = useState({});
     const [isNewImageUploaded, setIsNewImageUploaded] = useState(false);
 
-    useEffect(() => {
-        if (edit?.value) {
-            loadBlogData(edit.data);
-        } else {
-            setFormData({
-                ...initialState,
-                eventId: Id
-            });
-        }
-    }, [edit, Id]);
-
-    const loadBlogData = async (data) => {
+    const loadBlogData = useCallback(async (data) => {
         try {
             dispatch(setLoading(true));
             setFormData({
@@ -62,10 +51,18 @@ const BlogsForm = ({ edit, onSuccess, onClose }) => {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    }, [dispatch, Id]);
 
-
-
+    useEffect(() => {
+        if (edit?.value) {
+            loadBlogData(edit.data);
+        } else {
+            setFormData({
+                ...initialState,
+                eventId: Id
+            });
+        }
+    }, [edit, Id, loadBlogData]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

@@ -2,12 +2,12 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/Component/UI/TableFormat';
 import { FiCalendar, FiEye, FiEdit2 } from 'react-icons/fi';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 import { useSelector } from 'react-redux';
 import { permissions } from '@/Redux/Reducer/menuSlice';
 import { toast } from 'sonner';
 const EventCard = ({ event, onView, onEdit }) => {
-  userPermissions();
+  UserPermissions();
   const permissions = useSelector((state) => state.menu.permissions);
 
   const handleAction = (e, action) => {

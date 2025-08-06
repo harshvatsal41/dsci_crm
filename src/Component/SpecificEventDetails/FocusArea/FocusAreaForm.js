@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { useParams } from 'next/navigation';
@@ -27,18 +27,7 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
   const [previewImage, setPreviewImage] = useState('');
   const [isNewImageUploaded, setIsNewImageUploaded] = useState(false);
 
-  useEffect(() => {
-    if (edit?.value) {
-      loadFocusAreaData(edit.data);
-    } else {
-      setFormData({
-        ...initialState,
-        eventId: Id
-      });
-    }
-  }, [edit, Id]);
-
-  const loadFocusAreaData = async (data) => {
+  const loadFocusAreaData = useCallback(async (data) => {
     const imageUrl = normalizeImagePath(data?.imageUrlPath);
       try {
         dispatch(setLoading(true));
@@ -57,7 +46,20 @@ const FocusAreaForm = ({ edit, onSuccess, onClose }) => {
     } finally {
       dispatch(setLoading(false));
     }
-  };
+  },[dispatch, Id]);
+
+  useEffect(() => {
+    if (edit?.value) {
+      loadFocusAreaData(edit.data);
+    } else {
+      setFormData({
+        ...initialState,
+        eventId: Id
+      });
+    }
+  }, [edit, Id, loadFocusAreaData]);
+
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;

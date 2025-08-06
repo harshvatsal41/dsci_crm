@@ -10,7 +10,7 @@ import EventForm from '@/Component/Dashboard/EventForm';
 import { Button } from '@/Component/UI/TableFormat';
 import DashboardLoading from './loading';
 import { useRouter } from 'next/navigation';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 
 export default function DashboardPage() {
@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.menu.loading);
-  userPermissions();
+  UserPermissions();
   const permissions = useSelector((state) => state.menu.permissions);
   console.log(permissions);
   const fetchEvents = useCallback(async () => {

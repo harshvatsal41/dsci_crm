@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useCallback} from "react";
 import Modal from "../UI/Modal";
 import { InputField, NativeSelectField, InfoCard } from "../UI/ReusableCom";
 import { motion } from "framer-motion";
@@ -60,7 +60,16 @@ const UserManagementForm = () => {
       }
       
     
-  }, [data.action]);
+  }, [
+    data.action,
+    data.data?.username,
+    data.data?.email,
+    data.data?.contactNo,
+    data.data?.role,
+    data.data?.isDisabled,
+    data.data?.isSuperAdmin,
+    data.data?.isVerified
+  ]);
 
   // Handle form input changes
   const handleChange = (e) => {

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { toast } from 'react-toastify';
@@ -42,15 +42,7 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
         eligibility: ''
     }]);
 
-    useEffect(() => {
-        if (edit?.value) {
-            loadTicketData(edit.data);
-        } else {
-            setFormData(initialState);
-        }
-    }, [edit]);
-
-    const loadTicketData = async (data) => {
+    const loadTicketData = useCallback(async (data) => {
         try {
             dispatch(setLoading(true));
             setFormData({
@@ -82,8 +74,18 @@ const TicketForm = ({ edit, onSuccess, onClose, eventId }) => {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    },[dispatch]);
 
+
+    useEffect(() => {
+        if (edit?.value) {
+            loadTicketData(edit.data);
+        } else {
+            setFormData(initialState);
+        }
+    }, [edit, loadTicketData]);
+
+    
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
         

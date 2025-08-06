@@ -1,6 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { SpeakerApi } from '@/utilities/ApiManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
@@ -9,7 +9,7 @@ import SpecificSpeakerCard from '@/Component/SpecificEventDetails/Speaker/Specif
 import SpeakerForm from '@/Component/SpecificEventDetails/Speaker/SpeakerForm';
 import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 
 export default function Speaker() {
@@ -21,7 +21,7 @@ export default function Speaker() {
     const [searchField, setSearchField] = useState('name');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-    userPermissions();
+    UserPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
     const onSuccess = () => {
         setFormOpen(false);
@@ -38,7 +38,7 @@ export default function Speaker() {
         fetchSpeakers();
     };
 
-    const fetchSpeakers = async () => {
+    const fetchSpeakers = useCallback(async () => {
         if (permissions?.speaker?.includes("read")===false){
             toast.error("You don't have permission to read this speaker");
             return;
@@ -56,11 +56,11 @@ export default function Speaker() {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    },[dispatch,Id, permissions?.speaker]);
 
     useEffect(() => {
         fetchSpeakers();
-    }, [Id]);
+    }, [fetchSpeakers]);
 
     if (isLoading) {
         return <DashboardLoading />;

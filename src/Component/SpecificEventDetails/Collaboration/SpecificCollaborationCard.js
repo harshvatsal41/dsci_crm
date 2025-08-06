@@ -5,11 +5,11 @@ import { formatDate } from '@/Component/UI/TableFormat';
 import Modal from '@/Component/UI/Modal';
 import { toast } from 'sonner';
 import { useSelector } from 'react-redux';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 const SpecificCollaborationCard = ({ data, onDelete, setEdit }) => {
   const [selectedItem, setSelectedItem] = useState(null);
-  userPermissions();
+  UserPermissions();
   const permissions = useSelector((state) => state.menu.permissions);
   
   // Safely extract the data array

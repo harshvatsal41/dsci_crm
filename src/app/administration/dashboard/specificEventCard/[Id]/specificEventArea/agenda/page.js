@@ -17,7 +17,7 @@ export default function Agenda() {
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
 
-    const fetchAgendas = async () => {
+    const fetchAgendas = useCallback(async () => {
         dispatch(setLoading(true));
         try {
             const res = await AgendaApi(null, "GET", { Id });
@@ -30,7 +30,7 @@ export default function Agenda() {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    },[dispatch, Id]);
     
 
     const onSuccess = () => {
@@ -69,7 +69,7 @@ export default function Agenda() {
      let categories = getCategories();
     useEffect(() => {
         fetchAgendas();
-    }, [Id]);
+    }, [fetchAgendas]);
 
     if (isLoading) {
         return <DashboardLoading />;

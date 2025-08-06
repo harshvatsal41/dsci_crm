@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
 import { useParams } from 'next/navigation';
@@ -43,63 +43,7 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
     const [originalImagePath, setOriginalImagePath] = useState('');
     const [imageRemoved, setImageRemoved] = useState(false);
 
-    useEffect(() => {
-        const loadSubCategories = async () => {
-            try {
-                setLoadingSubCategories(true);
-                const response = await ColabCategoryApi(null, "GET", { Id });
-                if (response.statusCode === 200 || response.status === "success") {
-                    setSubCategories(response.data);
-                }
-            } catch (error) {
-                toast.error('Failed to load subcategories');
-            } finally {
-                setLoadingSubCategories(false);
-            }
-        };
-
-        loadSubCategories();
-
-        if (edit?.value) {
-            loadCollaborationData(edit?.data?.data);
-        } else {
-            setFormData({
-                ...initialState,
-                yeaslyEventId: Id
-            });
-            // Reset image states for new creation
-            resetImageStates();
-        }
-    }, [edit, Id]);
-
-    const resetImageStates = () => {
-        setPreviewImage('');
-        setOriginalImagePath('');
-        setImageFile(null);
-        setImageChanged(false);
-        setImageRemoved(false);
-    };
-
-    const constructImageUrl = (imagePath) => {
-        if (!imagePath) return '';
-        
-        // If it's already a full URL (starts with http/https), return as is
-        if (imagePath.startsWith('http')) {
-            return imagePath;
-        }
-        
-        // If it starts with a slash, it's an absolute path
-        if (imagePath.startsWith('/')) {
-            return imagePath;
-        }
-        
-        // If it's a relative path, construct the full URL
-        // Adjust this base URL according to your API setup
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
-        return `${baseUrl}/${imagePath}`;
-    };
-
-    const loadCollaborationData = async (data) => {
+    const loadCollaborationData = useCallback(async (data) => {
         try {
             dispatch(setLoading(true));
             setFormData({
@@ -138,8 +82,68 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
         } finally {
             dispatch(setLoading(false));
         }
+    }, [dispatch, Id]);
+
+    const loadSubCategories = useCallback(async () => {
+        try {
+            setLoadingSubCategories(true);
+            const response = await ColabCategoryApi(null, "GET", { Id });
+            if (response.statusCode === 200 || response.status === "success") {
+                setSubCategories(response.data);
+            }
+        } catch (error) {
+            toast.error('Failed to load subcategories');
+        } finally {
+            setLoadingSubCategories(false);
+        }
+    }, [Id]);
+
+
+    useEffect(() => {
+       
+
+        loadSubCategories();
+
+        if (edit?.value) {
+            loadCollaborationData(edit?.data?.data);
+        } else {
+            setFormData({
+                ...initialState,
+                yeaslyEventId: Id
+            });
+            // Reset image states for new creation
+            resetImageStates();
+        }
+    }, [edit, Id, loadCollaborationData, loadSubCategories]);
+
+    const resetImageStates = () => {
+        setPreviewImage('');
+        setOriginalImagePath('');
+        setImageFile(null);
+        setImageChanged(false);
+        setImageRemoved(false);
     };
 
+    const constructImageUrl = (imagePath) => {
+        if (!imagePath) return '';
+        
+        // If it's already a full URL (starts with http/https), return as is
+        if (imagePath.startsWith('http')) {
+            return imagePath;
+        }
+        
+        // If it starts with a slash, it's an absolute path
+        if (imagePath.startsWith('/')) {
+            return imagePath;
+        }
+        
+        // If it's a relative path, construct the full URL
+        // Adjust this base URL according to your API setup
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+        return `${baseUrl}/${imagePath}`;
+    };
+
+   
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({

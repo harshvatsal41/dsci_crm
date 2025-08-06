@@ -1,6 +1,6 @@
 'use client'
 import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FaqApi } from '@/utilities/ApiManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading } from '@/Redux/Reducer/menuSlice';
@@ -9,7 +9,7 @@ import SpecificFAQCard from '@/Component/SpecificEventDetails/Faq/SpecificFAQCar
 import FaqForm from '@/Component/SpecificEventDetails/Faq/FaqForm';
 import { toast } from 'sonner';
 import { FiSearch } from 'react-icons/fi';
-import { userPermissions } from '@/Component/UserPermission';
+import { UserPermissions } from '@/Component/UserPermission';
 
 export default function FAQ() {
     const { Id } = useParams();
@@ -19,7 +19,7 @@ export default function FAQ() {
     const [search, setSearch] = useState('');
     const dispatch = useDispatch();
     const isLoading = useSelector((state) => state.menu.loading);
-    userPermissions();
+    UserPermissions();
     const permissions = useSelector((state) => state.menu.permissions);
 
     const onSuccess = () => {
@@ -37,7 +37,7 @@ export default function FAQ() {
         fetchFaqs();
     };
 
-    const fetchFaqs = async () => {
+    const fetchFaqs = useCallback(async () => {
         dispatch(setLoading(true));
         try {
             const res = await FaqApi(null, "GET", { Id });
@@ -51,12 +51,12 @@ export default function FAQ() {
         } finally {
             dispatch(setLoading(false));
         }
-    };
+    },[dispatch, Id]);
 
     useEffect(() => {
         
         fetchFaqs();
-    }, [Id]);
+    }, [fetchFaqs]);
 
     if (isLoading) {
         return <DashboardLoading />;
