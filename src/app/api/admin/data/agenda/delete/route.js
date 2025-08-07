@@ -33,7 +33,7 @@ export async function POST(req){
         const { searchParams } = new URL(req.url);
         const agendaId = sanitizeInput(searchParams.get("agendaId"));
 
-        const agenda = await Agenda.findById(agendaId);
+        let agenda = await Agenda.findById(agendaId);
         if (!agenda) {
             return NextResponse.json(apiResponse({
                 message: "Agenda not found",
@@ -41,8 +41,19 @@ export async function POST(req){
             }), { status: STATUS_CODES.NOT_FOUND });
         }
 
-        agenda.isDeleted = true;
-        agenda.updatedBy = user._id;
+        if(agenda.isDeleted){
+            return NextResponse.json(apiResponse({
+                message: "Agenda already deleted",
+                statusCode: STATUS_CODES.NOT_FOUND,
+            }), { status: STATUS_CODES.NOT_FOUND });
+        }
+        
+        agenda = await Agenda.findByIdAndUpdate(agendaId, { 
+            isDeleted: true,
+            deletedBy: user._id,
+            deletedAt: new Date(), 
+        });
+        console.log("Agenda:", agenda);
 
         await agenda.save();
 
@@ -52,6 +63,7 @@ export async function POST(req){
             statusCode: STATUS_CODES.DELETESUCCESS,
         }), { status: STATUS_CODES.DELETESUCCESS });
     } catch (error) {
+        console.log("Error deleting agenda:", error);
         return NextResponse.json(handleError(error), {
             status: STATUS_CODES.INTERNAL_ERROR,
         });
