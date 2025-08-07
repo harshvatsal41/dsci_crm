@@ -68,7 +68,6 @@ const AgendaSchema = new mongoose.Schema({
                 {
                     type: mongoose.Schema.Types.ObjectId,
                     ref: "Speaker",
-                    default: [],
                 },
             ],
             sessionCollaborations: [
@@ -76,20 +75,20 @@ const AgendaSchema = new mongoose.Schema({
                     head: {
                         type: String,
                         trim: true,
+                        default: null,
                     },
                     company: {
                         type: mongoose.Schema.Types.ObjectId,
                         ref: "Collaboration",
-                        default: [],
-                    },
-
+                        default: null,
+                    }
                 },
             ],
             tags: [
                 {
                     type: String,
                     trim: true,
-                    default: [],
+                    default: null,
                 },
             ],
         },
