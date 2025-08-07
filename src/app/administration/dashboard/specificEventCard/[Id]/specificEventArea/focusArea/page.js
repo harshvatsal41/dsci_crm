@@ -38,12 +38,9 @@ export default function FocusArea() {
        fetchFocusArea();
     }
  
+    
     const fetchFocusArea = useCallback(async () => {
-        if (permissions?.focusArea?.includes("read")===false){ 
-            toast.error("You don't have permission to read this focus area");
-            return;
-        }
-        
+       
         dispatch(setLoading(true));
         const res = await BroadFocusAreaApi(null, "GET", {Id});
         if(res.statusCode === 200){
@@ -51,7 +48,7 @@ export default function FocusArea() {
             toast.success(res.message || 'Operation Success');
         }
         dispatch(setLoading(false));
-    },[dispatch,Id,permissions?.focusArea]);
+    },[dispatch,Id]);
 
 
     useEffect(() => {
@@ -62,7 +59,12 @@ export default function FocusArea() {
     if(isLoading){
         return <DashboardLoading />;
     }
-
+ 
+    if (permissions?.focusArea?.includes("read")===false){ 
+        toast.error("You don't have permission to read this focus area");
+        return;
+    }
+    
     // Filtered focus areas by name
     const filteredFocusAreas = focusArea.data.filter(fa =>
         fa?.name?.toLowerCase().includes(search.toLowerCase())

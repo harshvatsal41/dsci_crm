@@ -66,6 +66,10 @@ export default function SpecificTestimonialCard({ setEdit, data, onDelete }) {
       day: 'numeric'
     });
   };
+  
+  if(!data?.data?.length){
+    return <div className="p-6"><p>No testimonial found</p></div>
+  }
 
   return (
     <div className="p-6">

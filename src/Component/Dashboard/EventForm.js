@@ -112,7 +112,7 @@ export default function EventForm({ onSuccess, onClose, eventData = {} }) {
       const method = eventData?.editMode ? 'PUT' : 'POST';
       const response = await EventApi(submitData, method, method === 'PUT' ? eventData : {});
   
-      if(response.statusCode === 200){
+      if(response.statusCode === 200 || response.status === "success" || response.statusCode===201){
         onSuccess(response.data);
         toast.success(`${response.message}`);
         onClose();
@@ -187,6 +187,7 @@ export default function EventForm({ onSuccess, onClose, eventData = {} }) {
         value={formData.description}
         onChange={handleChange}
         rows={4}
+        required
         containerClass="mb-4"
       />
       
@@ -300,6 +301,7 @@ export default function EventForm({ onSuccess, onClose, eventData = {} }) {
         onChange={handleChange}
         placeholder="https://maps.google.com/..."
         containerClass="mt-4"
+        required
       />
     </div>
   );

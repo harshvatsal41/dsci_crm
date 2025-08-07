@@ -81,7 +81,7 @@ export default function DashboardPage() {
     <section className=" h-full overflow-auto">
       <div className="flex p-4 justify-between items-center mb-1">
         <h1 className="text-2xl font-bold">Event Dashboard</h1>
-        <Button
+        {permissions?.event?.includes("create") && <Button
           onClick={() => {
             if (!permissions?.event?.includes("create")) {
               toast.error("You don't have permission to create this event");
@@ -92,7 +92,7 @@ export default function DashboardPage() {
           className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
         >
           Create New Event
-        </Button>
+        </Button>}
       </div>
 
       {events.length === 0 ? (

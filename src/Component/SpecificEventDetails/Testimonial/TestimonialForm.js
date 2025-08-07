@@ -143,39 +143,44 @@ const TestimonialForm = ({ edit, onSuccess, onClose }) => {
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <InputField 
-                        label="Name *" 
+                        label="Name " 
                         name="name" 
+                        required
                         value={formData.name} 
                         onChange={handleChange} 
                         error={validationErrors.name}
                     />
                     <InputField 
-                        label="Organization *" 
+                        label="Organization " 
                         name="organization" 
+                        required
                         value={formData.organization} 
                         onChange={handleChange} 
                         error={validationErrors.organization}
                     />
                     <InputField 
-                        label="Email *" 
+                        label="Email " 
                         name="email" 
                         type="email" 
+                        required
                         value={formData.email} 
                         onChange={handleChange} 
                         error={validationErrors.email}
                     />
                     <InputField 
-                        label="Content Weight *" 
+                        label="Content Weight " 
                         name="contentWeight" 
                         type="number" 
+                        required
                         min="0"
                         value={formData.contentWeight} 
                         onChange={handleChange} 
                         error={validationErrors.contentWeight}
                     />
                     <NativeSelectField
-                        label="Status *"
+                        label="Status "
                         name="status"
+                        required
                         value={formData.status}
                         onChange={handleChange}
                         options={[
@@ -186,8 +191,9 @@ const TestimonialForm = ({ edit, onSuccess, onClose }) => {
                 </div>
 
                 <TextAreaField 
-                    label="Description *" 
+                    label="Description " 
                     name="description" 
+                    required
                     value={formData.description} 
                     onChange={handleChange} 
                     rows={3}
@@ -195,8 +201,9 @@ const TestimonialForm = ({ edit, onSuccess, onClose }) => {
                 />
 
                 <TextAreaField 
-                    label="Testimonial Content *" 
+                    label="Testimonial Content " 
                     name="body" 
+                    required
                     value={formData.body} 
                     onChange={handleChange} 
                     rows={5}

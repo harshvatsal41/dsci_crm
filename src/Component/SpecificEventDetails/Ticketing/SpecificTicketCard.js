@@ -89,6 +89,10 @@ export default function SpecificTicketCard({ setEdit, data, onDelete }) {
     );
   };
 
+  if(!data?.data?.length){
+    return <div className="p-6"><p>No ticket found</p></div>
+  }
+
   return (
     <div className="p-6">
       <ConfirmDialog

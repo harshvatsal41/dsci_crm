@@ -39,10 +39,7 @@ export default function Speaker() {
     };
 
     const fetchSpeakers = useCallback(async () => {
-        if (permissions?.speaker?.includes("read")===false){
-            toast.error("You don't have permission to read this speaker");
-            return;
-        }
+    
         dispatch(setLoading(true));
         try {
             const res = await SpeakerApi(null, "GET", { Id });
@@ -56,7 +53,7 @@ export default function Speaker() {
         } finally {
             dispatch(setLoading(false));
         }
-    },[dispatch,Id, permissions?.speaker]);
+    },[dispatch,Id]);
 
     useEffect(() => {
         fetchSpeakers();
@@ -74,6 +71,11 @@ export default function Speaker() {
             return val.includes(search.toLowerCase());
         })
     };
+
+    if (permissions?.speaker?.includes("read")===false){
+        toast.error("You don't have permission to read this speaker");
+        return;
+    }
 
     return (
         <>
