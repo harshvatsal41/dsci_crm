@@ -7,11 +7,11 @@ import { setLoading, setPermissions } from "@/Redux/Reducer/menuSlice";
 import { InputField } from "@/Component/UI/ReusableCom";
 import { Eye, EyeOff } from "lucide-react";
 import { LoginApi } from "@/utilities/ApiManager";
+import { toast } from "sonner";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState(null);
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.menu?.loading ?? false);
   const router = useRouter();
@@ -19,10 +19,15 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setMessage(null);
     dispatch(setLoading(true));
 
     const res = await LoginApi(formData);
+
+    if(res.error){
+      toast.error(res.error);
+      dispatch(setLoading(false));
+      return;
+    }
   
     if (res.statusCode===200) {
       document.cookie = `dsciAuthToken=${res.token}; path=/;`;
@@ -31,10 +36,10 @@ export default function Login() {
       sessionStorage.setItem("dsciAuthData", JSON.stringify({userName: res?.user?.username, role: res?.role, permissions: res?.user?.permissions, email: res?.user?.email, isSuperAdmin: res?.user?.isSuperAdmin}));
       dispatch(setPermissions());
       dispatch(login({ token: res?.token, role: res?.role, user: res?.user }));
-      setMessage("Logged in successfully");
+      toast.success(res.message || "Logged in successfully");
       router.push("/administration/dashboard");
     } else {
-      setMessage(res.error);
+      toast.error(res.error || "Something went wrong. Please try again.");
     }
     dispatch(setLoading(false));
   
@@ -80,19 +85,12 @@ export default function Login() {
             </button>
           </div>
 
-          {message && (
-            <p className={`text-sm ${message.includes("successfully") ? "text-green-600" : "text-red-500"}`}>
-              {message}
-            </p>
-          )}
-
           <button
             type="submit"
-            disabled={loading}
             className={`w-full py-2 px-4 rounded-md text-white font-medium transition-colors
-              ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
+              bg-blue-600 hover:bg-blue-700`}
           >
-            {loading ? "Logging in..." : "Log In"}
+            {"Log In"}
           </button>
         </form>
       </div>

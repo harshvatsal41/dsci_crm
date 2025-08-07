@@ -71,7 +71,7 @@ export const FetchWithAuth = async (
     if (!response.ok) {
       const message = responseData?.error || responseData?.message || "Something went wrong";
       toast.error(message);
-      throw new Error(message);
+      // throw new Error(message);
     }else{
       toast.success(responseData?.message || "Request successful");
       return responseData;
@@ -79,6 +79,6 @@ export const FetchWithAuth = async (
   } catch (error) {
     const finalMessage = error.message || "Network error";
     toast.error(finalMessage);
-    throw new Error(finalMessage);
+    // throw new Error(finalMessage);
   }
 };
