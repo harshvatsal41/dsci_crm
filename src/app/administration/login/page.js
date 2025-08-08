@@ -23,13 +23,13 @@ export default function Login() {
 
     const res = await LoginApi(formData);
 
-    if(res.error){
-      toast.error(res.error);
+    if(res?.error){
+      toast?.error(res.error);
       dispatch(setLoading(false));
       return;
     }
   
-    if (res.statusCode===200) {
+    if (res?.statusCode===200) {
       document.cookie = `dsciAuthToken=${res.token}; path=/;`;
       document.cookie = `dsciAuthRole=${res.role}; path=/;`;
 
@@ -39,7 +39,7 @@ export default function Login() {
       toast.success(res.message || "Logged in successfully");
       router.push("/administration/dashboard");
     } else {
-      toast.error(res.error || "Something went wrong. Please try again.");
+      toast?.error(res.error || "Something went wrong. Please try again.");
     }
     dispatch(setLoading(false));
   

@@ -77,6 +77,11 @@ export default function Speaker() {
         return;
     }
 
+    if (speakers?.data?.length===0){
+     
+        return <h1 className="text-2xl font-bold text-gray-800 flex-shrink-0">No Speakers Found</h1>;
+    }
+
     return (
         <>
             {!isLoading && (

@@ -72,6 +72,11 @@ export default function TestimonialPage() {
         return 
     }
 
+    if (testimonials?.data?.length===0){
+        
+        return <h1 className="text-2xl font-bold text-gray-800 flex-shrink-0">No Testimonials Found</h1>;
+    }
+
     return (
         <>
             {!isLoading && (
