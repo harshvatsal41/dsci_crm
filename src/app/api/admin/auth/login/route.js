@@ -35,15 +35,15 @@ export async function POST(req) {
     if(!user.isVerified || user.isDeleted){
         return NextResponse.json(apiResponse({
                 message: "User is not verified Yet please verify the account and set The password or the account had been suspended",
-                statusCode: STATUS_CODES.UNAUTHORIZED,
-              }), { status: STATUS_CODES.UNAUTHORIZED });
+                statusCode: STATUS_CODES.FORBIDDEN,
+              }), { status: STATUS_CODES.FORBIDDEN });
     }
 
     if (!user || !(await user.matchPassword(password))) {
       return NextResponse.json(apiResponse({
         message: "Invalid credentials.",
-        statusCode: STATUS_CODES.UNAUTHORIZED,
-      }), { status: STATUS_CODES.UNAUTHORIZED });
+        statusCode: STATUS_CODES.NOT_FOUND,
+      }), { status: STATUS_CODES.NOT_FOUND });
     }
 
     // Transform permissions
@@ -95,10 +95,9 @@ export async function POST(req) {
       }
     );
   } catch (error) {
-    console.error("Error in login endpoint:", error);
-    return new Response(
-      JSON.stringify({ error: "Something went wrong. Please try again." }),
-      { status: 500 }
-    );
+    return NextResponse.json(apiResponse({
+      message: "Something went wrong. Please try again.",
+      statusCode: STATUS_CODES.INTERNAL_ERROR,
+    }), { status: STATUS_CODES.INTERNAL_ERROR });
   }
 }
