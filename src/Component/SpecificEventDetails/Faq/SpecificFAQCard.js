@@ -37,13 +37,12 @@ export default function SpecificFAQCard({ onDelete, setEdit, data }) {
         dispatch(setLoading(true));
         try {
             const res = await FaqApi(null, "DELETE", { Id: faqToDelete });
-            if (res.statusCode === 200) {
+            if (res?.statusCode === 200 || res?.status === "success") {
                 toast.success('FAQ deleted successfully');
                 onDelete();
             }
         } catch (error) {
-            toast.error('Failed to delete FAQ');
-            console.error(error);
+            toast.error(response?.message || 'Failed to delete FAQ');
         } finally {
             dispatch(setLoading(false));
             setConfirmOpen(false);

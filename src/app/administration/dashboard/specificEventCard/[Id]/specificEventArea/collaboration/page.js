@@ -102,8 +102,7 @@ export default function Collaboration() {
                 toast.error(res.message || `Failed to delete ${type === 'main' ? 'collaboration' : 'category'}`);
             }
         } catch (error) {
-            console.error('Delete error:', error);
-            toast.error(`Failed to delete ${type === 'main' ? 'collaboration' : 'category'}`);
+            toast.error('Delete error: ' + error.message);
         } finally {
             dispatch(setLoading(false));
         }

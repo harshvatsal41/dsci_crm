@@ -21,28 +21,62 @@ export default function Login() {
     e.preventDefault();
     dispatch(setLoading(true));
 
-    const res = await LoginApi(formData);
+    try {
+      const res = await LoginApi(formData);
 
-    if(res?.error){
-      toast?.error(res.error);
+      // Handle network errors or invalid responses
+      if (!res) {
+        toast.error("No response from server. Please check your connection.");
+        dispatch(setLoading(false));
+        return;
+      }
+
+      // Handle error responses
+      if (res.error) {
+        toast.error(res.error);
+        dispatch(setLoading(false));
+        return;
+      }
+
+      // Handle 404 - User not found
+      if (res.statusCode === 404) {
+        toast.error(res.message || "User not found. Please check your credentials.");
+        dispatch(setLoading(false));
+        return;
+      }
+      
+      // Handle successful login
+      if (res.statusCode === 200 && res.token) {
+        document.cookie = `dsciAuthToken=${res.token}; path=/;`;
+        document.cookie = `dsciAuthRole=${res.role}; path=/;`;
+
+        sessionStorage.setItem("dsciAuthData", JSON.stringify({
+          userName: res?.user?.username, 
+          role: res?.role, 
+          permissions: res?.user?.permissions, 
+          email: res?.user?.email, 
+          isSuperAdmin: res?.user?.isSuperAdmin
+        }));
+        
+        dispatch(setPermissions());
+        dispatch(login({ 
+          token: res.token, 
+          role: res.role, 
+          user: res.user 
+        }));
+        
+        toast.success(res.message || "Logged in successfully");
+        router.push("/administration/dashboard");
+      } else {
+        // Handle other error cases
+        toast.error(res.message || "Something went wrong. Please try again.");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
       dispatch(setLoading(false));
-      return;
     }
-  
-    if (res?.statusCode===200) {
-      document.cookie = `dsciAuthToken=${res.token}; path=/;`;
-      document.cookie = `dsciAuthRole=${res.role}; path=/;`;
-
-      sessionStorage.setItem("dsciAuthData", JSON.stringify({userName: res?.user?.username, role: res?.role, permissions: res?.user?.permissions, email: res?.user?.email, isSuperAdmin: res?.user?.isSuperAdmin}));
-      dispatch(setPermissions());
-      dispatch(login({ token: res?.token, role: res?.role, user: res?.user }));
-      toast.success(res.message || "Logged in successfully");
-      router.push("/administration/dashboard");
-    } else {
-      toast?.error(res.error || "Something went wrong. Please try again.");
-    }
-    dispatch(setLoading(false));
-  
   };
 
   return (

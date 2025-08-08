@@ -499,7 +499,7 @@ export default function SpeakerCardDesigner() {
         }, 1000);
       }
     } catch (error) {
-      console.error('PDF export failed:', error);
+      toast.error('PDF export failed: ' + error.message);
     } finally {
       setIsLoading(false);
     }

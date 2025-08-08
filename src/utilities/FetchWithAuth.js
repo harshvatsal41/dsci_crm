@@ -56,11 +56,12 @@ export const FetchWithAuth = async (
 
     // Handle token expiration
     if (response.status === 401) {
-      toast.error("Your session has expired. Please login again.");
+      const message = "Your session has expired. Please login again.";
+      if (!suppressToast) toast.error(message);
       store.dispatch({ type: "auth/logout" });
       localStorage.removeItem("dsciAuthToken");
       window.location.href = `${loginPath}?redirect=${encodeURIComponent(window.location.pathname)}`;
-      return;
+      return { error: message, statusCode: 401 };
     }
 
     // Handle empty response (204 No Content)
@@ -70,15 +71,17 @@ export const FetchWithAuth = async (
 
     if (!response.ok) {
       const message = responseData?.error || responseData?.message || "Something went wrong";
-      toast.error(message);
-      // throw new Error(message);
-    }else{
-      toast.success(responseData?.message || "Request successful");
-      return responseData;
+      if (!suppressToast) toast.error(message);
+      return { error: message, statusCode: response.status, ...responseData };
     }
+    
+    if (!suppressToast && responseData?.message) {
+      toast.success(responseData.message);
+    }
+    return responseData;
   } catch (error) {
     const finalMessage = error.message || "Network error";
-    toast.error(finalMessage);
-    // throw new Error(finalMessage);
+    if (!suppressToast) toast.error(finalMessage);
+    return { error: finalMessage, statusCode: 500 };
   }
 };

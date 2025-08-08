@@ -22,7 +22,7 @@ import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectFilteredMenu, setPermissions } from '@/Redux/Reducer/menuSlice';
-
+import { toast } from 'react-hot-toast';
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isMobile, setIsMobile] = useState(false);
@@ -51,7 +51,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       try {
         dispatch(setPermissions());
       } catch (error) {
-        console.error('Error initializing permissions:', error);
+        toast.error('Error initializing permissions: ' + error.message);
       } finally {
         setIsLoading(false);
       }

@@ -46,8 +46,7 @@ export default function FAQ() {
                 toast.success(res.message || 'FAQs loaded successfully');
             }
         } catch (error) {
-            toast.error('Failed to fetch FAQs');
-            console.error(error);
+            toast.error(res.message || 'Failed to fetch FAQs');
         } finally {
             dispatch(setLoading(false));
         }

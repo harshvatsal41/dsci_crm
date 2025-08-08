@@ -48,8 +48,7 @@ export default function Speaker() {
                 toast.success(res.message || 'Speakers loaded successfully');
             }
         } catch (error) {
-            toast.error('Failed to fetch speakers');
-            console.error(error);
+            toast.error(res.message || 'Failed to fetch speakers');
         } finally {
             dispatch(setLoading(false));
         }

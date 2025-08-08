@@ -70,7 +70,7 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
         setCompanies(companiesResponse.data || [])
       }
     } catch (error) {
-      console.error('Error fetching speakers and companies:', error)
+      toast.error(error.message || 'Error fetching speakers and companies')
     }
   }, [eventId])
 

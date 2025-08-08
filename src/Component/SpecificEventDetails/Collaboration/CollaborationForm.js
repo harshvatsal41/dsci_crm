@@ -77,8 +77,7 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
             setImageFile(null);
             setImageRemoved(false);
         } catch (error) {
-            console.error('Error loading collaboration data:', error);
-            toast.error('Failed to load collaboration data');
+            toast.error(error.message || 'Error loading collaboration data');
         } finally {
             dispatch(setLoading(false));
         }
@@ -290,7 +289,6 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                 toast.error(response.message || 'Operation failed');
             }
         } catch (error) {
-            console.error('Submit error:', error);
             toast.error(error.response?.data?.message || 'Operation failed');
         } finally {
             dispatch(setLoading(false));
@@ -380,7 +378,7 @@ const CollaborationForm = ({ edit, onSuccess, onClose }) => {
                                             className="w-full h-48 object-contain bg-gray-100"
                                             unoptimized={previewImage.startsWith('blob:')}
                                             onError={(e) => {
-                                                console.error('Image load error for:', previewImage);
+                                                toast.error('Image load error for:', previewImage);
                                                 // Try alternative image paths
                                                 if (originalImagePath && previewImage !== originalImagePath) {
                                                     const alternativeUrl = constructImageUrl(originalImagePath);
