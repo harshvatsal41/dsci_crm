@@ -1,6 +1,6 @@
 'use client'
 import React, { useState, useEffect, useCallback } from 'react'
-import { toast } from 'react-hot-toast'
+import { toast } from 'sonner'
 import Modal from '@/Component/UI/Modal'
 import {
   InputField,
@@ -17,6 +17,7 @@ import { setLoading } from '@/Redux/Reducer/menuSlice'
 import SessionForm from './SessionForm'
 import { SpeakerApi, CollaborationApi, AgendaApi } from '@/utilities/ApiManager'
 import { useParams } from 'next/navigation'
+
 
 const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
   const dispatch = useDispatch()
@@ -116,7 +117,6 @@ const AgendaForm = ({ eventId, agendaData = null, onSuccess, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
     // Basic validation
     if (!formData.title.trim()) {
       toast.error('Title is required');
