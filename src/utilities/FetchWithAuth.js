@@ -79,6 +79,5 @@ export const FetchWithAuth = async (
   } catch (error) {
     const finalMessage = error.message || "Network error";
     toast.error(finalMessage);
-    // throw new Error(finalMessage);
   }
 };

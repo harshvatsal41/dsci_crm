@@ -96,9 +96,9 @@ export async function POST(req) {
     );
   } catch (error) {
     console.error("Error in login endpoint:", error);
-    return new Response(
-      JSON.stringify({ error: "Something went wrong. Please try again." }),
-      { status: 500 }
-    );
+    return new NextResponse(apiResponse({
+      message: "Something went wrong. Please try again.",
+      statusCode: STATUS_CODES.INTERNAL_ERROR,
+    }), { status: STATUS_CODES.INTERNAL_ERROR });
   }
 }
